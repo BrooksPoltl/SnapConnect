@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+yarn.lock
+package-lock.json
+
+# Expo
+.expo/
+.expo-shared/
+
+# Build outputs
+build/
+dist/
+web-build/
+
+# Assets
+assets/
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage
+coverage/ 

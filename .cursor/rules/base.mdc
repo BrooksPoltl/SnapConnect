@@ -1,0 +1,75 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Technology Stack:
+- React Native
+- Typescript
+- Firebase
+- Expo
+
+
+# General Coding Best Practices
+
+These are the core coding principles for all files in a React Native project using Expo and Firebase. They ensure clean, maintainable, and consistent code. For specific guidelines, refer to the following specialized rules:
+
+- [TypeScript Rules](/Users/brookspoltl/coding/SnapConnect/.cursor/rules/typescript.mdc) for `.ts` and `.tsx` files.
+- [Component Rules](./.cursor/rules/component.mdc) for React Native components in `components/` or `screens/`.
+- [Styling Rules](./.cursor/rules/styling.mdc) for styles in `styles/` or style definitions.
+- [Firebase Rules](./.cursor/rules/firebase.mdc) for Firestore logic in `services/`.
+
+## Principles
+- **Clean Code**: Write self-documenting code with meaningful names (e.g., `fetchUserData` instead of `getStuff`).
+- **DRY**: Avoid duplication; extract reusable logic to hooks, utilities, or services.
+- **KISS**: Keep solutions simple and focused; avoid over-engineering.
+- **Single Responsibility**: Functions and components should do one thing well.
+- **Consistency**: Use `camelCase` for variables/functions, `PascalCase` for components/interfaces.
+
+## Project Structure
+- Organize code modularly:
+  - `components/`: Reusable UI components.
+  - `screens/`: Screen-specific components.
+  - `hooks/`: Custom hooks.
+  - `services/`: Firebase and API logic.
+  - `utils/`: Helper functions, should follow functional programming principles, pure functions, avoiding reassignment.
+  - `types/`: TypeScript interfaces.
+  - `styles/`: Shared styles or themes.
+- Use barrel files (`index.ts`) for simplified imports (e.g., `export * from './useAuth';`).
+
+## Error Handling
+- Wrap async operations in `try-catch` and display user-friendly errors.
+- Use error boundaries for component rendering errors.
+- Log errors to Sentry or Firebase Crashlytics via `expo-error-reporter`.
+
+## Performance
+- Memoize expensive computations with `useMemo` or `useCallback`.
+- Use `FlatList` for lists with `initialNumToRender` for efficiency.
+- Minimize Firestore reads/writes; use batched operations when possible.
+
+## Version Control
+- Write clear commit messages (e.g., `feat: add user auth hook`).
+- Use pull requests with code reviews for all changes.
+- Include a `.gitignore` for `node_modules/`, `.expo/`, and logs.
+
+## Documentation
+- Document public APIs and hooks with JSDoc or TypeScript comments.
+- Maintain a `README.md` with setup instructions and Firebase configuration.
+
+## Example
+```tsx
+// services/auth.ts
+/**
+ * Signs in a user with email and password
+ * @param email - User's email
+ * @param password - User's password
+ * @returns User object or throws error
+ */
+export const signIn = async (email: string, password: string) => {
+  try {
+    const user = await auth().signInWithEmailAndPassword(email, password);
+    return user;
+  } catch (error) {
+    throw new Error('Failed to sign in');
+  }
+};

@@ -1,0 +1,38 @@
+---
+description: Typescript best practices
+globs: 
+alwaysApply: false
+---
+# TypeScript Best Practices
+
+These rules ensure type safety and consistency in TypeScript files (`.ts`, `.tsx`) for React Native projects using Expo and Firebase. They build on the [General Rules](./.cursor/base.mdc) and focus on TypeScript-specific conventions.
+
+## General Guidelines
+- Use TypeScript for all code to enforce type safety.
+- Prefer `interface` over `type` for better extendability, unless union types or complex types are needed.
+- Avoid `any` types; use `unknown` or specific types instead.
+- Use explicit return types for functions and hooks to catch errors early.
+
+## Interfaces and Types
+- Define interfaces for component props, state, and Firestore documents.
+- Name interfaces with a descriptive `PascalCase` (e.g., `UserProps`, `FirestoreUser`).
+- Place shared interfaces in `types/` (e.g., `types/user.ts`).
+- Use generics for reusable hooks or components.
+- Example:
+  ```tsx
+  // types/user.ts
+  export interface User {
+    id: string;
+    name: string;
+    email: string;
+  }
+
+  // components/UserCard.tsx
+  interface UserCardProps {
+    user: User;
+    onPress: (id: string) => void;
+  }
+
+  const UserCard = ({ user, onPress }: UserCardProps) => {
+    // ...
+  };

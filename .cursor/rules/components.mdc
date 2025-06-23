@@ -1,0 +1,64 @@
+---
+description: Component Best Practices
+globs: 
+alwaysApply: false
+---
+
+# React Native Component Best Practices
+
+These rules ensure clean, reusable, and performant React Native components in `components/` and `screens/` directories.
+
+## General Guidelines
+- Use functional components with arrow functions and hooks instead of class components.
+- Keep components small, ideally 50-100 lines, and extract complex logic to custom hooks.
+- Destructure props and state to simplify code readability.
+- Name components using `PascalCase`, such as `UserCard` or `ProfileScreen`.
+
+## Structure
+- Place reusable components in `components/` and screen-specific components in `screens/`.
+- Break down large components into smaller, focused sub-components.
+- Store styles in a separate `styles.ts` file for components with extensive styling.
+- Example: A `UserCard` component should have its logic in an `index.tsx` file and styles in a `styles.ts` file within a `UserCard/` folder.
+
+## Props and Type Safety
+- Define TypeScript interfaces for props, as specified in TypeScript Rules.
+- Avoid using `defaultProps`; set default values in prop destructuring.
+- Use optional chaining for nullable props to prevent runtime errors.
+- Example: A `Header` component should have a props interface with a required `title` and an optional `subtitle`, rendering the subtitle only if provided.
+
+## Performance
+- Apply `React.memo` to components with stable props to avoid unnecessary re-renders.
+- Use `FlatList` for lists, setting `initialNumToRender` and `windowSize` for efficiency.
+- Avoid inline functions in render; use `useCallback` for event handlers.
+- Example: An `ItemList` component should use `FlatList` with a memoized render function and limited initial rendering for performance.
+
+## Accessibility
+- Add `accessibilityLabel` and `accessibilityRole` to interactive elements for screen reader support.
+- Ensure text and backgrounds have sufficient color contrast per accessibility standards.
+- Maintain a logical component hierarchy for screen reader compatibility.
+- Example: A button should include an accessibility label like "Submit form" and a role of "button".
+
+## Styling
+- Use `StyleSheet.create` for styles, as outlined in Styling Rules.
+- Avoid inline styles and reference styles from a `styles.ts` file.
+- Use a global theme for consistent colors and spacing, such as a primary color.
+- Support responsive design using the `useWindowDimensions` hook.
+- Example: A component should apply styles from a `styles.ts` file, using theme-defined values for padding and colors.
+
+## Reusability
+- Design components with flexible props, such as a `variant` prop for different styles.
+- Extract shared logic to hooks in `hooks/`, as per Hooks Rules.
+- Avoid direct Firebase calls in components; fetch data in parent components or hooks.
+- Example: A `Button` component should accept a `variant` prop to toggle between primary and secondary styles.
+
+## Error Handling
+- Use error boundaries to catch rendering errors and display fallback UI.
+- Show user-friendly messages for failed states, such as "Failed to load".
+- Example: An error boundary component should wrap a risky component and render a fallback message if an error occurs.
+
+## Notes
+- Use `SafeAreaView` from `react-native-safe-area-context` to handle notches and status bars.
+- Use `expo-router` for navigation, as recommended in General Rules.
+- Test components with `@testing-library/react-native`, as detailed in Testing Rules.
+- Refer to React Native documentation for component and API guidelines.
+```

@@ -1,0 +1,60 @@
+---
+description: Styling best practices for components
+globs: 
+alwaysApply: false
+---
+
+# React Native Styling Best Practices
+
+These rules ensure consistent, maintainable, and performant styling in React Native projects using Expo and Firebase. They apply to style definitions in `styles/` directories, `styles.ts` files, or components with style definitions. They build on the [General Rules](./general.cursorrules), [TypeScript Rules](./typescript.cursorrules), [Component Rules](./components.cursorrules), and [Firebase Rules](./firebase.cursorrules).
+
+## General Guidelines
+- Use the `StyleSheet.create` method for all styles to optimize performance.
+- Avoid inline styles to improve maintainability; always define styles in `StyleSheet.create`.
+- Store styles in a separate `styles.ts` file for components or screens with significant styling.
+- Use `camelCase` naming for style objects, such as `container` or `textPrimary`.
+
+## Theme Consistency
+- Define a global theme in a `styles/theme.ts` file to centralize colors, fonts, and spacing.
+- Reference theme values in all styles to ensure consistency, such as using a primary color or medium spacing.
+- Example: A theme should include a colors object with values like primary and background, a spacing object with small, medium, and large values, and a fontSizes object for text sizes.
+
+## Style Organization
+- Group related styles in `styles.ts` files within `components/` or `screens/` directories, such as a `styles.ts` file for a UserCard component.
+- Place shared styles in a `styles/shared/` directory, such as a file for button styles.
+- Keep style objects small and focused; split large style files into multiple objects for clarity.
+- Example: A component’s styles file should define a container style with padding and background color, and a title style with font size and weight.
+
+## Responsive Design
+- Use Flexbox for layouts, prioritizing `flex` properties over fixed width or height.
+- Use the `useWindowDimensions` hook from `react-native` to create responsive sizing based on screen dimensions.
+- Avoid absolute positioning unless necessary, such as for overlays or modals.
+- Example: A container style should use flex to fill available space and adjust padding based on screen width.
+
+## Dark Mode Support
+- Use the `useColorScheme` hook from `react-native` to support light and dark mode.
+- Define light and dark theme variants in the theme file to switch colors dynamically.
+- Example: A theme should specify a background color that changes to dark or light based on the color scheme.
+
+## Accessibility
+- Ensure text has sufficient color contrast to meet WCAG 2.1 AA standards, with a minimum 4.5:1 ratio.
+- Use relative units, such as theme-defined font sizes, to support scalable text for accessibility.
+- Test styles with accessibility tools provided by Expo, such as those in the `react-native-accessibility` package.
+- Example: A text style should use a theme-defined font size and a high-contrast color for readability.
+
+## Performance
+- Flatten styles to reduce rendering overhead, avoiding nested arrays or complex computations.
+- Reuse shared styles across components to minimize memory usage.
+- Use `StyleSheet.hairlineWidth` for thin borders to ensure cross-platform consistency.
+- Example: A separator style should use `hairlineWidth` for a thin, platform-optimized border.
+
+## Usage in Components
+- Import styles from a `styles.ts` file and apply them via the `style` prop, as per Component Rules.
+- Combine styles conditionally using arrays for dynamic styling, such as applying an active state.
+- Example: A component should apply a base container style and conditionally add an active style based on a prop.
+
+## Notes
+- Use `SafeAreaView` from `react-native-safe-area-context` to handle notches and status bars.
+- Leverage `expo-font` for custom fonts, ensuring fallback fonts are specified.
+- Refer to React Native styling documentation for detailed `StyleSheet` usage.
+- For theming guidance, consult Expo’s guides on custom fonts and styling.

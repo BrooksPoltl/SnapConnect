@@ -28,6 +28,19 @@ export const styles = (theme: Theme) =>
       color: theme.colors.text,
       textAlign: 'center',
       lineHeight: 24,
+      marginBottom: theme.spacing.lg,
+    },
+    permissionButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.xl,
+      borderRadius: theme.borderRadius.md,
+      alignItems: 'center',
+    },
+    permissionButtonText: {
+      color: theme.colors.background,
+      fontSize: theme.fontSizes.md,
+      fontWeight: theme.fontWeights.semibold,
     },
     preview: {
       flex: 1,

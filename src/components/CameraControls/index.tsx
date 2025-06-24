@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
+import { CameraView, CameraType } from 'expo-camera';
 
 import { useTheme } from '../../styles/theme';
 import CameraActions from '../CameraActions';
@@ -9,7 +9,7 @@ import CameraOptions from '../CameraOptions';
 import { styles } from './styles';
 
 interface CameraControlsProps {
-  cameraRef: React.RefObject<Camera>;
+  cameraRef: React.RefObject<CameraView | null>;
   cameraType: CameraType;
   onTakePhoto: () => void;
   onFlipCamera: () => void;
@@ -32,7 +32,7 @@ const CameraControls: React.FC<CameraControlsProps> = ({
 
   return (
     <View style={dynamicStyles.cameraContainer}>
-      <Camera style={dynamicStyles.camera} type={cameraType} ref={cameraRef} />
+      <CameraView style={dynamicStyles.camera} facing={cameraType} ref={cameraRef} />
       <CameraOptions flipCamera={onFlipCamera} />
       <CameraActions takePhoto={onTakePhoto} checkGallery={onCheckGallery} />
     </View>

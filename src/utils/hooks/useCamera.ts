@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { Camera, CameraType, CameraCapturedPicture } from 'expo-camera';
+import { CameraView, CameraType, CameraCapturedPicture, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { shareAsync } from 'expo-sharing';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,10 +9,11 @@ import { logger, logError } from '../logger';
 
 interface UseCameraReturn {
   // Camera refs and state
-  cameraRef: React.RefObject<Camera>;
-  hasCameraPermission: boolean | undefined;
+  cameraRef: React.RefObject<CameraView | null>;
+  permission: { granted: boolean } | null;
+  requestPermission: () => void;
   hasMediaLibraryPermission: boolean | undefined;
-  type: CameraType;
+  facing: CameraType;
   photo: CameraCapturedPicture | undefined;
 
   // Camera actions
@@ -29,18 +30,16 @@ interface UseCameraReturn {
  * Extracts complex camera logic from components
  */
 export const useCamera = (): UseCameraReturn => {
-  const cameraRef = useRef<Camera>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | undefined>();
-  const [type, setType] = useState<CameraType>(CameraType.back);
+  const cameraRef = useRef<CameraView>(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState<CameraType>('back');
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | undefined>();
   const [photo, setPhoto] = useState<CameraCapturedPicture | undefined>();
 
   useEffect(() => {
     const requestPermissions = async () => {
       try {
-        const cameraPermission = await Camera.requestCameraPermissionsAsync();
         const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
-        setHasCameraPermission(cameraPermission.status === 'granted');
         setHasMediaLibraryPermission(mediaLibraryPermission.status === 'granted');
       } catch (error) {
         logError('useCamera', 'Error requesting permissions', error);
@@ -52,7 +51,7 @@ export const useCamera = (): UseCameraReturn => {
   }, []);
 
   const flipCamera = (): void => {
-    setType(type === CameraType.back ? CameraType.front : CameraType.back);
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
   const checkGallery = async (): Promise<void> => {
@@ -132,9 +131,10 @@ export const useCamera = (): UseCameraReturn => {
 
   return {
     cameraRef,
-    hasCameraPermission,
+    permission,
+    requestPermission,
     hasMediaLibraryPermission,
-    type,
+    facing,
     photo,
     flipCamera,
     checkGallery,

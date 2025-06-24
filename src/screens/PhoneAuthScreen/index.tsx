@@ -27,7 +27,13 @@ const PhoneAuthScreen: React.FC<PhoneAuthScreenProps> = ({ navigation }) => {
       [
         {
           text: 'OK',
-          onPress: () => navigation.goBack(),
+          onPress: () => {
+            if (navigation?.canGoBack?.()) {
+              navigation.goBack();
+            } else {
+              navigation?.navigate('AuthHome');
+            }
+          },
         },
       ],
     );

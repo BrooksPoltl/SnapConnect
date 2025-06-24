@@ -16,7 +16,9 @@ const ReturnButton: React.FC<ReturnButtonProps> = ({ navigation, returnName }) =
   const dynamicStyles = styles(theme);
 
   const handlePress = () => {
-    navigation.navigate(returnName);
+    if (navigation && navigation.navigate) {
+      navigation.navigate(returnName);
+    }
   };
 
   return (

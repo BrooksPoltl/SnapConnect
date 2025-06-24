@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Camera, CameraType, CameraCapturedPicture } from 'expo-camera';
+import { CameraView, CameraType, CameraCapturedPicture, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { shareAsync } from 'expo-sharing';
 import * as ImagePicker from 'expo-image-picker';
@@ -25,9 +25,9 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   navigation: _navigation,
   focused: _focused,
 }) => {
-  const cameraRef = useRef<Camera>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | undefined>();
-  const [type, setType] = useState<CameraType>(CameraType.back);
+  const cameraRef = useRef<CameraView>(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState<CameraType>('back');
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | undefined>();
   const [photo, setPhoto] = useState<CameraCapturedPicture | undefined>();
 
@@ -37,9 +37,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   useEffect(() => {
     (async () => {
       try {
-        const cameraPermission = await Camera.requestCameraPermissionsAsync();
         const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
-        setHasCameraPermission(cameraPermission.status === 'granted');
         setHasMediaLibraryPermission(mediaLibraryPermission.status === 'granted');
       } catch (error) {
         logError('CameraScreen', 'Error requesting permissions', error);
@@ -49,7 +47,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   }, []);
 
   const flipCamera = (): void => {
-    setType(type === CameraType.back ? CameraType.front : CameraType.back);
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
   const checkGallery = async (): Promise<void> => {
@@ -128,7 +126,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   };
 
   // Permission loading state
-  if (hasCameraPermission === undefined) {
+  if (!permission) {
     return (
       <SafeAreaView style={dynamicStyles.container}>
         <View style={dynamicStyles.messageContainer}>
@@ -139,13 +137,21 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   }
 
   // Permission denied state
-  if (!hasCameraPermission) {
+  if (!permission.granted) {
     return (
       <SafeAreaView style={dynamicStyles.container}>
         <View style={dynamicStyles.messageContainer}>
           <Text style={dynamicStyles.messageText}>
-            Camera permission not granted. Please enable camera access in your device settings.
+            We need your permission to access the camera
           </Text>
+          <TouchableOpacity
+            style={dynamicStyles.permissionButton}
+            onPress={requestPermission}
+            accessibilityRole='button'
+            accessibilityLabel='Grant camera permission'
+          >
+            <Text style={dynamicStyles.permissionButtonText}>Grant Permission</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -194,7 +200,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   // Camera mode
   return (
     <View style={dynamicStyles.cameraContainer}>
-      <Camera style={dynamicStyles.camera} type={type} ref={cameraRef} />
+      <CameraView style={dynamicStyles.camera} facing={facing} ref={cameraRef} />
       <CameraOptions flipCamera={flipCamera} />
       <CameraActions checkGallery={checkGallery} takePhoto={takePhoto} />
     </View>

@@ -54,10 +54,10 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
         },
       },
     });
-    
+
     if (error) throw error;
     if (!data.user) throw new Error('No user returned from sign up');
-    
+
     logger.info('Auth', 'User account created successfully');
     return data.user;
   } catch (error: unknown) {

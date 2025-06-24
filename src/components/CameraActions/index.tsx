@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 
 import { useTheme } from '../../styles/theme';
+import Icon from '../Icon';
 
 import { styles } from './styles';
 
@@ -26,7 +27,7 @@ const CameraActions: React.FC<CameraActionsProps> = memo(
             accessibilityLabel='Open gallery'
             accessibilityHint='Tap to select a photo from your gallery'
           >
-            <Text style={dynamicStyles.icon}>📁</Text>
+            <Icon name='image' size={24} color='text' />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -36,7 +37,7 @@ const CameraActions: React.FC<CameraActionsProps> = memo(
             accessibilityLabel='Take photo'
             accessibilityHint='Tap to capture a photo'
           >
-            <Text style={dynamicStyles.captureIcon}>⭕</Text>
+            <View style={dynamicStyles.captureButtonInner} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -46,7 +47,7 @@ const CameraActions: React.FC<CameraActionsProps> = memo(
             accessibilityLabel='Switch camera'
             accessibilityHint='Tap to switch between front and back camera'
           >
-            <Text style={dynamicStyles.icon}>🔄</Text>
+            <Icon name='refresh-cw' size={24} color='text' />
           </TouchableOpacity>
         </View>
       </View>

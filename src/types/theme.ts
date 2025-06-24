@@ -18,9 +18,35 @@ export interface ColorPalette {
 }
 
 export interface Colors {
-  light: ColorPalette;
-  dark: ColorPalette;
+  light: {
+    primary: string;
+    secondary: string;
+    background: string;
+    surface: string;
+    text: string;
+    textSecondary: string;
+    border: string;
+    error: string;
+    success: string;
+    warning: string;
+    disabled: string;
+  };
+  dark: {
+    primary: string;
+    secondary: string;
+    background: string;
+    surface: string;
+    text: string;
+    textSecondary: string;
+    border: string;
+    error: string;
+    success: string;
+    warning: string;
+    disabled: string;
+  };
 }
+
+export type ThemeColor = keyof Colors['light'] | keyof Colors['dark'];
 
 export interface Spacing {
   xs: number;

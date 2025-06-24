@@ -6,7 +6,7 @@ export const styles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#FDFC02', // Snapchat yellow
+      backgroundColor: theme.colors.background,
     },
     content: {
       flex: 1,
@@ -28,36 +28,44 @@ export const styles = (theme: Theme) =>
     },
     button: {
       paddingVertical: 15,
-      borderRadius: 30,
+      borderRadius: theme.borderRadius.lg,
       alignItems: 'center',
       width: '80%',
       marginVertical: 10,
+      elevation: 2,
+      shadowColor: theme.colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
     },
     loginButton: {
-      backgroundColor: '#F13A56', // Snapchat red
+      backgroundColor: theme.colors.surface,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
     },
     signUpButton: {
       backgroundColor: theme.colors.primary,
     },
     googleButton: {
-      backgroundColor: '#db4437', // Google's brand color
+      backgroundColor: theme.colors.secondary,
     },
     phoneButton: {
-      backgroundColor: theme.colors.success, // A generic green for phone auth
+      backgroundColor: theme.colors.success,
     },
     buttonText: {
-      color: theme.colors.text,
-      fontSize: 18,
-      fontWeight: 'bold',
+      color: theme.colors.background,
+      fontSize: theme.fontSizes.lg,
+      fontWeight: theme.fontWeights.semibold,
     },
     logInText: {
       color: theme.colors.primary,
-      marginTop: 20,
+      fontSize: theme.fontSizes.md,
+      marginTop: theme.spacing.lg,
     },
     title: {
-      fontSize: 48,
-      fontWeight: 'bold',
+      fontSize: theme.fontSizes.xxxl,
+      fontWeight: theme.fontWeights.bold,
       color: theme.colors.text,
-      marginBottom: 50,
+      marginBottom: theme.spacing.xxl,
     },
   });

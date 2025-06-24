@@ -39,6 +39,7 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) =
       'refresh-cw': '🔄',
       'refresh-ccw': '↻',
       'arrow-left': '←',
+      'arrow-right': '→',
       download: '⬇️',
       send: '➤',
       'trash-2': '🗑️',

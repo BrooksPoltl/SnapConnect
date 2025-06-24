@@ -1,4 +1,5 @@
 import { useColorScheme, Dimensions } from 'react-native';
+import { useMemo } from 'react';
 
 import {
   Colors,
@@ -88,15 +89,18 @@ export const dimensions: ThemeDimensions = {
  */
 export const useTheme = (): Theme => {
   const colorScheme = useColorScheme();
-  const themeColors = colorScheme === 'dark' ? colors.dark : colors.light;
 
-  return {
-    colors: themeColors,
-    spacing,
-    fontSizes,
-    fontWeights,
-    borderRadius,
-    dimensions,
-    isDark: colorScheme === 'dark',
-  };
+  return useMemo(() => {
+    const themeColors = colorScheme === 'dark' ? colors.dark : colors.light;
+
+    return {
+      colors: themeColors,
+      spacing,
+      fontSizes,
+      fontWeights,
+      borderRadius,
+      dimensions,
+      isDark: colorScheme === 'dark',
+    };
+  }, [colorScheme]);
 };

@@ -14,10 +14,12 @@ Technology Stack:
 
 These are the core coding principles for all files in a React Native project using Expo and Firebase. They ensure clean, maintainable, and consistent code. For specific guidelines, refer to the following specialized rules:
 
-- [TypeScript Rules](/Users/brookspoltl/coding/SnapConnect/.cursor/rules/typescript.mdc) for `.ts` and `.tsx` files.
-- [Component Rules](./.cursor/rules/component.mdc) for React Native components in `components/` or `screens/`.
-- [Styling Rules](./.cursor/rules/styling.mdc) for styles in `styles/` or style definitions.
-- [Firebase Rules](./.cursor/rules/firebase.mdc) for Firestore logic in `services/`.
+- ([TypeScript Rules](mdc:.cursor/rules/typescript.mdc) for `.ts` and `.tsx` files.
+- [Component Rules](mdc:.cursor/rules/component.mdc) for React Native components in `components/` or `screens/`.
+- [Styling Rules](mdc:.cursor/rules/styling.mdc) for styles in `styles/` or style definitions.
+- [Firebase Rules](mdc:.cursor/rules/firebase.mdc) for Firestore logic in `services/`.
+- [PRODUCT_REQUIREMENTS_DOCUMENT.md](mdc:PRODUCT_REQUIREMENTS_DOCUMENT.md) for overall project context
+- /feature_docs for a list of implemented feature plans and implementation steps
 
 ## Principles
 - **Clean Code**: Write self-documenting code with meaningful names (e.g., `fetchUserData` instead of `getStuff`).
@@ -47,13 +49,8 @@ These are the core coding principles for all files in a React Native project usi
 - Use `FlatList` for lists with `initialNumToRender` for efficiency.
 - Minimize Firestore reads/writes; use batched operations when possible.
 
-## Version Control
-- Write clear commit messages (e.g., `feat: add user auth hook`).
-- Use pull requests with code reviews for all changes.
-- Include a `.gitignore` for `node_modules/`, `.expo/`, and logs.
-
 ## Documentation
-- Document public APIs and hooks with JSDoc or TypeScript comments.
+- Document service calls and hooks with JSDoc or TypeScript comments.
 - Maintain a `README.md` with setup instructions and Firebase configuration.
 
 ## Example
@@ -73,3 +70,7 @@ export const signIn = async (email: string, password: string) => {
     throw new Error('Failed to sign in');
   }
 };
+```
+## Logging
+
+use the dedicated @logger.ts for logging, we should log all service calls for debugging purposes

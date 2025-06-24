@@ -1,9 +1,11 @@
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-
+/**
+ * Authentication service using Supabase Auth
+ * Following official Supabase patterns for React Native
+ */
+import { supabase } from './supabase';
 import { AuthError, LoginCredentials, SignUpCredentials } from '../types/auth';
-import { isFirebaseAuthError, FirebaseAuthErrorCode } from '../types/firebase';
-
-type User = FirebaseAuthTypes.User;
+import { logger } from '../utils/logger';
+import type { User } from '@supabase/supabase-js';
 
 /**
  * Signs in a user with email and password
@@ -12,23 +14,25 @@ type User = FirebaseAuthTypes.User;
  */
 export const signIn = async (credentials: LoginCredentials): Promise<User> => {
   try {
+    logger.info('Auth', 'Attempting to sign in user');
     const { email, password } = credentials;
-    const userCredential = await auth().signInWithEmailAndPassword(email, password);
-    return userCredential.user;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error('No user returned from sign in');
+
+    logger.info('Auth', 'User signed in successfully');
+    return data.user;
   } catch (error: unknown) {
-    if (isFirebaseAuthError(error)) {
-      const authError: AuthError = {
-        code: error.code as FirebaseAuthErrorCode,
-        message: getFriendlyErrorMessage(error.code as FirebaseAuthErrorCode),
-      };
-      throw authError;
-    } else {
-      const authError: AuthError = {
-        code: 'auth/unknown-error',
-        message: 'An unexpected error occurred. Please try again.',
-      };
-      throw authError;
-    }
+    logger.error('Auth', 'Error signing in user', error);
+    const authError: AuthError = {
+      code: 'auth/sign-in-failed',
+      message: error instanceof Error ? error.message : 'Failed to sign in. Please try again.',
+    };
+    throw authError;
   }
 };
 
@@ -39,23 +43,31 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
  */
 export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   try {
-    const { email, password } = credentials;
-    const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-    return userCredential.user;
+    logger.info('Auth', 'Attempting to create new user account');
+    const { email, password, name } = credentials;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username: name || email.split('@')[0], // Use name or fallback to email prefix
+        },
+      },
+    });
+    
+    if (error) throw error;
+    if (!data.user) throw new Error('No user returned from sign up');
+    
+    logger.info('Auth', 'User account created successfully');
+    return data.user;
   } catch (error: unknown) {
-    if (isFirebaseAuthError(error)) {
-      const authError: AuthError = {
-        code: error.code as FirebaseAuthErrorCode,
-        message: getFriendlyErrorMessage(error.code as FirebaseAuthErrorCode),
-      };
-      throw authError;
-    } else {
-      const authError: AuthError = {
-        code: 'auth/unknown-error',
-        message: 'An unexpected error occurred. Please try again.',
-      };
-      throw authError;
-    }
+    logger.error('Auth', 'Error creating user account', error);
+    const authError: AuthError = {
+      code: 'auth/sign-up-failed',
+      message:
+        error instanceof Error ? error.message : 'Failed to create account. Please try again.',
+    };
+    throw authError;
   }
 };
 
@@ -64,48 +76,18 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
  */
 export const logOut = async (): Promise<void> => {
   try {
-    await auth().signOut();
-  } catch (error: unknown) {
-    if (isFirebaseAuthError(error)) {
-      const authError: AuthError = {
-        code: error.code as FirebaseAuthErrorCode,
-        message: 'Failed to sign out. Please try again.',
-      };
-      throw authError;
-    } else {
-      const authError: AuthError = {
-        code: 'auth/unknown-error',
-        message: 'Failed to sign out. Please try again.',
-      };
-      throw authError;
-    }
-  }
-};
+    logger.info('Auth', 'Attempting to sign out user');
+    const { error } = await supabase.auth.signOut();
 
-/**
- * Converts Firebase error codes to user-friendly messages
- * @param errorCode - Firebase error code
- * @returns User-friendly error message
- */
-const getFriendlyErrorMessage = (errorCode: FirebaseAuthErrorCode): string => {
-  switch (errorCode) {
-    case 'auth/user-not-found':
-      return 'No account found with this email address.';
-    case 'auth/wrong-password':
-      return 'Incorrect password. Please try again.';
-    case 'auth/invalid-email':
-      return 'Please enter a valid email address.';
-    case 'auth/user-disabled':
-      return 'This account has been disabled.';
-    case 'auth/email-already-in-use':
-      return 'An account with this email already exists.';
-    case 'auth/weak-password':
-      return 'Password should be at least 6 characters long.';
-    case 'auth/network-request-failed':
-      return 'Network error. Please check your connection.';
-    case 'auth/operation-not-allowed':
-      return 'Email/Password sign-in is not enabled for this project.';
-    default:
-      return 'An unexpected error occurred. Please try again.';
+    if (error) throw error;
+
+    logger.info('Auth', 'User signed out successfully');
+  } catch (error: unknown) {
+    logger.error('Auth', 'Error signing out user', error);
+    const authError: AuthError = {
+      code: 'auth/sign-out-failed',
+      message: 'Failed to sign out. Please try again.',
+    };
+    throw authError;
   }
 };

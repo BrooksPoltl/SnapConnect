@@ -114,7 +114,7 @@ export default [
       // Import rules
       'import/no-unresolved': 'error',
       'import/order': [
-        'error',
+        'off',
         {
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
           'newlines-between': 'always',

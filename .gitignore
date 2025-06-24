@@ -174,3 +174,4 @@ storybook-static/
 .env.development.local 
 /android/
 /ios/
+GoogleService-Info.plist

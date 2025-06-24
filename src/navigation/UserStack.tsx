@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { getAuth, signOut } from 'firebase/auth';
+import { logOut } from '../services/auth';
 
 import MapScreen from '../screens/MapScreen';
 import CameraScreen from '../screens/CameraScreen';
@@ -23,27 +23,18 @@ export type UserStackParamList = {
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
 const UserStack: React.FC = () => {
-  const auth = getAuth();
-  let _user = auth.currentUser;
+  const handleLogOut = async () => {
+    try {
+      await logOut();
+      // Sign-out successful - navigation handled by useAuthentication hook
+    } catch (error: unknown) {
+      logError('UserStack', 'Sign out error', error);
+    }
+  };
 
   const screenOptions = {
     tabBarShowLabel: false,
-    headerLeft: () => (
-      <Button
-        onPress={() => {
-          signOut(auth)
-            .then(() => {
-              // Sign-out successful.
-              _user = null;
-            })
-            .catch(error => {
-              // An error happened.
-              logError('UserStack', 'Sign out error', error);
-            });
-        }}
-        title='Log Out'
-      />
-    ),
+    headerLeft: () => <Button onPress={handleLogOut} title='Log Out' />,
   };
 
   return (

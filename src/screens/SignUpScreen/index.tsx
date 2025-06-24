@@ -5,7 +5,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { AuthStackParamList } from '../../types/navigation';
 import { signUp } from '../../services/auth';
-import { saveUserData } from '../../services/firestore';
 import { SignUpCredentials, AuthError } from '../../types/auth';
 import { useTheme } from '../../styles/theme';
 // Components
@@ -61,16 +60,8 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      // Create user account
-      const user = await signUp(credentials);
-
-      // Save additional user data to Firestore
-      await saveUserData(user.uid, {
-        email: credentials.email,
-        name: credentials.name,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      // Create user account - user profile will be created automatically by database trigger
+      await signUp(credentials);
 
       // Navigation will be handled automatically by useAuthentication hook
     } catch (error) {

@@ -1,9 +1,8 @@
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
-
+import type { User } from '@supabase/supabase-js';
 import { UserData } from './user';
 
 export interface AuthenticationResult {
-  user: FirebaseAuthTypes.User | null;
+  user: User | null;
   userData: UserData | null;
   loading: boolean;
   error: string | null;

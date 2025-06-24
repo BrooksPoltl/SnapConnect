@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import { getAuth, signOut } from 'firebase/auth';
+import { logOut } from '../services/auth';
 
 import ChatScreen from '../screens/ChatScreen';
 import ConversationScreen from '../screens/ConversationScreen';
@@ -15,27 +15,18 @@ interface ChatStackProps {
 }
 
 const ChatStack: React.FC<ChatStackProps> = ({ navigation: _navigation }) => {
-  const auth = getAuth();
-  let _user = auth.currentUser;
+  const handleLogOut = async () => {
+    try {
+      await logOut();
+      // Sign-out successful - navigation handled by useAuthentication hook
+    } catch (error: unknown) {
+      logError('ChatStack', 'Sign out error', error);
+    }
+  };
 
   const screenOptions = {
     tabBarShowLabel: false,
-    headerLeft: () => (
-      <Button
-        onPress={() => {
-          signOut(auth)
-            .then(() => {
-              // Sign-out successful.
-              _user = null;
-            })
-            .catch(error => {
-              // An error happened.
-              logError('ChatStack', 'Sign out error', error);
-            });
-        }}
-        title='Log Out'
-      />
-    ),
+    headerLeft: () => <Button onPress={handleLogOut} title='Log Out' />,
   };
 
   return (

@@ -22,7 +22,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "snapconnect needs access to your Camera.",
         "NSMicrophoneUsageDescription": "snapconnect needs access to your Microphone.",

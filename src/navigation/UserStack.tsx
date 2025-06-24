@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text } from 'react-native';
+import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { logOut } from '../services/auth';
@@ -9,11 +9,13 @@ import CameraScreen from '../screens/CameraScreen';
 import StoriesScreen from '../screens/StoriesScreen';
 import SpotlightScreen from '../screens/SpotlightScreen';
 import { logError } from '../utils/logger';
+import { Icon } from '../components';
+import { useTheme } from '../styles/theme';
 
 import ChatStack from './ChatStack';
 
 export type UserStackParamList = {
-  Map: undefined;
+  Insights: undefined;
   ChatStack: undefined;
   Camera: undefined;
   Stories: undefined;
@@ -23,6 +25,8 @@ export type UserStackParamList = {
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
 const UserStack: React.FC = () => {
+  const theme = useTheme();
+
   const handleLogOut = async () => {
     try {
       await logOut();
@@ -42,29 +46,29 @@ const UserStack: React.FC = () => {
       <Tab.Navigator
         initialRouteName='Camera'
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, size }) => {
-            let icon: string;
+          tabBarIcon: ({ focused: _focused, size }) => {
+            let iconName: string;
 
-            if (route.name === 'Map') {
-              icon = focused ? '🗺️' : '📍';
+            if (route.name === 'Insights') {
+              iconName = 'trending-up';
             } else if (route.name === 'ChatStack') {
-              icon = focused ? '💬' : '💭';
+              iconName = 'message-square';
             } else if (route.name === 'Camera') {
-              icon = focused ? '📸' : '📷';
+              iconName = 'camera';
             } else if (route.name === 'Stories') {
-              icon = focused ? '👥' : '👤';
+              iconName = 'users';
             } else if (route.name === 'Spotlight') {
-              icon = focused ? '▶️' : '⏯️';
+              iconName = 'play-circle';
             } else {
-              icon = '❓';
+              iconName = 'help-circle';
             }
-            return <Text style={{ fontSize: size || 24 }}>{icon}</Text>;
+            return <Icon name={iconName} size={size || 24} color={theme.colors.white} />;
           },
           tabBarStyle: { backgroundColor: '#000' },
         })}
       >
         <Tab.Screen
-          name='Map'
+          name='Insights'
           component={MapScreen}
           options={{ ...screenOptions, headerShown: false }}
         />

@@ -147,7 +147,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <Animated.View
               style={[dynamicStyles.logoContainer, { transform: [{ scale: logoScale }] }]}
             >
-              <Text style={dynamicStyles.logo}>📊</Text>
+              <Icon name='trending-up' size={48} color={theme.colors.primary} />
             </Animated.View>
 
             <HomeScreenAnimatedText animatedValue={titleAnim} style={dynamicStyles.title}>
@@ -168,9 +168,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <View style={dynamicStyles.middleSection}>
           <View style={dynamicStyles.autoScrollSection}>
             <Animated.View style={[dynamicStyles.contentRow, { opacity: contentFade }]}>
-              <Text style={dynamicStyles.contentEmoji}>
-                {autoScrollContent[currentIndex].emoji}
-              </Text>
+              <Icon
+                name={autoScrollContent[currentIndex].iconName}
+                size={24}
+                color={theme.colors.primary}
+                style={dynamicStyles.contentIcon}
+              />
               <Text style={dynamicStyles.contentText}>{autoScrollContent[currentIndex].text}</Text>
             </Animated.View>
           </View>

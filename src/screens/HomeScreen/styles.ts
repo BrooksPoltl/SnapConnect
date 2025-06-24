@@ -14,29 +14,29 @@ export const styles = (theme: Theme) =>
     },
     headerSection: {
       alignItems: 'center',
-      paddingTop: theme.spacing.lg,
-      paddingBottom: theme.spacing.md,
+      paddingTop: theme.spacing.xl,
+      paddingBottom: theme.spacing.lg,
     },
     fixedHeader: {
       alignItems: 'center',
-      paddingHorizontal: theme.spacing.md,
     },
     middleSection: {
       flex: 1,
       justifyContent: 'center',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.md,
     },
     autoScrollSection: {
-      minHeight: 120,
+      width: '100%',
+      minHeight: 80,
       justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
     },
     bottomSection: {
+      alignItems: 'center',
+      paddingBottom: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
       backgroundColor: '#1a1a1a',
-      paddingHorizontal: theme.spacing.md,
-      paddingTop: theme.spacing.md,
-      paddingBottom: theme.spacing.lg,
       borderTopWidth: 1,
       borderTopColor: '#333333',
     },
@@ -46,15 +46,14 @@ export const styles = (theme: Theme) =>
       justifyContent: 'center',
       paddingHorizontal: theme.spacing.md,
     },
-    contentEmoji: {
-      fontSize: 32,
+    contentIcon: {
       marginRight: theme.spacing.md,
     },
     contentText: {
       flex: 1,
       fontSize: 16,
       lineHeight: 24,
-      color: '#FFFFFF',
+      color: theme.colors.white,
       textAlign: 'left',
     },
 
@@ -68,7 +67,7 @@ export const styles = (theme: Theme) =>
     title: {
       fontSize: theme.fontSizes.xxxl,
       fontWeight: theme.fontWeights.bold,
-      color: '#ffffff', // White text
+      color: theme.colors.white,
       textAlign: 'center',
       marginBottom: theme.spacing.xs,
     },
@@ -117,7 +116,7 @@ export const styles = (theme: Theme) =>
     featureTitle: {
       fontSize: theme.fontSizes.lg,
       fontWeight: theme.fontWeights.bold,
-      color: '#ffffff', // White text
+      color: theme.colors.white,
       marginBottom: theme.spacing.xs,
     },
     featureDescription: {
@@ -133,7 +132,7 @@ export const styles = (theme: Theme) =>
     ctaText: {
       fontSize: theme.fontSizes.lg,
       fontWeight: theme.fontWeights.bold,
-      color: '#ffffff', // White text
+      color: theme.colors.white,
       textAlign: 'center',
       marginBottom: theme.spacing.xs,
     },
@@ -178,7 +177,7 @@ export const styles = (theme: Theme) =>
     secondaryButtonText: {
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.semibold,
-      color: '#ffffff', // White text
+      color: theme.colors.white,
     },
     buttonIcon: {
       marginLeft: theme.spacing.xs,

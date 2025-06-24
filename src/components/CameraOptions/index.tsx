@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 
 import { useTheme } from '../../styles/theme';
+import { Icon } from '../';
 
 import { styles } from './styles';
 
@@ -31,7 +32,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({ flipCamera, switchFlash }
         accessibilityLabel='Flip camera'
         accessibilityHint='Switch between front and back camera'
       >
-        <Text style={dynamicStyles.icon}>🔄</Text>
+        <Icon name='refresh-ccw' size={24} color='#FFFFFF' />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -41,7 +42,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({ flipCamera, switchFlash }
         accessibilityLabel={flashState ? 'Turn flash off' : 'Turn flash on'}
         accessibilityHint='Toggle camera flash'
       >
-        <Text style={dynamicStyles.icon}>{flashState ? '⚡' : '🔦'}</Text>
+        <Icon name={flashState ? 'zap' : 'zap-off'} size={24} color='#FFFFFF' />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -50,7 +51,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({ flipCamera, switchFlash }
         accessibilityLabel='Video mode'
         accessibilityHint='Switch to video recording mode'
       >
-        <Text style={dynamicStyles.icon}>🎥</Text>
+        <Icon name='video' size={24} color='#FFFFFF' />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -59,7 +60,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({ flipCamera, switchFlash }
         accessibilityLabel='Music mode'
         accessibilityHint='Add music to your snap'
       >
-        <Text style={dynamicStyles.icon}>🎵</Text>
+        <Icon name='music' size={24} color='#FFFFFF' />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -68,7 +69,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({ flipCamera, switchFlash }
         accessibilityLabel='Night mode'
         accessibilityHint='Toggle night mode for low light photos'
       >
-        <Text style={dynamicStyles.icon}>🌙</Text>
+        <Icon name='moon' size={24} color='#FFFFFF' />
       </TouchableOpacity>
     </View>
   );

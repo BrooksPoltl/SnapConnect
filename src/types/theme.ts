@@ -15,6 +15,7 @@ export interface ColorPalette {
   success: string;
   warning: string;
   disabled: string;
+  white: string;
 }
 
 export interface Colors {
@@ -30,6 +31,7 @@ export interface Colors {
     success: string;
     warning: string;
     disabled: string;
+    white: string;
   };
   dark: {
     primary: string;
@@ -43,6 +45,7 @@ export interface Colors {
     success: string;
     warning: string;
     disabled: string;
+    white: string;
   };
 }
 

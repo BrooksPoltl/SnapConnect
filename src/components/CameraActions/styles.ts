@@ -19,12 +19,12 @@ export const styles = (theme: Theme) =>
       maxWidth: 300,
       padding: theme.spacing.sm,
       borderRadius: theme.borderRadius.pill,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: 'transparent',
       elevation: 5,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
+      shadowOpacity: 0.3,
+      shadowRadius: 6,
     },
     actionButton: {
       alignItems: 'center',
@@ -32,6 +32,7 @@ export const styles = (theme: Theme) =>
       width: 50,
       height: 50,
       borderRadius: theme.borderRadius.circle,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     captureButton: {
       alignItems: 'center',

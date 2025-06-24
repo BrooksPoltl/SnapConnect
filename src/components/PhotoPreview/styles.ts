@@ -22,16 +22,21 @@ export const styles = (theme: Theme) =>
       backgroundColor: theme.colors.surface,
     },
     actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.borderRadius.md,
       minWidth: 80,
-      alignItems: 'center',
+      justifyContent: 'center',
     },
     actionButtonText: {
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.semibold,
       color: theme.colors.background,
+    },
+    buttonIcon: {
+      marginRight: theme.spacing.xs,
     },
     saveButton: {
       backgroundColor: theme.colors.success,

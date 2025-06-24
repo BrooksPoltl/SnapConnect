@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraCapturedPicture } from 'expo-camera';
 
 import { useTheme } from '../../styles/theme';
+import { Icon } from '../';
 
 import { styles } from './styles';
 
@@ -11,12 +12,12 @@ interface PhotoPreviewProps {
   photo: CameraCapturedPicture;
   hasMediaLibraryPermission?: boolean;
   onSave: () => void;
-  onShare: () => void;
+  onSend: () => void;
   onDiscard: () => void;
 }
 
 const PhotoPreview: React.FC<PhotoPreviewProps> = memo(
-  ({ photo, hasMediaLibraryPermission = false, onSave, onShare, onDiscard }) => {
+  ({ photo, hasMediaLibraryPermission = false, onSave, onSend, onDiscard }) => {
     const theme = useTheme();
     const dynamicStyles = styles(theme);
 
@@ -33,24 +34,30 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = memo(
               onPress={onSave}
               accessibilityRole='button'
               accessibilityLabel='Save photo'
+              accessibilityHint='Save photo to gallery'
             >
+              <Icon name='download' size={16} color='background' style={dynamicStyles.buttonIcon} />
               <Text style={dynamicStyles.actionButtonText}>Save</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
             style={[dynamicStyles.actionButton, dynamicStyles.shareButton]}
-            onPress={onShare}
+            onPress={onSend}
             accessibilityRole='button'
-            accessibilityLabel='Share photo'
+            accessibilityLabel='Send photo'
+            accessibilityHint='Send photo to a friend'
           >
-            <Text style={dynamicStyles.actionButtonText}>Share</Text>
+            <Icon name='send' size={16} color='background' style={dynamicStyles.buttonIcon} />
+            <Text style={dynamicStyles.actionButtonText}>Send</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[dynamicStyles.actionButton, dynamicStyles.discardButton]}
             onPress={onDiscard}
             accessibilityRole='button'
             accessibilityLabel='Discard photo'
+            accessibilityHint='Delete photo and go back'
           >
+            <Icon name='trash-2' size={16} color='background' style={dynamicStyles.buttonIcon} />
             <Text style={dynamicStyles.actionButtonText}>Discard</Text>
           </TouchableOpacity>
         </View>

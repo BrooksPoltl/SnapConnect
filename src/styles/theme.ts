@@ -26,6 +26,7 @@ export const colors: Colors = {
     success: '#22C55E',
     warning: '#F97316',
     disabled: '#D1D5DB',
+    white: '#FFFFFF',
   },
   dark: {
     primary: '#409CFF',
@@ -39,6 +40,7 @@ export const colors: Colors = {
     success: '#4ADE80',
     warning: '#FB923C',
     disabled: '#4B5563',
+    white: '#FFFFFF',
   },
 };
 

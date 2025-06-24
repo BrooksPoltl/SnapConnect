@@ -27,7 +27,7 @@ const CameraActions: React.FC<CameraActionsProps> = memo(
             accessibilityLabel='Open gallery'
             accessibilityHint='Tap to select a photo from your gallery'
           >
-            <Icon name='image' size={24} color='text' />
+            <Icon name='image' size={24} color='#FFFFFF' />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -47,7 +47,7 @@ const CameraActions: React.FC<CameraActionsProps> = memo(
             accessibilityLabel='Switch camera'
             accessibilityHint='Tap to switch between front and back camera'
           >
-            <Icon name='refresh-cw' size={24} color='text' />
+            <Icon name='refresh-cw' size={24} color='#FFFFFF' />
           </TouchableOpacity>
         </View>
       </View>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TextStyle } from 'react-native';
+import { TextStyle } from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 
 import { useTheme } from '../../styles/theme';
 import { ThemeColor } from '../../types/theme';
@@ -31,35 +32,11 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) =
 
   const iconColor = getIconColor(color);
 
-  // For now, we'll use a simple text representation
-  // This will be replaced with proper Feather icons once the library issue is resolved
-  const getIconSymbol = (iconName: string): string => {
-    const iconMap: Record<string, string> = {
-      image: '🖼️',
-      'refresh-cw': '🔄',
-      'refresh-ccw': '↻',
-      'arrow-left': '←',
-      'arrow-right': '→',
-      download: '⬇️',
-      send: '➤',
-      'trash-2': '🗑️',
-      zap: '⚡',
-      'zap-off': '🔦',
-      video: '🎥',
-      music: '🎵',
-      moon: '🌙',
-      'trending-up': '📈',
-      'message-square': '💬',
-      camera: '📷',
-      users: '👥',
-      'play-circle': '▶️',
-      square: '☐',
-      'check-square': '☑️',
-    };
-    return iconMap[iconName] ?? '?';
-  };
+  // Cast to any to bypass TypeScript compatibility issues with react-native-vector-icons
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const FeatherIcon = Feather as any;
 
-  return <Text style={[{ fontSize: size, color: iconColor }, style]}>{getIconSymbol(name)}</Text>;
+  return <FeatherIcon name={name} size={size} color={iconColor} style={style} />;
 };
 
 export default Icon;

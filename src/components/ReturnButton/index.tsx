@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import { useTheme } from '../../styles/theme';
+import { Icon } from '../';
 
 import { styles } from './styles';
 
@@ -16,21 +17,19 @@ const ReturnButton: React.FC<ReturnButtonProps> = ({ navigation, returnName }) =
   const dynamicStyles = styles(theme);
 
   const handlePress = () => {
-    if (navigation && navigation.navigate) {
-      navigation.navigate(returnName);
-    }
+    navigation.navigate(returnName);
   };
 
   return (
     <View style={dynamicStyles.container}>
       <TouchableOpacity
-        style={dynamicStyles.button}
         onPress={handlePress}
+        style={dynamicStyles.button}
         accessibilityRole='button'
         accessibilityLabel='Go back'
-        accessibilityHint={`Navigate back to ${returnName}`}
+        accessibilityHint={`Return to ${returnName} screen`}
       >
-        <Text style={dynamicStyles.buttonText}>{'<'}</Text>
+        <Icon name='arrow-left' size={24} color='text' />
       </TouchableOpacity>
     </View>
   );

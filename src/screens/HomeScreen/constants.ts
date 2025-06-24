@@ -6,7 +6,7 @@
  */
 
 export interface AutoScrollItem {
-  emoji: string;
+  iconName: string;
   text: string;
 }
 
@@ -16,43 +16,43 @@ export interface AutoScrollItem {
  */
 export const AUTO_SCROLL_CONTENT: AutoScrollItem[] = [
   {
-    emoji: '🤖',
+    iconName: 'cpu',
     text: 'AI-Powered Analysis - Get intelligent insights from corporate filings and market data',
   },
   {
-    emoji: '👥',
+    iconName: 'users',
     text: 'Creator Network - Connect with top financial analysts and content creators',
   },
   {
-    emoji: '📸',
+    iconName: 'camera',
     text: 'Visual Storytelling - Share market insights through engaging photo and video content',
   },
   {
-    emoji: '💬',
+    iconName: 'message-square',
     text: 'Real-Time Messaging - Chat instantly with your network about breaking market news',
   },
   {
-    emoji: '⏰',
+    iconName: 'clock',
     text: 'Ephemeral Content - Financial insights that disappear in 24 hours for timely relevance',
   },
   {
-    emoji: '⭐',
+    iconName: 'star',
     text: 'Engagement Scoring - Build your reputation with our gamified user scoring system',
   },
   {
-    emoji: '📊',
+    iconName: 'trending-up',
     text: 'Market Insights - Access curated analysis from SEC filings and earnings reports',
   },
   {
-    emoji: '🔥',
+    iconName: 'activity',
     text: 'Trending Analysis - Discover what financial topics are gaining momentum right now',
   },
   {
-    emoji: '💎',
+    iconName: 'award',
     text: 'Premium Features - Advanced tools for serious investors and content creators',
   },
   {
-    emoji: '⚡',
+    iconName: 'zap',
     text: 'Lightning Fast - Real-time updates and instant content sharing for time-sensitive markets',
   },
 ];

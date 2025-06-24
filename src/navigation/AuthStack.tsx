@@ -7,6 +7,7 @@ import { AuthStackParamList } from '../types/navigation';
 import HomeScreen from '../screens/HomeScreen';
 import LogInScreen from '../screens/LogInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import PhoneAuthScreen from '../screens/PhoneAuthScreen';
 
 const Stack = createStackNavigator<AuthStackParamList>();
 
@@ -16,6 +17,7 @@ const AuthStack: React.FC = () => (
       <Stack.Screen name='AuthHome' component={HomeScreen} />
       <Stack.Screen name='Login' component={LogInScreen} />
       <Stack.Screen name='SignUp' component={SignUpScreen} />
+      <Stack.Screen name='PhoneAuth' component={PhoneAuthScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

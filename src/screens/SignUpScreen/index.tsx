@@ -44,27 +44,17 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     [errors],
   );
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<SignUpCredentials> = {};
-
-    if (!credentials.name.trim()) {
-      newErrors.name = 'Please enter your name';
-    }
-    if (!credentials.email.trim()) {
-      newErrors.email = 'Please enter your email address';
-    }
-    if (!credentials.password.trim()) {
-      newErrors.password = 'Please enter a password';
-    } else if (credentials.password.length < 6) {
-      newErrors.password = 'Password should be at least 6 characters long';
+  const validateForm = useCallback(() => {
+    if (!credentials.email.trim() || !credentials.password.trim()) {
+      Alert.alert('Validation Error', 'Please fill in all fields.');
+      return false;
     }
     if (credentials.password !== credentials.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      Alert.alert('Validation Error', 'Passwords do not match.');
+      return false;
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    return true;
+  }, [credentials]);
 
   const handleSubmit = useCallback(async (): Promise<void> => {
     if (!validateForm()) return;
@@ -85,11 +75,15 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       // Navigation will be handled automatically by useAuthentication hook
     } catch (error) {
       const authError = error as AuthError;
-      Alert.alert('Sign Up Failed', authError.message);
+      if (authError) {
+        Alert.alert('Sign Up Failed', authError.message);
+      } else {
+        Alert.alert('Sign Up Failed', 'An unknown error occurred.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [credentials]);
+  }, [credentials, validateForm]);
 
   const handlePrivacyPress = () => {
     // TODO: Navigate to privacy policy
@@ -146,6 +140,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               value={credentials.password}
               onChangeText={value => handleFieldChange('password', value)}
               secureTextEntry={true}
+              textContentType='oneTimeCode'
               autoCapitalize='none'
               autoCorrect={false}
               disabled={loading}
@@ -160,6 +155,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               value={credentials.confirmPassword}
               onChangeText={value => handleFieldChange('confirmPassword', value)}
               secureTextEntry={true}
+              textContentType='oneTimeCode'
               autoCapitalize='none'
               autoCorrect={false}
               disabled={loading}

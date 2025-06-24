@@ -27,23 +27,37 @@ export const styles = (theme: Theme) =>
       paddingHorizontal: theme.spacing.lg,
     },
     button: {
+      paddingVertical: 15,
+      borderRadius: 30,
       alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      width: '100%',
-      marginBottom: theme.spacing.sm,
-      borderRadius: theme.borderRadius.sm,
+      width: '80%',
+      marginVertical: 10,
     },
     loginButton: {
       backgroundColor: '#F13A56', // Snapchat red
     },
     signUpButton: {
-      backgroundColor: '#11AEFF', // Snapchat blue
+      backgroundColor: theme.colors.primary,
+    },
+    googleButton: {
+      backgroundColor: '#db4437', // Google's brand color
+    },
+    phoneButton: {
+      backgroundColor: theme.colors.success, // A generic green for phone auth
     },
     buttonText: {
-      color: theme.colors.background,
-      fontSize: theme.fontSizes.xl,
-      fontWeight: theme.fontWeights.semibold,
-      letterSpacing: 2,
-      textTransform: 'uppercase',
+      color: theme.colors.text,
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    logInText: {
+      color: theme.colors.primary,
+      marginTop: 20,
+    },
+    title: {
+      fontSize: 48,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      marginBottom: 50,
     },
   });

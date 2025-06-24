@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -26,6 +26,7 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const theme = useTheme();
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const handleEmailChange = useCallback((email: string) => {
     setCredentials(prev => ({ ...prev, email }));
@@ -35,20 +36,16 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
     setCredentials(prev => ({ ...prev, password }));
   }, []);
 
-  const validateForm = (): boolean => {
-    if (!credentials.email.trim()) {
-      Alert.alert('Validation Error', 'Please enter your email address');
-      return false;
-    }
-    if (!credentials.password.trim()) {
-      Alert.alert('Validation Error', 'Please enter your password');
-      return false;
-    }
-    return true;
-  };
+  const validateForm = useCallback(
+    () => credentials.email.trim() !== '' && credentials.password.trim() !== '',
+    [credentials.email, credentials.password],
+  );
 
   const handleSubmit = useCallback(async (): Promise<void> => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      Alert.alert('Validation Error', 'Please enter your email and password');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -60,7 +57,11 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, [credentials]);
+  }, [credentials, validateForm]);
+
+  useEffect(() => {
+    setIsFormValid(validateForm());
+  }, [validateForm]);
 
   const dynamicStyles = styles(theme);
 
@@ -106,11 +107,10 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
         <TouchableOpacity
           style={[
             dynamicStyles.submitButton,
-            (loading || !credentials.email || !credentials.password) &&
-              dynamicStyles.submitButtonDisabled,
+            (loading || !isFormValid) && dynamicStyles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
-          disabled={loading || !credentials.email || !credentials.password}
+          disabled={loading || !isFormValid}
           accessibilityRole='button'
           accessibilityLabel='Log in button'
           accessibilityHint='Tap to log in with your credentials'

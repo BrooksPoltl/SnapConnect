@@ -2,6 +2,7 @@ export type AuthStackParamList = {
   AuthHome: undefined;
   Login: undefined;
   SignUp: undefined;
+  PhoneAuth: undefined;
 };
 
 export type UserStackParamList = {

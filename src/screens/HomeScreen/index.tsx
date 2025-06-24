@@ -18,42 +18,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const dynamicStyles = styles(theme);
 
-  const handleLoginPress = () => {
-    navigation.navigate('Login');
-  };
-
-  const handleSignUpPress = () => {
-    navigation.navigate('SignUp');
+  const onPhoneButtonPress = () => {
+    navigation.navigate('PhoneAuth');
   };
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
       <View style={dynamicStyles.content}>
-        <View style={dynamicStyles.logoContainer}>
-          <Text style={dynamicStyles.logo}>👻</Text>
-        </View>
-
-        <View style={dynamicStyles.buttonsContainer}>
-          <TouchableOpacity
-            style={[dynamicStyles.button, dynamicStyles.loginButton]}
-            onPress={handleLoginPress}
-            accessibilityRole='button'
-            accessibilityLabel='Log in'
-            accessibilityHint='Navigate to login screen'
-          >
-            <Text style={dynamicStyles.buttonText}>LOG IN</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[dynamicStyles.button, dynamicStyles.signUpButton]}
-            onPress={handleSignUpPress}
-            accessibilityRole='button'
-            accessibilityLabel='Sign up'
-            accessibilityHint='Navigate to sign up screen'
-          >
-            <Text style={dynamicStyles.buttonText}>SIGN UP</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={dynamicStyles.title}>SnapConnect</Text>
+        <TouchableOpacity
+          style={[dynamicStyles.button, dynamicStyles.signUpButton]}
+          onPress={() => navigation.navigate('SignUp')}
+          accessibilityRole='button'
+          accessibilityLabel='Sign up with email'
+        >
+          <Text style={dynamicStyles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[dynamicStyles.button, dynamicStyles.phoneButton]}
+          onPress={onPhoneButtonPress}
+          accessibilityRole='button'
+          accessibilityLabel='Sign in with your phone number'
+        >
+          <Text style={dynamicStyles.buttonText}>Sign In with Phone</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={dynamicStyles.logInText}>Already have an account? Log In</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

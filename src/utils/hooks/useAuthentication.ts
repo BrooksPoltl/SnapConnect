@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-import { auth } from '../../../firebase';
 import { getUserData } from '../../services/firestore';
 import { AuthenticationResult } from '../../types/auth';
 import { UserData } from '../../types/user';
@@ -12,13 +11,14 @@ import { logError } from '../logger';
  * @returns Authentication state including user, userData, loading, and error
  */
 export function useAuthentication(): AuthenticationResult {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribeFromAuthStatusChanged = onAuthStateChanged(auth, async (user: User | null) => {
+    const auth = getAuth();
+    const subscriber = onAuthStateChanged(auth, async (user: FirebaseAuthTypes.User | null) => {
       try {
         setError(null);
 
@@ -50,7 +50,7 @@ export function useAuthentication(): AuthenticationResult {
       }
     });
 
-    return unsubscribeFromAuthStatusChanged;
+    return subscriber; // unsubscribe on unmount
   }, []);
 
   return {

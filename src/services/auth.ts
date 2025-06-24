@@ -1,13 +1,9 @@
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  User,
-} from 'firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-import { auth } from '../../firebase';
 import { AuthError, LoginCredentials, SignUpCredentials } from '../types/auth';
 import { isFirebaseAuthError, FirebaseAuthErrorCode } from '../types/firebase';
+
+type User = FirebaseAuthTypes.User;
 
 /**
  * Signs in a user with email and password
@@ -17,13 +13,13 @@ import { isFirebaseAuthError, FirebaseAuthErrorCode } from '../types/firebase';
 export const signIn = async (credentials: LoginCredentials): Promise<User> => {
   try {
     const { email, password } = credentials;
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await auth().signInWithEmailAndPassword(email, password);
     return userCredential.user;
   } catch (error: unknown) {
     if (isFirebaseAuthError(error)) {
       const authError: AuthError = {
-        code: error.code,
-        message: getFriendlyErrorMessage(error.code),
+        code: error.code as FirebaseAuthErrorCode,
+        message: getFriendlyErrorMessage(error.code as FirebaseAuthErrorCode),
       };
       throw authError;
     } else {
@@ -44,13 +40,13 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
 export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   try {
     const { email, password } = credentials;
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await auth().createUserWithEmailAndPassword(email, password);
     return userCredential.user;
   } catch (error: unknown) {
     if (isFirebaseAuthError(error)) {
       const authError: AuthError = {
-        code: error.code,
-        message: getFriendlyErrorMessage(error.code),
+        code: error.code as FirebaseAuthErrorCode,
+        message: getFriendlyErrorMessage(error.code as FirebaseAuthErrorCode),
       };
       throw authError;
     } else {
@@ -68,11 +64,11 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
  */
 export const logOut = async (): Promise<void> => {
   try {
-    await signOut(auth);
+    await auth().signOut();
   } catch (error: unknown) {
     if (isFirebaseAuthError(error)) {
       const authError: AuthError = {
-        code: error.code,
+        code: error.code as FirebaseAuthErrorCode,
         message: 'Failed to sign out. Please try again.',
       };
       throw authError;
@@ -107,6 +103,8 @@ const getFriendlyErrorMessage = (errorCode: FirebaseAuthErrorCode): string => {
       return 'Password should be at least 6 characters long.';
     case 'auth/network-request-failed':
       return 'Network error. Please check your connection.';
+    case 'auth/operation-not-allowed':
+      return 'Email/Password sign-in is not enabled for this project.';
     default:
       return 'An unexpected error occurred. Please try again.';
   }

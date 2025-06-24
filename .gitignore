@@ -69,6 +69,7 @@ firebase-debug.log*
 firestore-debug.log*
 ui-debug.log*
 storage.rules
+/ios/GoogleService-Info.plist
 
 # React Native
 # Android/gradle
@@ -171,3 +172,5 @@ storybook-static/
 .env
 .env.local
 .env.development.local 
+/android/
+/ios/

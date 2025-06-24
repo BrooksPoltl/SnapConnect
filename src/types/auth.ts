@@ -1,9 +1,9 @@
-import { User } from 'firebase/auth';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 import { UserData } from './user';
 
 export interface AuthenticationResult {
-  user: User | null;
+  user: FirebaseAuthTypes.User | null;
   userData: UserData | null;
   loading: boolean;
   error: string | null;

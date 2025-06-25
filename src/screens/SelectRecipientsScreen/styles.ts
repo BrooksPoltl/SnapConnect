@@ -62,4 +62,10 @@ export const styles = (theme: Theme) =>
       fontSize: 16,
       fontWeight: 'bold',
     },
+    closeButton: {
+      position: 'absolute',
+      top: 20,
+      left: 20,
+      zIndex: 1,
+    },
   });

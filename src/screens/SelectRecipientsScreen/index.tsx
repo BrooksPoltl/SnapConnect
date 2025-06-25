@@ -110,6 +110,9 @@ export const SelectRecipientsScreen: React.FC = () => {
 
   return (
     <View style={dynamicStyles.container}>
+      <Pressable style={dynamicStyles.closeButton} onPress={() => navigation.goBack()}>
+        <Ionicons name='close-circle' size={30} color={theme.colors.white} />
+      </Pressable>
       <FlatList
         data={friends}
         keyExtractor={item => item.id}

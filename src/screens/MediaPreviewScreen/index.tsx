@@ -143,7 +143,7 @@ const MediaPreviewScreen: React.FC = () => {
             accessibilityLabel='Save media'
             accessibilityHint='Save to device gallery'
           >
-            <Icon name='download' size={16} color='background' style={dynamicStyles.buttonIcon} />
+            <Icon name='download' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
             <Text style={dynamicStyles.actionButtonText}>Save</Text>
           </TouchableOpacity>
         )}
@@ -155,7 +155,7 @@ const MediaPreviewScreen: React.FC = () => {
           accessibilityLabel='Send media'
           accessibilityHint='Send to a friend'
         >
-          <Icon name='send' size={16} color='background' style={dynamicStyles.buttonIcon} />
+          <Icon name='send' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
           <Text style={dynamicStyles.actionButtonText}>Send</Text>
         </TouchableOpacity>
 
@@ -166,7 +166,7 @@ const MediaPreviewScreen: React.FC = () => {
           accessibilityLabel='Discard media'
           accessibilityHint='Delete and go back'
         >
-          <Icon name='trash-2' size={16} color='background' style={dynamicStyles.buttonIcon} />
+          <Icon name='trash-2' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
           <Text style={dynamicStyles.actionButtonText}>Discard</Text>
         </TouchableOpacity>
       </View>

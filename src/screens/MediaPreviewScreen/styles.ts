@@ -50,22 +50,25 @@ export const styles = (theme: Theme) =>
       borderRadius: theme.borderRadius.md,
       minWidth: 80,
       justifyContent: 'center',
+      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
     },
     actionButtonText: {
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.semibold,
-      color: theme.colors.background,
+      color: theme.colors.text,
     },
     buttonIcon: {
       marginRight: theme.spacing.xs,
     },
     saveButton: {
-      backgroundColor: theme.colors.success,
+      // All buttons now use the same neutral styling
     },
     sendButton: {
-      backgroundColor: theme.colors.primary,
+      // All buttons now use the same neutral styling
     },
     discardButton: {
-      backgroundColor: theme.colors.error,
+      // All buttons now use the same neutral styling
     },
   });

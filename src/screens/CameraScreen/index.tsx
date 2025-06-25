@@ -8,7 +8,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '../../styles/theme';
-import CameraOptions from '../../components/CameraOptions';
+import { CameraOptions } from '../../components';
 import { CapturedMedia } from '../../types/media';
 import { UserStackParamList } from '../../types/navigation';
 // Utils
@@ -38,6 +38,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   const [facing, setFacing] = useState<CameraType>('back');
   const [isRecording, setIsRecording] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [cameraMode, setCameraMode] = useState<'picture' | 'video'>('picture');
 
   const theme = useTheme();
   const dynamicStyles = styles(theme);
@@ -179,6 +180,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
    */
   const startRecording = async (): Promise<void> => {
     logger.log('[CameraScreen] startRecording triggered.');
+    setCameraMode('video');
     if (cameraRef.current && !isRecording && isCameraReady) {
       try {
         logger.log('[CameraScreen] Starting video recording...');
@@ -216,6 +218,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     if (cameraRef.current && isRecording) {
       logger.log('[CameraScreen] Calling native stopRecording().');
       cameraRef.current.stopRecording();
+      setCameraMode('picture');
     }
   };
 
@@ -251,6 +254,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
                   const { status: micStatus } = await Camera.requestMicrophonePermissionsAsync();
                   setHasPermission(camStatus === 'granted' && micStatus === 'granted');
                 } catch (err) {
+                  logError('CameraScreen', 'Error re-requesting permissions', err);
                   setHasPermission(false);
                 }
               })();
@@ -274,7 +278,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
         facing={facing}
         ref={cameraRef}
         onCameraReady={onCameraReady}
-        // Let the camera handle mode switching automatically
+        mode={cameraMode}
       />
 
       <CameraOptions flipCamera={flipCamera} disabled={isRecording} />
@@ -312,19 +316,6 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
         </TouchableOpacity>
 
         {/* Camera Flip Button */}
-        <TouchableOpacity
-          style={[dynamicStyles.sideButton, isRecording && dynamicStyles.disabledButton]}
-          onPress={flipCamera}
-          disabled={isRecording}
-          accessibilityRole='button'
-          accessibilityLabel='Flip camera'
-        >
-          <Ionicons
-            name='camera-reverse-outline'
-            size={28}
-            color={isRecording ? theme.colors.textSecondary : theme.colors.text}
-          />
-        </TouchableOpacity>
       </View>
       {/* --- End of Unified Capture Controls --- */}
     </View>

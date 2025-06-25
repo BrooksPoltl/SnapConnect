@@ -8,6 +8,15 @@ export const styles = (theme: Theme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
     },
+    header: {
+      position: 'absolute',
+      top: 40,
+      left: 20,
+      zIndex: 1,
+    },
+    closeButton: {
+      padding: 10,
+    },
     cameraContainer: {
       flex: 1,
       backgroundColor: theme.colors.background,
@@ -82,7 +91,7 @@ export const styles = (theme: Theme) =>
       left: theme.spacing.lg,
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: theme.colors.overlay,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.sm,
       borderRadius: theme.borderRadius.pill,
@@ -91,7 +100,7 @@ export const styles = (theme: Theme) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: '#FF3B30',
+      backgroundColor: theme.colors.error,
       marginRight: theme.spacing.sm,
     },
     recordingText: {
@@ -116,7 +125,7 @@ export const styles = (theme: Theme) =>
       width: 50,
       height: 50,
       borderRadius: 25,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: theme.colors.overlay,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -125,23 +134,23 @@ export const styles = (theme: Theme) =>
       width: 80,
       height: 80,
       borderRadius: 40,
-      backgroundColor: 'transparent',
+      backgroundColor: theme.colors.transparent,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 6,
-      borderColor: 'white',
+      borderColor: theme.colors.white,
     },
 
     captureButtonInner: {
       width: 60,
       height: 60,
       borderRadius: 30,
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.white,
       transform: [{ scale: 1 }],
     },
 
     recordingButton: {
-      backgroundColor: '#FF3B30', // A vibrant red for recording
+      backgroundColor: theme.colors.error, // A vibrant red for recording
       transform: [{ scale: 0.6 }], // Shrinks to indicate recording
     },
 

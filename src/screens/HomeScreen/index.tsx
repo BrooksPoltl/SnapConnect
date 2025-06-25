@@ -18,7 +18,7 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const theme = useTheme();
-  const dynamicStyles = useMemo(() => styles(theme), [theme.isDark, theme.colors]);
+  const dynamicStyles = useMemo(() => styles(theme), [theme]);
 
   // Animation values - memoized to prevent recreation
   const fadeAnim = useRef(new Animated.Value(0)).current;

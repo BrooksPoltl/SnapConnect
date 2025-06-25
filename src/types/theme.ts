@@ -16,6 +16,9 @@ export interface ColorPalette {
   warning: string;
   disabled: string;
   white: string;
+  transparent: string;
+  overlay: string;
+  shadow: string;
 }
 
 export interface Colors {
@@ -32,6 +35,9 @@ export interface Colors {
     warning: string;
     disabled: string;
     white: string;
+    transparent: string;
+    overlay: string;
+    shadow: string;
   };
   dark: {
     primary: string;
@@ -46,6 +52,9 @@ export interface Colors {
     warning: string;
     disabled: string;
     white: string;
+    transparent: string;
+    overlay: string;
+    shadow: string;
   };
 }
 

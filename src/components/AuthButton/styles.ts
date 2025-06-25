@@ -13,7 +13,7 @@ export const styles = (theme: Theme) =>
       minHeight: 48,
     },
     buttonSecondary: {
-      backgroundColor: 'transparent',
+      backgroundColor: theme.colors.transparent,
       borderWidth: 1,
       borderColor: theme.colors.primary,
     },

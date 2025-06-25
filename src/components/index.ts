@@ -1,8 +1,8 @@
 /**
- * Component Barrel Exports
+ * This file serves as a barrel for all components, making them easily importable from a single location.
  *
- * Centralized exports for all reusable components to simplify imports
- * and maintain a clean component architecture.
+ * Each component should be exported from its own file and then re-exported here.
+ * This pattern helps to keep imports clean and consistent across the application.
  */
 
 export { default as AuthButton } from './AuthButton';

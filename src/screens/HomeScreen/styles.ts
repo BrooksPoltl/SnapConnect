@@ -6,7 +6,7 @@ export const styles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#1a1a1a', // Dark background
+      backgroundColor: theme.colors.background, // Dark background
     },
     content: {
       flex: 1,
@@ -36,9 +36,9 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       paddingBottom: theme.spacing.xl,
       paddingHorizontal: theme.spacing.lg,
-      backgroundColor: '#1a1a1a',
+      backgroundColor: theme.colors.background,
       borderTopWidth: 1,
-      borderTopColor: '#333333',
+      borderTopColor: theme.colors.border,
     },
     contentRow: {
       flexDirection: 'row',
@@ -81,7 +81,7 @@ export const styles = (theme: Theme) =>
     subtitle: {
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.medium,
-      color: '#cccccc', // Light gray text
+      color: theme.colors.textSecondary, // Light gray text
       textAlign: 'center',
       marginBottom: theme.spacing.lg,
       paddingHorizontal: theme.spacing.sm,
@@ -91,12 +91,12 @@ export const styles = (theme: Theme) =>
       paddingVertical: theme.spacing.md,
     },
     featureCard: {
-      backgroundColor: '#2a2a2a', // Dark card background
+      backgroundColor: theme.colors.surface, // Dark card background
       borderRadius: theme.borderRadius.lg,
       padding: theme.spacing.lg,
       marginBottom: theme.spacing.md,
       elevation: 3,
-      shadowColor: '#000000',
+      shadowColor: theme.colors.shadow,
       shadowOffset: {
         width: 0,
         height: 2,
@@ -122,7 +122,7 @@ export const styles = (theme: Theme) =>
     featureDescription: {
       fontSize: theme.fontSizes.sm,
       fontWeight: theme.fontWeights.regular,
-      color: '#cccccc', // Light gray text
+      color: theme.colors.textSecondary, // Light gray text
       lineHeight: 20,
     },
     ctaSection: {
@@ -139,7 +139,7 @@ export const styles = (theme: Theme) =>
     ctaSubtext: {
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.medium,
-      color: '#cccccc', // Light gray text
+      color: theme.colors.textSecondary, // Light gray text
       textAlign: 'center',
       marginBottom: theme.spacing.lg,
     },
@@ -170,9 +170,9 @@ export const styles = (theme: Theme) =>
       color: theme.colors.background,
     },
     secondaryButton: {
-      backgroundColor: '#2a2a2a', // Dark button background
+      backgroundColor: theme.colors.surface, // Dark button background
       borderWidth: 1.5,
-      borderColor: '#444444', // Dark border
+      borderColor: theme.colors.border, // Dark border
     },
     secondaryButtonText: {
       fontSize: theme.fontSizes.md,
@@ -184,7 +184,7 @@ export const styles = (theme: Theme) =>
     },
     logInText: {
       fontSize: theme.fontSizes.sm,
-      color: '#cccccc', // Light gray text
+      color: theme.colors.textSecondary, // Light gray text
       textAlign: 'center',
       marginTop: theme.spacing.md,
     },
@@ -199,13 +199,13 @@ export const styles = (theme: Theme) =>
     footerText: {
       fontSize: theme.fontSizes.sm,
       fontWeight: theme.fontWeights.medium,
-      color: '#cccccc', // Light gray text
+      color: theme.colors.textSecondary, // Light gray text
       textAlign: 'center',
       marginBottom: theme.spacing.xs,
     },
     disclaimer: {
       fontSize: theme.fontSizes.xs,
-      color: '#999999', // Muted gray text
+      color: theme.colors.textSecondary, // Muted gray text
       textAlign: 'center',
       opacity: 0.8,
     },

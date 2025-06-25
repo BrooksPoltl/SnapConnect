@@ -10,7 +10,7 @@ export const styles = (theme: Theme) =>
     },
     mediaContainer: {
       flex: 1,
-      backgroundColor: '#000',
+      backgroundColor: theme.colors.shadow,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -30,7 +30,7 @@ export const styles = (theme: Theme) =>
       width: 48,
       height: 48,
       borderRadius: 24,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: theme.colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
     },

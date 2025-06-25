@@ -27,6 +27,9 @@ export const colors: Colors = {
     warning: '#F97316',
     disabled: '#D1D5DB',
     white: '#FFFFFF',
+    transparent: 'transparent',
+    overlay: 'rgba(0, 0, 0, 0.5)',
+    shadow: '#000000',
   },
   dark: {
     primary: '#409CFF',
@@ -41,6 +44,9 @@ export const colors: Colors = {
     warning: '#FB923C',
     disabled: '#4B5563',
     white: '#FFFFFF',
+    transparent: 'transparent',
+    overlay: 'rgba(0, 0, 0, 0.5)',
+    shadow: '#000000',
   },
 };
 

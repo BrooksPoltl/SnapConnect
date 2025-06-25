@@ -1,26 +1,21 @@
 import { StyleSheet } from 'react-native';
-
 import { Theme } from '../../types/theme';
 
 export const styles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       position: 'absolute',
-      right: theme.spacing.sm,
-      top: theme.spacing.xxl + theme.spacing.md, // Account for safe area
-      width: 40,
-      paddingVertical: theme.spacing.sm,
+      top: theme.spacing.xl,
+      right: theme.spacing.lg,
+      zIndex: 1,
     },
-    button: {
-      marginTop: theme.spacing.sm,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: 40,
-      height: 40,
-      borderRadius: theme.borderRadius.md,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    optionButton: {
+      padding: theme.spacing.sm,
+      borderRadius: theme.borderRadius.circle,
+      backgroundColor: theme.colors.overlay,
+      marginBottom: theme.spacing.md,
     },
-    icon: {
-      fontSize: theme.fontSizes.lg,
+    disabledButton: {
+      opacity: 0.5,
     },
   });

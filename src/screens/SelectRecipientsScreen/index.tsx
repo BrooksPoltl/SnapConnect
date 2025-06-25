@@ -6,7 +6,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Alert, Pressable } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import * as friendService from '../../services/friends';
@@ -14,7 +15,7 @@ import * as chatService from '../../services/chat';
 import { styles } from './styles';
 import { logger } from '../../utils/logger';
 import type { Friend } from '../../services/friends';
-import { useNavigation, RootStackScreenProps } from '../../types/navigation';
+import { UserStackParamList, RootStackScreenProps } from '../../types/navigation';
 import { useTheme } from '../../styles/theme';
 import { Theme } from '../../types/theme';
 
@@ -47,7 +48,7 @@ const FriendListItem: React.FC<FriendListItemProps> = ({
 );
 
 export const SelectRecipientsScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<UserStackParamList>>();
   const route = useRoute<RootStackScreenProps<'SelectRecipients'>['route']>();
   const { media } = route.params;
   const theme = useTheme();
@@ -62,6 +63,7 @@ export const SelectRecipientsScreen: React.FC = () => {
     async function fetchFriends() {
       try {
         const friendsList = await friendService.getFriendsList();
+        logger.log('[SelectRecipientsScreen] Fetched friends list:', friendsList);
         setFriends(friendsList);
       } catch (error) {
         logger.error('Failed to fetch friends for selection', error);
@@ -91,7 +93,7 @@ export const SelectRecipientsScreen: React.FC = () => {
 
       Alert.alert('Success', 'Your message has been sent!');
       // Navigate to home or camera screen after sending
-      navigation.navigate('User', { screen: 'Home' });
+      navigation.navigate('Main', { screen: 'Camera' });
     } catch (error) {
       logger.error('Failed to send media to friends', error);
       Alert.alert('Error', 'There was a problem sending your message.');

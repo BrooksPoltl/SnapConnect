@@ -15,8 +15,16 @@ export type AuthStackParamList = {
   SelectRecipients: { media: CapturedMedia };
 };
 
+export type MainTabParamList = {
+  Insights: undefined;
+  ChatStack: undefined;
+  Camera: undefined;
+  Stories: undefined;
+  Spotlight: undefined;
+};
+
 export type UserStackParamList = {
-  Main: undefined;
+  Main: NavigatorScreenParams<MainTabParamList>;
   Home: undefined;
   Camera: undefined;
   Chat: undefined;

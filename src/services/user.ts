@@ -27,8 +27,15 @@ export const getUserData = async (userId: string): Promise<UserData | null> => {
       .eq('id', userId)
       .single();
 
-    if (profileError) throw profileError;
-    if (!profile) throw new Error('Profile not found');
+    if (profileError) {
+      if (profileError.code === 'PGRST116') {
+        logger.info('User', 'User profile not found');
+        return null;
+      }
+      throw profileError;
+    }
+
+    if (!profile) return null;
 
     // Combine data - only include email if it's the current user
     const userData: UserData = {

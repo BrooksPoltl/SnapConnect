@@ -328,6 +328,47 @@ CREATE TRIGGER on_auth_user_created
     FOR EACH ROW
     EXECUTE FUNCTION public.handle_new_user();
 
+-- Function to create user profile atomically (called from client during signup)
+CREATE OR REPLACE FUNCTION public.create_user_profile(
+    user_id UUID,
+    user_username TEXT,
+    user_score INTEGER DEFAULT 0
+)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    -- Validate input
+    IF user_username IS NULL OR length(trim(user_username)) = 0 THEN
+        RAISE EXCEPTION 'Username cannot be empty';
+    END IF;
+    
+    IF length(user_username) < 3 OR length(user_username) > 30 THEN
+        RAISE EXCEPTION 'Username must be between 3 and 30 characters';
+    END IF;
+    
+    IF user_username !~ '^[a-zA-Z0-9_]+$' THEN
+        RAISE EXCEPTION 'Username can only contain letters, numbers, and underscores';
+    END IF;
+    
+    -- Check if username is already taken
+    IF EXISTS (SELECT 1 FROM public.profiles WHERE username = user_username) THEN
+        RAISE EXCEPTION 'Username is already taken';
+    END IF;
+    
+    -- Check if user already has a profile
+    IF EXISTS (SELECT 1 FROM public.profiles WHERE id = user_id) THEN
+        RAISE EXCEPTION 'User profile already exists';
+    END IF;
+    
+    -- Create the profile
+    INSERT INTO public.profiles (id, username, score)
+    VALUES (user_id, user_username, user_score);
+END;
+$$;
+
 -- ============================================================================
 -- GRANT PERMISSIONS
 -- ============================================================================
@@ -339,6 +380,7 @@ GRANT ALL ON public.friendships TO authenticated;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 -- Grant execute permissions on functions
+GRANT EXECUTE ON FUNCTION public.create_user_profile(UUID, TEXT, INTEGER) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.update_username(TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.accept_friend_request(BIGINT) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.decline_friend_request(BIGINT) TO authenticated;
@@ -353,6 +395,7 @@ GRANT EXECUTE ON FUNCTION public.get_suggested_friends(INTEGER) TO authenticated
 
 COMMENT ON TABLE public.profiles IS 'User profiles with public information';
 COMMENT ON TABLE public.friendships IS 'Friend relationships between users';
+COMMENT ON FUNCTION public.create_user_profile(UUID, TEXT, INTEGER) IS 'Atomically create user profile during signup';
 COMMENT ON FUNCTION public.update_username(TEXT) IS 'Safely update username with validation';
 COMMENT ON FUNCTION public.accept_friend_request(BIGINT) IS 'Accept a pending friend request';
 COMMENT ON FUNCTION public.decline_friend_request(BIGINT) IS 'Decline a pending friend request';

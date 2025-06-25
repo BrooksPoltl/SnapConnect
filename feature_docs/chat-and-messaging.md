@@ -42,6 +42,10 @@ session.
   to subscribe to channels and manage the lifecycle of the real-time
   subscriptions.
 
+- **Photo & Video Messages**: The chat feature now fully supports sending and
+  receiving ephemeral photo and video messages. For a detailed breakdown of this
+  feature, see the [Photo & Video Messaging Feature Plan](./photo-video-messaging.md).
+
 ## 2. UI/UX Breakdown
 
 ### Chat List Screen (`screens/ChatScreen`)

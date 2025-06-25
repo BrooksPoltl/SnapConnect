@@ -34,11 +34,11 @@ export const colors: Colors = {
   dark: {
     primary: '#409CFF',
     secondary: '#F472B6',
-    background: '#161B22',
-    surface: '#21262D',
-    text: '#F0F6FC',
-    textSecondary: '#8B949E',
-    border: '#30363D',
+    background: '#000000',
+    surface: '#1A1A1A',
+    text: '#FFFFFF',
+    textSecondary: '#B0B0B0',
+    border: '#333333',
     error: '#F87171',
     success: '#4ADE80',
     warning: '#FB923C',
@@ -93,13 +93,14 @@ export const dimensions: ThemeDimensions = {
 };
 
 /**
- * Hook to get theme colors based on current color scheme
+ * Hook to get theme colors - SnapConnect uses dark mode only
  */
 export const useTheme = (): Theme => {
-  const colorScheme = useColorScheme();
+  // Force dark mode for SnapConnect - it's designed as a dark-themed app
+  const colorScheme = 'dark';
 
   return useMemo(() => {
-    const themeColors = colorScheme === 'dark' ? colors.dark : colors.light;
+    const themeColors = colors.dark;
 
     return {
       colors: themeColors,
@@ -108,7 +109,7 @@ export const useTheme = (): Theme => {
       fontWeights,
       borderRadius,
       dimensions,
-      isDark: colorScheme === 'dark',
+      isDark: true,
     };
-  }, [colorScheme]);
+  }, []);
 };

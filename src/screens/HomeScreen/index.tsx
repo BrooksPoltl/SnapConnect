@@ -18,7 +18,7 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const theme = useTheme();
-  const dynamicStyles = useMemo(() => styles(theme), [theme]);
+  const dynamicStyles = styles(theme);
 
   // Animation values - memoized to prevent recreation
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -196,7 +196,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <Icon
               name='arrow-right'
               size={16}
-              color='background'
+              color={theme.colors.background}
               style={dynamicStyles.buttonIcon}
             />
           </TouchableOpacity>

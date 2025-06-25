@@ -16,19 +16,41 @@ export const getUserData = async (userId: string): Promise<UserData | null> => {
   try {
     logger.info('UserService', `Fetching user data for ID: ${userId}`);
 
-    const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
+    // Get profile data (username, score, etc.)
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // No rows returned
-        logger.info('UserService', 'User data not found');
+    if (profileError) {
+      if (profileError.code === 'PGRST116') {
+        logger.info('UserService', 'User profile not found');
         return null;
       }
-      throw error;
+      throw profileError;
     }
 
+    // Get auth user data (email, etc.)
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      logger.error('UserService', 'Failed to get authenticated user');
+      throw new Error('User not authenticated');
+    }
+
+    // Combine auth and profile data
+    const userData: UserData = {
+      id: profileData.id,
+      email: authData.user.email || '',
+      username: profileData.username,
+      score: profileData.score,
+      created_at: profileData.created_at,
+      updated_at: profileData.updated_at,
+    };
+
     logger.info('UserService', 'User data fetched successfully');
-    return data as UserData;
+    return userData;
   } catch (error: unknown) {
     logger.error('UserService', 'Error fetching user data', error);
     throw new Error(
@@ -81,10 +103,13 @@ export const saveUserData = async (userId: string, userData: Partial<UserData>):
   try {
     logger.info('UserService', `Saving user data for ID: ${userId}`);
 
-    const { error } = await supabase.from('users').upsert(
+    // Extract only profile-related fields (exclude email and other auth fields)
+    const { email, ...profileData } = userData;
+    
+    const { error } = await supabase.from('profiles').upsert(
       {
         id: userId,
-        ...userData,
+        ...profileData,
         updated_at: new Date().toISOString(),
       },
       {
@@ -112,10 +137,13 @@ export const updateUserData = async (userId: string, updates: Partial<UserData>)
   try {
     logger.info('UserService', `Updating user data for ID: ${userId}`);
 
+    // Extract only profile-related fields (exclude email and other auth fields)
+    const { email, ...profileUpdates } = updates;
+
     const { error } = await supabase
-      .from('users')
+      .from('profiles')
       .update({
-        ...updates,
+        ...profileUpdates,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId);
@@ -140,7 +168,7 @@ export const updateUsername = async (newUsername: string): Promise<void> => {
   try {
     logger.info('UserService', 'Updating username via secure backend function');
 
-    const { error } = await supabase.rpc('change_username', {
+    const { error } = await supabase.rpc('update_username', {
       new_username: newUsername,
     });
 
@@ -163,7 +191,7 @@ export const deleteUserData = async (userId: string): Promise<void> => {
   try {
     logger.info('UserService', `Deleting user data for ID: ${userId}`);
 
-    const { error } = await supabase.from('users').delete().eq('id', userId);
+    const { error } = await supabase.from('profiles').delete().eq('id', userId);
 
     if (error) throw error;
 
@@ -189,15 +217,26 @@ export const getUsers = async (
   try {
     logger.info('UserService', `Fetching users with page size: ${pageSize}, offset: ${offset}`);
 
+    // For listing users, we only need profile data (username, score)
+    // Email is private and shouldn't be included in user lists
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
+      .from('profiles')
+      .select('id, username, score, created_at, updated_at')
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
 
     if (error) throw error;
 
-    const users = data as UserData[];
+    // Convert to UserData format (without email for privacy)
+    const users: UserData[] = data.map(profile => ({
+      id: profile.id,
+      email: '', // Don't expose email in user lists
+      username: profile.username,
+      score: profile.score,
+      created_at: profile.created_at,
+      updated_at: profile.updated_at,
+    }));
+
     const hasMore = users.length === pageSize;
 
     logger.info('UserService', `Fetched ${users.length} users successfully`);
@@ -222,14 +261,24 @@ export const searchUsers = async (searchTerm: string, limit: number = 10): Promi
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, username, score')
+      .select('id, username, score, created_at, updated_at')
       .ilike('username', `%${searchTerm}%`)
       .limit(limit);
 
     if (error) throw error;
 
-    logger.info('UserService', `Found ${data.length} matching users`);
-    return data as UserData[];
+    // Convert to UserData format (without email for privacy)
+    const users: UserData[] = data.map(profile => ({
+      id: profile.id,
+      email: '', // Don't expose email in search results
+      username: profile.username,
+      score: profile.score,
+      created_at: profile.created_at,
+      updated_at: profile.updated_at,
+    }));
+
+    logger.info('UserService', `Found ${users.length} matching users`);
+    return users;
   } catch (error: unknown) {
     logger.error('UserService', 'Error searching users', error);
     throw new Error(

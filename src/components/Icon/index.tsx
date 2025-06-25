@@ -24,9 +24,20 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) =
 
   // Use theme color if it exists, otherwise use the provided color string
   const getIconColor = (colorKey: string): string => {
+    // Handle special cases for common color references
+    if (colorKey === 'background') {
+      return colors.background;
+    }
+    if (colorKey === 'white') {
+      return colors.white;
+    }
+    
+    // Check if it's a valid theme color key
     if (colorKey in colors) {
       return colors[colorKey as keyof typeof colors];
     }
+    
+    // Return the color string as-is (for hex colors, etc.)
     return colorKey;
   };
 

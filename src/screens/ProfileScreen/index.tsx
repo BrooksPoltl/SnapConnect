@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '../../styles/theme';
@@ -11,7 +11,7 @@ import { logger } from '../../utils/logger';
 
 import { styles as createStyles } from './styles';
 
-type ProfileScreenProps = StackScreenProps<any, 'Profile'>;
+type ProfileScreenProps = StackScreenProps<Record<string, object | undefined>, 'Profile'>;
 
 /**
  * Screen displaying a user's profile (username and score)
@@ -31,7 +31,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
 
   // Determine if this is the current user's profile
   const isOwnProfile = !userId || userId === currentUser?.id;
-  const targetUserId = userId || currentUser?.id;
+  const targetUserId = userId ?? currentUser?.id;
 
   /**
    * Load user profile data
@@ -66,7 +66,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
    */
   const handleCancelEdit = useCallback(() => {
     setEditing(false);
-    setNewUsername(profile?.username || '');
+    setNewUsername(profile?.username ?? '');
   }, [profile?.username]);
 
   /**
@@ -78,7 +78,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
       return;
     }
 
-    if (newUsername.trim() === profile?.username) {
+    if (newUsername.trim() === (profile?.username ?? '')) {
       setEditing(false);
       return;
     }

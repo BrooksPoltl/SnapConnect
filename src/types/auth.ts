@@ -20,5 +20,6 @@ export interface LoginCredentials {
 
 export interface SignUpCredentials extends LoginCredentials {
   name: string;
+  username: string;
   confirmPassword: string;
 }

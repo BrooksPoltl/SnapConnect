@@ -31,12 +31,12 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) =
     if (colorKey === 'white') {
       return colors.white;
     }
-    
+
     // Check if it's a valid theme color key
     if (colorKey in colors) {
       return colors[colorKey as keyof typeof colors];
     }
-    
+
     // Return the color string as-is (for hex colors, etc.)
     return colorKey;
   };

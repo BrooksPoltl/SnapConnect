@@ -1,5 +1,4 @@
-import { useColorScheme, Dimensions } from 'react-native';
-import { useMemo } from 'react';
+import { Dimensions } from 'react-native';
 
 import {
   Colors,
@@ -15,12 +14,12 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const colors: Colors = {
   light: {
-    primary: '#0052FF',
+    primary: '#007AFF',
     secondary: '#EC4899',
-    background: '#F8F9FA',
+    background: '#FFFFFF',
     surface: '#FFFFFF',
-    text: '#1D2329',
-    textSecondary: '#6C757D',
+    text: '#000000',
+    textSecondary: '#6D6D80',
     border: '#E9ECEF',
     error: '#EF4444',
     success: '#22C55E',
@@ -32,7 +31,7 @@ export const colors: Colors = {
     shadow: '#000000',
   },
   dark: {
-    primary: '#409CFF',
+    primary: '#007AFF',
     secondary: '#F472B6',
     background: '#000000',
     surface: '#1A1A1A',
@@ -97,19 +96,15 @@ export const dimensions: ThemeDimensions = {
  */
 export const useTheme = (): Theme => {
   // Force dark mode for SnapConnect - it's designed as a dark-themed app
-  const colorScheme = 'dark';
+  const themeColors = colors.dark;
 
-  return useMemo(() => {
-    const themeColors = colors.dark;
-
-    return {
-      colors: themeColors,
-      spacing,
-      fontSizes,
-      fontWeights,
-      borderRadius,
-      dimensions,
-      isDark: true,
-    };
-  }, []);
+  return {
+    colors: themeColors,
+    spacing,
+    fontSizes,
+    fontWeights,
+    borderRadius,
+    dimensions,
+    isDark: true,
+  };
 };

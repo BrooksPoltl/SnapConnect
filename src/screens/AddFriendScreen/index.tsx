@@ -166,8 +166,8 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
         style={styles.userInfo}
         onPress={() => handleViewProfile(request.user_id_1)}
       >
-        <Text style={styles.username}>{request.requester?.username || 'Unknown User'}</Text>
-        <Text style={styles.score}>Score: {request.requester?.score || 0}</Text>
+        <Text style={styles.username}>{request.requester?.username ?? 'Unknown User'}</Text>
+        <Text style={styles.score}>Score: {request.requester?.score ?? 0}</Text>
       </TouchableOpacity>
 
       <View style={styles.actionButtons}>
@@ -197,13 +197,13 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
     return (
       <View key={user.id} style={styles.userItem}>
         <TouchableOpacity style={styles.userInfo} onPress={() => handleViewProfile(user.id!)}>
-          <Text style={styles.username}>{user.username || 'Unknown User'}</Text>
-          <Text style={styles.score}>Score: {user.score || 0}</Text>
+          <Text style={styles.username}>{user.username ?? 'Unknown User'}</Text>
+          <Text style={styles.score}>Score: {user.score ?? 0}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => handleSendRequest(user.id!, user.username || 'Unknown User')}
+          onPress={() => handleSendRequest(user.id!, user.username ?? 'Unknown User')}
         >
           <Ionicons name='person-add' size={20} color={theme.colors.primary} />
         </TouchableOpacity>

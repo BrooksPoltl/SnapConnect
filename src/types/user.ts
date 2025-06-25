@@ -9,7 +9,7 @@ export interface User {
 
 export interface UserData {
   id?: string;
-  email: string;
+  email?: string;
   username: string;
   score: number;
   created_at?: string;

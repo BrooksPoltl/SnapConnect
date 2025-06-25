@@ -24,6 +24,7 @@ interface SignUpScreenProps {
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [credentials, setCredentials] = useState<SignUpCredentials>({
     name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -44,8 +45,24 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   );
 
   const validateForm = useCallback(() => {
-    if (!credentials.email.trim() || !credentials.password.trim()) {
+    if (
+      !credentials.name.trim() ||
+      !credentials.username.trim() ||
+      !credentials.email.trim() ||
+      !credentials.password.trim()
+    ) {
       Alert.alert('Validation Error', 'Please fill in all fields.');
+      return false;
+    }
+    if (credentials.username.length < 3) {
+      Alert.alert('Validation Error', 'Username must be at least 3 characters long.');
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(credentials.username)) {
+      Alert.alert(
+        'Validation Error',
+        'Username can only contain letters, numbers, and underscores.',
+      );
       return false;
     }
     if (credentials.password !== credentials.confirmPassword) {
@@ -109,6 +126,19 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               error={errors.name}
               accessibilityLabel='Name input field'
               accessibilityHint='Enter your full name'
+            />
+
+            <FormField
+              label='USERNAME'
+              placeholder='Enter a unique username'
+              value={credentials.username}
+              onChangeText={value => handleFieldChange('username', value.toLowerCase())}
+              autoCapitalize='none'
+              autoCorrect={false}
+              disabled={loading}
+              error={errors.username}
+              accessibilityLabel='Username input field'
+              accessibilityHint='Enter a unique username for your profile'
             />
 
             <FormField

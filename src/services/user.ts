@@ -14,42 +14,32 @@ import { logger } from '../utils/logger';
  */
 export const getUserData = async (userId: string): Promise<UserData | null> => {
   try {
-    logger.info('UserService', `Fetching user data for ID: ${userId}`);
+    logger.info('User', `Getting user data for user: ${userId}`);
 
-    // Get profile data (username, score, etc.)
-    const { data: profileData, error: profileError } = await supabase
+    // Get auth user data (email, etc.) - only accessible to the user themselves
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+
+    // Get profile data (public info)
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
 
-    if (profileError) {
-      if (profileError.code === 'PGRST116') {
-        logger.info('UserService', 'User profile not found');
-        return null;
-      }
-      throw profileError;
-    }
+    if (profileError) throw profileError;
+    if (!profile) throw new Error('Profile not found');
 
-    // Get auth user data (email, etc.)
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !authData.user) {
-      logger.error('UserService', 'Failed to get authenticated user');
-      throw new Error('User not authenticated');
-    }
-
-    // Combine auth and profile data
+    // Combine data - only include email if it's the current user
     const userData: UserData = {
-      id: profileData.id,
-      email: authData.user.email || '',
-      username: profileData.username,
-      score: profileData.score,
-      created_at: profileData.created_at,
-      updated_at: profileData.updated_at,
+      id: profile.id,
+      username: profile.username,
+      score: profile.score ?? 0,
+      // Only include email for the current user
+      ...(authData.user?.id === userId && { email: authData.user.email }),
     };
 
-    logger.info('UserService', 'User data fetched successfully');
+    logger.info('User', 'User data retrieved successfully');
     return userData;
   } catch (error: unknown) {
     logger.error('UserService', 'Error fetching user data', error);
@@ -104,8 +94,8 @@ export const saveUserData = async (userId: string, userData: Partial<UserData>):
     logger.info('UserService', `Saving user data for ID: ${userId}`);
 
     // Extract only profile-related fields (exclude email and other auth fields)
-    const { email, ...profileData } = userData;
-    
+    const { email: _email, ...profileData } = userData;
+
     const { error } = await supabase.from('profiles').upsert(
       {
         id: userId,
@@ -138,7 +128,7 @@ export const updateUserData = async (userId: string, updates: Partial<UserData>)
     logger.info('UserService', `Updating user data for ID: ${userId}`);
 
     // Extract only profile-related fields (exclude email and other auth fields)
-    const { email, ...profileUpdates } = updates;
+    const { email: _email, ...profileUpdates } = updates;
 
     const { error } = await supabase
       .from('profiles')

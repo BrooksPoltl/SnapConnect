@@ -44,13 +44,14 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
 export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   try {
     logger.info('Auth', 'Attempting to create new user account');
-    const { email, password, name } = credentials;
+    const { email, password, name, username } = credentials;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          username: name || email.split('@')[0], // Use name or fallback to email prefix
+          name,
+          username,
         },
       },
     });

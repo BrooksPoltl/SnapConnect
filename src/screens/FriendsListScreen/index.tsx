@@ -22,8 +22,9 @@ interface FriendsListScreenProps {
  */
 const FriendsListScreen: React.FC<FriendsListScreenProps> = ({ navigation }) => {
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [_error, _setError] = useState<string | null>(null);
 
   const theme = useTheme();
   const styles = createStyles(theme);

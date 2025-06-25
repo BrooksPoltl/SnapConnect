@@ -171,14 +171,15 @@ export const getFriendsList = async (): Promise<Friend[]> => {
 
     // Transform the data to return the friend (not the current user)
     const friends: Friend[] = data
-      .map((friendship: any) => {
-        if (friendship.user_id_1 === currentUserId) {
-          return friendship.friend2;
+      .map((friendship: unknown) => {
+        const f = friendship as Record<string, unknown>;
+        if (f.user_id_1 === currentUserId) {
+          return f.friend2;
         } else {
-          return friendship.friend1;
+          return f.friend1;
         }
       })
-      .filter(Boolean);
+      .filter(Boolean) as Friend[];
 
     logger.info('FriendsService', `Found ${friends.length} friends`);
     return friends;

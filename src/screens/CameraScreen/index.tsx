@@ -280,6 +280,8 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
               onStopRecording={stopRecording}
               onCheckGallery={checkGallery}
               onFlipCamera={flipCamera}
+              cameraMode={cameraMode}
+              onModeChange={setCameraMode}
             />
           </View>
         </View>

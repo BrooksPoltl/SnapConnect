@@ -11,14 +11,11 @@ export const styles = (theme: Theme) =>
       flex: 1,
     },
     container: {
-      position: 'absolute',
-      bottom: 40,
-      left: 0,
-      right: 0,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-around',
       paddingHorizontal: 20,
+      paddingVertical: 10,
     },
     captureButton: {
       width: 80,
@@ -29,6 +26,7 @@ export const styles = (theme: Theme) =>
       justifyContent: 'center',
       borderWidth: 6,
       borderColor: theme.colors.white,
+      marginBottom: 10,
     },
     captureButtonInner: {
       width: 60,
@@ -48,6 +46,35 @@ export const styles = (theme: Theme) =>
       backgroundColor: theme.colors.overlay,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    captureSection: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    modeToggle: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    modeButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      backgroundColor: theme.colors.overlay,
+      borderWidth: 1,
+      borderColor: `${theme.colors.white}40`,
+    },
+    activeModeButton: {
+      backgroundColor: `${theme.colors.white}20`,
+      borderColor: theme.colors.white,
+    },
+    modeButtonText: {
+      color: `${theme.colors.white}80`,
+      fontSize: 12,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    activeModeButtonText: {
+      color: theme.colors.white,
     },
     disabledButton: {
       opacity: 0.3,

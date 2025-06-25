@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 
 import { Icon } from '../';
 import { useTheme } from '../../styles/theme';
@@ -12,6 +12,8 @@ interface CameraControlsProps {
   onStopRecording: () => void;
   onCheckGallery: () => void;
   onFlipCamera: () => void;
+  cameraMode: 'picture' | 'video';
+  onModeChange: (mode: 'picture' | 'video') => void;
 }
 
 const CameraControls: React.FC<CameraControlsProps> = ({
@@ -21,6 +23,8 @@ const CameraControls: React.FC<CameraControlsProps> = ({
   onStopRecording,
   onCheckGallery,
   onFlipCamera,
+  cameraMode,
+  onModeChange,
 }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -42,18 +46,60 @@ const CameraControls: React.FC<CameraControlsProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Main Capture Button */}
-      <TouchableOpacity
-        style={styles.captureButton}
-        onPress={onTakePhoto}
-        onLongPress={onStartRecording}
-        onPressOut={onStopRecording}
-        activeOpacity={0.8}
-        accessibilityRole='button'
-        accessibilityLabel='Take photo or start recording'
-      >
-        <View style={[styles.captureButtonInner, isRecording && styles.recordingButton]} />
-      </TouchableOpacity>
+      {/* Main Capture Section */}
+      <View style={styles.captureSection}>
+        {/* Main Capture Button */}
+        <TouchableOpacity
+          style={styles.captureButton}
+          onPress={cameraMode === 'picture' ? onTakePhoto : onStartRecording}
+          onLongPress={onStartRecording}
+          onPressOut={onStopRecording}
+          delayLongPress={800}
+          activeOpacity={0.8}
+          accessibilityRole='button'
+          accessibilityLabel='Take photo or start recording'
+        >
+          <View style={[styles.captureButtonInner, isRecording && styles.recordingButton]} />
+        </TouchableOpacity>
+
+        {/* Mode Toggle Buttons */}
+        <View style={styles.modeToggle}>
+          <TouchableOpacity
+            style={[
+              styles.modeButton,
+              cameraMode === 'picture' && styles.activeModeButton,
+              isRecording && styles.disabledButton,
+            ]}
+            onPress={() => onModeChange('picture')}
+            disabled={isRecording}
+          >
+            <Text
+              style={[
+                styles.modeButtonText,
+                cameraMode === 'picture' && styles.activeModeButtonText,
+              ]}
+            >
+              PHOTO
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.modeButton,
+              cameraMode === 'video' && styles.activeModeButton,
+              isRecording && styles.disabledButton,
+            ]}
+            onPress={() => onModeChange('video')}
+            disabled={isRecording}
+          >
+            <Text
+              style={[styles.modeButtonText, cameraMode === 'video' && styles.activeModeButtonText]}
+            >
+              VIDEO
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Flip Camera Button */}
       <TouchableOpacity

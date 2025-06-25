@@ -26,6 +26,7 @@ export interface Conversation {
   last_message_created_at?: string;
   last_message_viewed_at?: string;
   last_activity: string;
+  unread_count: number;
 }
 
 export interface Chat {

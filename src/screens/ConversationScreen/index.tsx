@@ -16,6 +16,7 @@ import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { getChatMessages, sendMessage, markMessagesAsRead } from '../../services/chat';
 import { supabase } from '../../services/supabase';
+import { useChatStore } from '../../stores';
 import { logger } from '../../utils/logger';
 import { UserStackParamList } from '../../types/navigation';
 import { Message, MessageReadEvent } from '../../types/chat';
@@ -30,6 +31,7 @@ const ConversationScreen: React.FC = () => {
   const theme = useTheme();
   const dynamicStyles = styles(theme);
   const { user } = useAuthentication();
+  const { refreshUnreadCount } = useChatStore();
   const flatListRef = useRef<FlatList>(null);
 
   const { chatId, otherUserId, otherUsername } = route.params;
@@ -63,10 +65,12 @@ const ConversationScreen: React.FC = () => {
   const markAsRead = useCallback(async () => {
     try {
       await markMessagesAsRead(chatId);
+      // Refresh unread count after marking messages as read
+      refreshUnreadCount();
     } catch (error) {
       logger.error('Error marking messages as read:', error);
     }
-  }, [chatId]);
+  }, [chatId, refreshUnreadCount]);
 
   /**
    * Sends a new message

@@ -1,9 +1,10 @@
-import React from 'react';
-import { Button } from 'react-native';
+import React, { useEffect } from 'react';
+import { Button, View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { logOut } from '../services/auth';
+import { useChatStore, useUnreadCount } from '../stores';
 
 import MapScreen from '../screens/MapScreen';
 import CameraScreen from '../screens/CameraScreen';
@@ -11,10 +12,11 @@ import StoriesScreen from '../screens/StoriesScreen';
 import SpotlightScreen from '../screens/SpotlightScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
 import ConversationScreen from '../screens/ConversationScreen';
-import { logError } from '../utils/logger';
+import { logError, logger } from '../utils/logger';
 import { Icon } from '../components';
 import { useTheme } from '../styles/theme';
 import { UserStackParamList } from '../types/navigation';
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 import ChatStack from './ChatStack';
 import FriendsStack from './FriendsStack';
@@ -45,6 +47,22 @@ const getIconName = (routeName: string): string => {
  */
 const MainTabNavigator: React.FC = () => {
   const theme = useTheme();
+  const { user } = useAuthentication();
+  const { unreadCount } = useUnreadCount();
+  const { initializeRealtime, refreshUnreadCount, reset } = useChatStore();
+
+  // Initialize store and real-time subscriptions when user changes
+  useEffect(() => {
+    if (user) {
+      // Initialize real-time subscriptions
+      initializeRealtime(user);
+      // Load initial unread count
+      refreshUnreadCount();
+    } else {
+      // Reset store when user logs out
+      reset();
+    }
+  }, [user, initializeRealtime, refreshUnreadCount, reset]);
 
   const handleLogOut = async () => {
     try {
@@ -60,13 +78,33 @@ const MainTabNavigator: React.FC = () => {
     headerLeft: () => <Button onPress={handleLogOut} title='Log Out' />,
   };
 
+  /**
+   * Renders the tab icon with optional unread badge for ChatStack
+   */
+  const renderTabIcon = (routeName: string, size: number) => {
+    const iconName = getIconName(routeName);
+    
+    if (routeName === 'ChatStack' && unreadCount > 0) {
+      return (
+        <View style={tabStyles.iconContainer}>
+          <Icon name={iconName} size={size || 24} color={theme.colors.white} />
+          <View style={tabStyles.badge}>
+            <Text style={tabStyles.badgeText}>
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+    
+    return <Icon name={iconName} size={size || 24} color={theme.colors.white} />;
+  };
+
   return (
     <Tab.Navigator
       initialRouteName='Camera'
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ size }) => (
-          <Icon name={getIconName(route.name)} size={size || 24} color={theme.colors.white} />
-        ),
+        tabBarIcon: ({ size }) => renderTabIcon(route.name, size || 24),
         tabBarStyle: { backgroundColor: '#000' },
       })}
     >
@@ -129,5 +167,28 @@ const UserStack: React.FC = () => (
     </Stack.Navigator>
   </NavigationContainer>
 );
+
+const tabStyles = StyleSheet.create({
+  iconContainer: {
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#007AFF', // iOS blue
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
+  },
+});
 
 export default UserStack;

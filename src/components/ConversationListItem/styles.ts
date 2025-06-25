@@ -48,6 +48,7 @@ export const styles = (theme: Theme) =>
     statusContainer: {
       alignItems: 'center',
       minWidth: 80,
+      position: 'relative',
     },
     statusIcon: {
       marginBottom: 4,
@@ -59,5 +60,22 @@ export const styles = (theme: Theme) =>
       fontSize: 12,
       fontWeight: '500',
       textAlign: 'center',
+    },
+    unreadBadge: {
+      position: 'absolute',
+      top: -8,
+      right: 8,
+      backgroundColor: theme.colors.error,
+      borderRadius: 10,
+      minWidth: 20,
+      height: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 6,
+    },
+    unreadBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.white,
     },
   }); 

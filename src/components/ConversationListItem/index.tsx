@@ -184,6 +184,15 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
         <Text style={[dynamicStyles.statusText, { color: iconConfig.textColor }]}>
           {iconConfig.text}
         </Text>
+        
+        {/* Unread count badge */}
+        {conversation.unread_count > 0 && (
+          <View style={dynamicStyles.unreadBadge}>
+            <Text style={dynamicStyles.unreadBadgeText}>
+              {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
+            </Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );

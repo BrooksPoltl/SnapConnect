@@ -134,4 +134,28 @@ export async function getOrCreateDirectChat(otherUserId: string): Promise<number
     logger.error('Error in getOrCreateDirectChat:', error);
     throw error;
   }
+}
+
+/**
+ * Gets the total unread message count for the current user
+ * @returns Promise<number> - Total number of unread messages across all chats
+ */
+export async function getTotalUnreadCount(): Promise<number> {
+  try {
+    logger.info('Fetching total unread message count');
+    
+    const { data, error } = await supabase.rpc('get_total_unread_count');
+    
+    if (error) {
+      logger.error('Error fetching total unread count:', error);
+      throw new Error(`Failed to fetch total unread count: ${error.message}`);
+    }
+    
+    const count = data || 0;
+    logger.info(`Total unread messages: ${count}`);
+    return count;
+  } catch (error) {
+    logger.error('Error in getTotalUnreadCount:', error);
+    throw error;
+  }
 } 

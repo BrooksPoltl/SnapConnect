@@ -8,13 +8,13 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '../../styles/theme';
-import { CameraOptions } from '../../components';
+import { CameraControls, CameraOptions } from '../../components';
 import { CapturedMedia } from '../../types/media';
 import { UserStackParamList } from '../../types/navigation';
 // Utils
 import { logError, logger } from '../../utils/logger';
 
-import { styles } from './styles';
+import { styles as createStyles } from './styles';
 
 interface CameraScreenProps {
   navigation?: {
@@ -37,11 +37,16 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [isRecording, setIsRecording] = useState(false);
+  const [isFlashEnabled, setIsFlashEnabled] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraMode, setCameraMode] = useState<'picture' | 'video'>('picture');
 
   const theme = useTheme();
-  const dynamicStyles = styles(theme);
+  const styles = createStyles(theme);
+
+  const onToggleFlash = () => {
+    setIsFlashEnabled(prev => !prev);
+  };
 
   // Camera ready callback
   const onCameraReady = React.useCallback(() => {
@@ -94,21 +99,18 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     if (isRecording) return;
     logger.log('[CameraScreen] Checking gallery');
     try {
-      // Use more robust permission checking for gallery access
-      // First try the media library permission
       let hasMediaPermission = mediaPermission?.granted;
       if (!hasMediaPermission) {
         const mediaResult = await requestMediaPermission();
         hasMediaPermission = mediaResult.granted;
       }
 
-      // Also request image picker permission (sometimes needed separately in Expo Go)
       const pickerPermissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!hasMediaPermission && !pickerPermissionResult.granted) {
         Alert.alert(
           'Permission Required',
-          'Please allow media library access to select photos and videos.\n\nGo to Settings > Expo Go > Photos and enable access.',
+          'Please allow media library access to select photos and videos.',
           [
             { text: 'Cancel', style: 'cancel' },
             { text: 'Try Again', onPress: checkGallery },
@@ -174,10 +176,6 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     }
   };
 
-  /**
-   * Starts an async video recording session on long press. The promise returned
-   * by `recordAsync` resolves only after `stopRecording` is invoked.
-   */
   const startRecording = async (): Promise<void> => {
     logger.log('[CameraScreen] startRecording triggered.');
     setCameraMode('video');
@@ -210,9 +208,6 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     }
   };
 
-  /**
-   * Stops an active recording session when the capture button is released.
-   */
   const stopRecording = () => {
     logger.log('[CameraScreen] stopRecording triggered.');
     if (cameraRef.current && isRecording) {
@@ -222,103 +217,74 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     }
   };
 
-  // Permission loading state
   if (hasPermission === null) {
-    logger.log('[CameraScreen] Rendering: Permission status is null. Waiting...');
     return (
-      <SafeAreaView style={dynamicStyles.container}>
-        <View style={dynamicStyles.messageContainer}>
-          <Text style={dynamicStyles.messageText}>
-            Requesting camera and microphone permissions...
-          </Text>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.messageContainer}>
+          <Text style={styles.messageText}>Requesting permissions...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  // Permission denied state
   if (hasPermission === false) {
-    logger.log('[CameraScreen] Rendering: Permissions denied.');
     return (
-      <SafeAreaView style={dynamicStyles.container}>
-        <View style={dynamicStyles.messageContainer}>
-          <Text style={dynamicStyles.messageText}>
-            We need your permission to access the camera and microphone
+      <SafeAreaView style={styles.container}>
+        <View style={styles.messageContainer}>
+          <Text style={styles.messageText}>
+            We need your permission to access the camera and microphone.
           </Text>
           <TouchableOpacity
-            style={dynamicStyles.permissionButton}
-            onPress={() => {
-              (async () => {
-                try {
-                  const { status: camStatus } = await Camera.requestCameraPermissionsAsync();
-                  const { status: micStatus } = await Camera.requestMicrophonePermissionsAsync();
-                  setHasPermission(camStatus === 'granted' && micStatus === 'granted');
-                } catch (err) {
-                  logError('CameraScreen', 'Error re-requesting permissions', err);
-                  setHasPermission(false);
-                }
-              })();
+            style={styles.permissionButton}
+            onPress={async () => {
+              const { status: camStatus } = await Camera.requestCameraPermissionsAsync();
+              const { status: micStatus } = await Camera.requestMicrophonePermissionsAsync();
+              setHasPermission(camStatus === 'granted' && micStatus === 'granted');
             }}
-            accessibilityRole='button'
-            accessibilityLabel='Grant camera and microphone permission'
           >
-            <Text style={dynamicStyles.permissionButtonText}>Grant Permission</Text>
+            <Text style={styles.permissionButtonText}>Grant Permission</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
 
-  // Camera mode
-  logger.log('[CameraScreen] Rendering: Camera view.');
   return (
-    <View style={dynamicStyles.cameraContainer}>
+    <SafeAreaView style={styles.container}>
       <CameraView
-        style={dynamicStyles.camera}
-        facing={facing}
         ref={cameraRef}
+        style={styles.camera}
+        facing={facing}
         onCameraReady={onCameraReady}
         mode={cameraMode}
-      />
+      >
+        <View style={styles.topControlsContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name='close-outline' size={32} color={theme.colors.white} />
+          </TouchableOpacity>
+        </View>
 
-      <CameraOptions flipCamera={flipCamera} disabled={isRecording} />
-
-      {/* --- Unified Capture Controls --- */}
-      <View style={dynamicStyles.actionsContainer}>
-        {/* Gallery Button */}
-        <TouchableOpacity
-          style={[dynamicStyles.sideButton, isRecording && dynamicStyles.disabledButton]}
-          onPress={checkGallery}
+        <CameraOptions
+          flipCamera={flipCamera}
           disabled={isRecording}
-          accessibilityRole='button'
-          accessibilityLabel='Open gallery'
-        >
-          <Ionicons
-            name='images-outline'
-            size={28}
-            color={isRecording ? theme.colors.textSecondary : theme.colors.text}
-          />
-        </TouchableOpacity>
+          isFlashEnabled={isFlashEnabled}
+          onToggleFlash={onToggleFlash}
+        />
 
-        {/* Main Capture Button */}
-        <TouchableOpacity
-          style={dynamicStyles.captureButton}
-          onPress={takePhoto}
-          onLongPress={startRecording}
-          onPressOut={stopRecording}
-          activeOpacity={0.8}
-          accessibilityRole='button'
-          accessibilityLabel='Take photo or start recording'
-        >
-          <View
-            style={[dynamicStyles.captureButtonInner, isRecording && dynamicStyles.recordingButton]}
-          />
-        </TouchableOpacity>
-
-        {/* Camera Flip Button */}
-      </View>
-      {/* --- End of Unified Capture Controls --- */}
-    </View>
+        <View style={styles.bottomControlsContainer}>
+          <View style={styles.actionsContainer}>
+            <CameraControls
+              isRecording={isRecording}
+              onTakePhoto={takePhoto}
+              onStartRecording={startRecording}
+              onStopRecording={stopRecording}
+              onCheckGallery={checkGallery}
+              onFlipCamera={flipCamera}
+            />
+          </View>
+        </View>
+      </CameraView>
+    </SafeAreaView>
   );
 };
 

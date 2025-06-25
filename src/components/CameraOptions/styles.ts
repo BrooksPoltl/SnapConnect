@@ -5,15 +5,16 @@ export const styles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       position: 'absolute',
-      top: theme.spacing.xl,
-      right: theme.spacing.lg,
+      top: theme.spacing.xxl,
+      right: theme.spacing.md,
       zIndex: 1,
+      alignItems: 'center',
     },
     optionButton: {
-      padding: theme.spacing.sm,
+      padding: theme.spacing.md,
       borderRadius: theme.borderRadius.circle,
       backgroundColor: theme.colors.overlay,
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
     },
     disabledButton: {
       opacity: 0.5,

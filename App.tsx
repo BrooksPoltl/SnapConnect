@@ -2,6 +2,7 @@ import React from 'react';
 import { LogBox, Text, View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useTheme } from './src/styles/theme';
 import { logger, logWithContext } from './src/utils/logger';
 
 logWithContext('App', 'Starting app initialization...');
@@ -36,10 +37,22 @@ const styles = StyleSheet.create({
   },
   errorDetails: {
     fontSize: 12,
-    color: '#666666',
     textAlign: 'center',
   },
 });
+
+const ErrorDisplay: React.FC<{ error?: Error }> = ({ error }) => {
+  const theme = useTheme();
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTitle}>Something went wrong!</Text>
+      <Text style={styles.errorMessage}>{error?.message ?? 'Unknown error occurred'}</Text>
+      <Text style={[styles.errorDetails, { color: theme.colors.textSecondary }]}>
+        Check the console for more details
+      </Text>
+    </View>
+  );
+};
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -61,15 +74,7 @@ class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>Something went wrong!</Text>
-          <Text style={styles.errorMessage}>
-            {this.state.error?.message ?? 'Unknown error occurred'}
-          </Text>
-          <Text style={styles.errorDetails}>Check the console for more details</Text>
-        </View>
-      );
+      return <ErrorDisplay error={this.state.error} />;
     }
 
     return this.props.children;

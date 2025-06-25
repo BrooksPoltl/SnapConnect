@@ -109,6 +109,29 @@ export const styles = (theme: Theme) =>
       fontWeight: theme.fontWeights.semibold,
     },
 
+    topControlsContainer: {
+      position: 'absolute',
+      top: 20,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      alignItems: 'center',
+    },
+
+    backButton: {
+      padding: 10,
+    },
+
+    bottomControlsContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.overlay,
+    },
+
     // --- Unified Capture Control Styles ---
     actionsContainer: {
       position: 'absolute',

@@ -7,6 +7,7 @@ import { supabase } from './supabase';
 import { logger } from '../utils/logger';
 import type { Conversation, Message } from '../types/chat';
 import type { CapturedMedia } from '../types/media';
+import * as FileSystem from 'expo-file-system';
 
 /**
  * Fetches all conversations for the current user
@@ -174,26 +175,31 @@ async function uploadMedia(file: CapturedMedia, bucket: string): Promise<string>
     const fileExt = uri.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
-
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    // Map the local 'photo' type to the database 'image' type
     const contentType = type === 'photo' ? 'image/jpeg' : 'video/mp4';
 
-    const { data, error } = await supabase.storage.from(bucket).upload(filePath, blob, {
+    // Read the file from the local URI into a blob
+    const fileData = await FileSystem.readAsStringAsync(uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    const { data, error } = await supabase.storage.from(bucket).upload(filePath, fileData, {
       contentType,
+      upsert: true,
     });
 
     if (error) {
-      logger.error('Error uploading media:', error);
+      logger.error('Error uploading media with Supabase client:', error);
       throw new Error(`Failed to upload media: ${error.message}`);
     }
 
+    logger.info(`Successfully uploaded media. Path: ${data.path}`);
     return data.path;
   } catch (error) {
     logger.error('Error in uploadMedia:', error);
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(`Failed to upload media: ${error.message}`);
+    }
+    throw new Error('An unknown error occurred during media upload.');
   }
 }
 

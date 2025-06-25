@@ -187,6 +187,7 @@ export const getFriendsList = async (): Promise<Friend[]> => {
       .from('friendships')
       .select(
         `
+        friendship_id:id,
         friend_a:profiles!user_id_1(id, username, score),
         friend_b:profiles!user_id_2(id, username, score)
       `,
@@ -197,19 +198,19 @@ export const getFriendsList = async (): Promise<Friend[]> => {
     if (error) throw error;
 
     // Transform the data to return the friend (not the current user)
-    const friends: Friend[] = (data as unknown as { friend_a: Friend; friend_b: Friend }[])
-      .map((friendship: { friend_a: Friend; friend_b: Friend }) => {
-        if (!friendship.friend_a || !friendship.friend_b) {
-          return null;
-        }
-
-        if (friendship.friend_a.id === currentUserId) {
-          return friendship.friend_b;
-        } else {
-          return friendship.friend_a;
-        }
+    const friends: Friend[] = (
+      data as unknown as {
+        friendship_id: number;
+        friend_a: Friend;
+        friend_b: Friend;
+      }[]
+    )
+      .map(({ friend_a, friend_b }) => {
+        // Determine which object is the friend
+        const friend = friend_a.id === currentUserId ? friend_b : friend_a;
+        return friend;
       })
-      .filter((friend): friend is Friend => friend != null);
+      .filter(friend => friend.id !== currentUserId); // Ensure we don't include ourselves
 
     logger.info('FriendsService', `Found ${friends.length} friends`);
     return friends;

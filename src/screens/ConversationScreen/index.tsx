@@ -20,7 +20,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { RealtimeChannel } from '@supabase/supabase-js';
 import * as ImagePicker from 'expo-image-picker';
 
 import { Icon } from '../../components';
@@ -55,16 +54,16 @@ const ConversationScreen: React.FC = () => {
   const { chatId, otherUserId, otherUsername } = route.params;
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
   const [messageText, setMessageText] = useState('');
+  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [realtimeChannel, setRealtimeChannel] = useState<RealtimeChannel | null>(null);
 
   /**
    * Fetches messages for the current chat
    */
   const fetchMessages = useCallback(async () => {
     try {
+      setLoading(true);
       const data = await getChatMessages(chatId);
       // Reverse the array since we want newest messages at the bottom
       setMessages(data.reverse());
@@ -89,6 +88,80 @@ const ConversationScreen: React.FC = () => {
       logger.error('Error marking messages as read:', error);
     }
   }, [chatId, refreshUnreadCount]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    // 1. Fetch initial data
+    fetchMessages();
+    markAsRead();
+
+    // 2. Set up real-time subscriptions
+    const channel = supabase.channel(`chat:${chatId}`, {
+      config: {
+        broadcast: { self: true },
+        presence: { key: user.id },
+      },
+    });
+
+    // Listen for new messages
+    channel.on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `chat_id=eq.${chatId}`,
+      },
+      payload => {
+        logger.info('New message received in chat:', payload);
+        const newMessage = payload.new as Message;
+
+        if (newMessage.sender_id !== user.id) {
+          const messageWithMetadata: Message = {
+            ...newMessage,
+            sender_username: otherUsername,
+            is_own_message: false,
+          };
+          setMessages(prev => [...prev, messageWithMetadata]);
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        }
+      },
+    );
+
+    // Listen for message updates (e.g., read receipts)
+    channel.on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `chat_id=eq.${chatId}`,
+      },
+      payload => {
+        logger.info('Message updated in chat:', payload);
+        const updatedMessage = payload.new as Message;
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === updatedMessage.id ? { ...msg, viewed_at: updatedMessage.viewed_at } : msg,
+          ),
+        );
+      },
+    );
+
+    channel.subscribe(status => {
+      logger.info('Chat realtime subscription status:', status);
+      if (status === 'SUBSCRIBED') {
+        logger.info('Successfully subscribed to chat realtime updates');
+      }
+    });
+
+    // 3. Cleanup on unmount
+    return () => {
+      supabase.removeChannel(channel);
+      logger.info('Cleaned up chat realtime subscriptions');
+    };
+  }, [user, chatId, otherUsername, fetchMessages, markAsRead]);
 
   /**
    * Sends a new message
@@ -198,118 +271,6 @@ const ConversationScreen: React.FC = () => {
       }
     }
   };
-
-  /**
-   * Sets up real-time subscriptions for this chat
-   */
-  const setupRealtimeSubscriptions = useCallback(() => {
-    if (!user) return;
-
-    const channel = supabase.channel(`chat:${chatId}`, {
-      config: {
-        broadcast: { self: true },
-        presence: { key: user.id },
-      },
-    });
-
-    // Listen for new messages in this chat
-    channel.on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `chat_id=eq.${chatId}`,
-      },
-      payload => {
-        logger.info('New message received in chat:', payload);
-        const newMessage = payload.new as Message;
-
-        // Only add the message if it's not from the current user (to avoid duplicates)
-        if (newMessage.sender_id !== user.id) {
-          // Add sender username and is_own_message flag
-          const messageWithMetadata: Message = {
-            ...newMessage,
-            sender_username: otherUsername,
-            is_own_message: false,
-          };
-
-          setMessages(prev => [...prev, messageWithMetadata]);
-
-          // Auto-scroll to bottom when new message arrives
-          setTimeout(() => {
-            flatListRef.current?.scrollToEnd({ animated: true });
-          }, 100);
-        }
-      },
-    );
-
-    // Listen for message updates (when messages are marked as viewed)
-    channel.on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'messages',
-        filter: `chat_id=eq.${chatId}`,
-      },
-      payload => {
-        logger.info('Message updated in chat:', payload);
-        const updatedMessage = payload.new as Message;
-
-        // Update the message in local state
-        setMessages(prev =>
-          prev.map(msg => {
-            if (msg.id === updatedMessage.id) {
-              return {
-                ...msg,
-                viewed_at: updatedMessage.viewed_at,
-              };
-            }
-            return msg;
-          }),
-        );
-      },
-    );
-
-    // Subscribe with error handling
-    channel.subscribe((status, err) => {
-      logger.info('Chat realtime subscription status:', status);
-      if (err) {
-        logger.error('Chat realtime subscription error:', err);
-      }
-
-      if (status === 'SUBSCRIBED') {
-        logger.info('Successfully subscribed to chat realtime updates');
-      } else if (status === 'CHANNEL_ERROR') {
-        logger.error('Chat channel error - will not attempt reconnect to avoid loops');
-      } else if (status === 'CLOSED') {
-        logger.warn('Chat realtime connection closed');
-      }
-    });
-
-    setRealtimeChannel(channel);
-  }, [user, chatId, otherUsername]);
-
-  // Fetch messages when component mounts
-  useEffect(() => {
-    fetchMessages();
-    markAsRead();
-  }, [fetchMessages, markAsRead]);
-
-  // Set up real-time subscriptions
-  useEffect(() => {
-    if (user) {
-      setupRealtimeSubscriptions();
-    }
-    return () => {
-      if (realtimeChannel) {
-        supabase.removeChannel(realtimeChannel);
-        setRealtimeChannel(null);
-        logger.info('Cleaned up chat realtime subscriptions');
-      }
-    };
-  }, [user, chatId, setupRealtimeSubscriptions, realtimeChannel, otherUsername]);
 
   /**
    * Renders a single message

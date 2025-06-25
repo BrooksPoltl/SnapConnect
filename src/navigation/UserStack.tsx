@@ -51,7 +51,7 @@ const MainTabNavigator: React.FC = () => {
   const theme = useTheme();
   const { user } = useAuthentication();
   const { unreadCount } = useUnreadCount();
-  const { initializeRealtime, refreshUnreadCount, reset } = useChatStore();
+  const { initializeRealtime, refreshUnreadCount, refreshConversations, reset } = useChatStore();
 
   // Initialize store and real-time subscriptions when user changes
   useEffect(() => {
@@ -60,11 +60,13 @@ const MainTabNavigator: React.FC = () => {
       initializeRealtime(user);
       // Load initial unread count
       refreshUnreadCount();
+      // Pre-fetch conversations for instant loading
+      refreshConversations();
     } else {
       // Reset store when user logs out
       reset();
     }
-  }, [user, initializeRealtime, refreshUnreadCount, reset]);
+  }, [user, initializeRealtime, refreshUnreadCount, refreshConversations, reset]);
 
   const styles = StyleSheet.create({
     iconContainer: {

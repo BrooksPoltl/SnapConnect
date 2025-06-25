@@ -14,7 +14,7 @@ import { supabase } from '../services/supabase';
 import { getTotalUnreadCount, getConversations } from '../services/chat';
 import { logger } from '../utils/logger';
 import type { Conversation } from '../types/chat';
-import type { User } from '@supabase/supabase-js';
+import type { User, RealtimeChannel } from '@supabase/supabase-js';
 
 interface ChatState {
   // Unread count state
@@ -26,7 +26,7 @@ interface ChatState {
   isLoadingConversations: boolean;
 
   // Real-time subscription
-  realtimeChannel: any;
+  realtimeChannel: RealtimeChannel | null;
 
   // Actions
   refreshUnreadCount: () => Promise<void>;

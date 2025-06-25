@@ -6,6 +6,7 @@
 import { supabase } from './supabase';
 import { logger } from '../utils/logger';
 import type { Conversation, Message } from '../types/chat';
+import type { CapturedMedia } from '../types/media';
 
 /**
  * Fetches all conversations for the current user
@@ -22,8 +23,8 @@ export async function getConversations(): Promise<Conversation[]> {
       throw new Error(`Failed to fetch conversations: ${error.message}`);
     }
 
-    logger.info(`Successfully fetched ${data?.length || 0} conversations`);
-    return data || [];
+    logger.info(`Successfully fetched ${data?.length ?? 0} conversations`);
+    return data ?? [];
   } catch (error) {
     logger.error('Error in getConversations:', error);
     throw error;
@@ -66,6 +67,7 @@ export async function sendMessage(chatId: number, content: string): Promise<numb
 
     const { data, error } = await supabase.rpc('send_message', {
       p_chat_id: chatId,
+      p_content_type: 'text',
       p_content_text: content,
     });
 
@@ -102,8 +104,8 @@ export async function getChatMessages(chatId: number, limit: number = 50): Promi
       throw new Error(`Failed to fetch chat messages: ${error.message}`);
     }
 
-    logger.info(`Successfully fetched ${data?.length || 0} messages for chat ${chatId}`);
-    return data || [];
+    logger.info(`Successfully fetched ${data?.length ?? 0} messages for chat ${chatId}`);
+    return data ?? [];
   } catch (error) {
     logger.error('Error in getChatMessages:', error);
     throw error;
@@ -151,11 +153,87 @@ export async function getTotalUnreadCount(): Promise<number> {
       throw new Error(`Failed to fetch total unread count: ${error.message}`);
     }
 
-    const count = data || 0;
+    const count = data ?? 0;
     logger.info(`Total unread messages: ${count}`);
     return count;
   } catch (error) {
     logger.error('Error in getTotalUnreadCount:', error);
+    throw error;
+  }
+}
+
+/**
+ * Uploads a media file to a specified Supabase Storage bucket.
+ * @param file - The media file to upload.
+ * @param bucket - The bucket to upload the file to.
+ * @returns Promise<string> - The storage path of the uploaded file.
+ */
+async function uploadMedia(file: CapturedMedia, bucket: string): Promise<string> {
+  try {
+    const { uri, type } = file;
+    const fileExt = uri.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    // Map the local 'photo' type to the database 'image' type
+    const contentType = type === 'photo' ? 'image/jpeg' : 'video/mp4';
+
+    const { data, error } = await supabase.storage.from(bucket).upload(filePath, blob, {
+      contentType,
+    });
+
+    if (error) {
+      logger.error('Error uploading media:', error);
+      throw new Error(`Failed to upload media: ${error.message}`);
+    }
+
+    return data.path;
+  } catch (error) {
+    logger.error('Error in uploadMedia:', error);
+    throw error;
+  }
+}
+
+/**
+ * Uploads a media file and calls an RPC to send it to multiple friends.
+ * @param mediaFile - The local media file to send.
+ * @param recipientIds - An array of friend UUIDs to send to.
+ */
+export async function sendMediaToFriends(
+  mediaFile: CapturedMedia,
+  recipientIds: string[],
+): Promise<void> {
+  if (recipientIds.length === 0) {
+    logger.warn('sendMediaToFriends called with no recipients.');
+    return;
+  }
+
+  try {
+    logger.info(`Sending media to ${recipientIds.length} friends.`);
+    // 1. Upload the media file to the 'media' bucket.
+    const storagePath = await uploadMedia(mediaFile, 'media');
+
+    // 2. Call the RPC to distribute the message to all recipients.
+    const { error } = await supabase.rpc('send_media_to_friends', {
+      p_storage_path: storagePath,
+      p_content_type: mediaFile.type === 'photo' ? 'image' : 'video',
+      p_recipient_ids: recipientIds,
+    });
+
+    if (error) {
+      // If the RPC fails, attempt to clean up the orphaned file.
+      logger.error('RPC call to send_media_to_friends failed.', { error });
+      await supabase.storage.from('media').remove([storagePath]);
+      logger.info('Cleaned up orphaned media file from storage.', { storagePath });
+      throw error;
+    }
+
+    logger.info('Successfully initiated media send to friends.');
+  } catch (error) {
+    logger.error('An error occurred in sendMediaToFriends.', { error });
     throw error;
   }
 }

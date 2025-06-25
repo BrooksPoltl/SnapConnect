@@ -121,6 +121,10 @@ granted only through explicit policies.
   similar policy will grant access only if the message has not yet been viewed,
   or if it has been viewed within the last 24 hours (i.e.,
   `now() - viewed_at < '24 hours'::interval`).
+- **Storage Access**: Policies on the `storage.objects` table ensure that users
+  can only upload to designated buckets (e.g., `media`) and can only access
+  media objects if they have a corresponding record in the `messages` or
+  `stories` table that they are authorized to view.
 
 ### 4.2. Content Expiration: Hybrid TTL Model
 
@@ -172,6 +176,11 @@ efficiency.
   `pl/pgsql` function that safely increments a user's score.
 - **`function suggest_users(user_id uuid, count integer)`**: Returns a set of
   random users that the given `user_id` is not already friends with.
+- **`function send_media_to_friends(storage_path text, content_type text, recipient_ids uuid[])`**:
+  Handles the transactional sending of a media message to multiple recipients.
+  It iterates through the recipient IDs, finds or creates a direct chat for
+  each, and inserts the message metadata into the `messages` table. This is
+  invoked via RPC from the client.
 
 ### 5.2. Edge Functions
 

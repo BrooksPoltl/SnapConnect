@@ -31,6 +31,13 @@ export interface Friend {
   score: number;
 }
 
+export interface Friendship {
+  user_id_1: string;
+  user_id_2: string;
+  friend1: Friend;
+  friend2: Friend;
+}
+
 /**
  * Sends a friend request to another user
  * @param recipientId - The ID of the user to send the request to
@@ -167,6 +174,15 @@ export const getFriendsList = async (): Promise<Friend[]> => {
   try {
     logger.info('FriendsService', 'Fetching friends list');
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const currentUserId = user?.id;
+
+    if (!currentUserId) {
+      throw new Error('User not authenticated');
+    }
+
     const { data, error } = await supabase
       .from('friendships')
       .select(
@@ -177,31 +193,29 @@ export const getFriendsList = async (): Promise<Friend[]> => {
         friend2:profiles!friendships_user_id_2_fkey(id, username, score)
       `,
       )
-      .eq('status', 'accepted');
+      .eq('status', 'accepted')
+      .or(`user_id_1.eq.${currentUserId},user_id_2.eq.${currentUserId}`);
 
     if (error) throw error;
 
-    // Get current user ID
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const currentUserId = user?.id;
-
-    if (!currentUserId) {
-      throw new Error('User not authenticated');
-    }
-
     // Transform the data to return the friend (not the current user)
     const friends: Friend[] = data
-      .map((friendship: unknown) => {
-        const f = friendship as Record<string, unknown>;
-        if (f.user_id_1 === currentUserId) {
-          return f.friend2;
-        } else {
-          return f.friend1;
-        }
-      })
-      .filter(Boolean) as Friend[];
+      .map(
+        (friendship: {
+          user_id_1: string;
+          user_id_2: string;
+          friend1: Friend[];
+          friend2: Friend[];
+        }) => {
+          if (friendship.user_id_1 === currentUserId) {
+            return friendship.friend2[0];
+          } else if (friendship.user_id_2 === currentUserId) {
+            return friendship.friend1[0];
+          }
+          return null; // Should not happen in a correctly filtered query
+        },
+      )
+      .filter((friend): friend is Friend => friend != null);
 
     logger.info('FriendsService', `Found ${friends.length} friends`);
     return friends;

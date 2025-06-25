@@ -73,7 +73,7 @@ const ChatScreen: React.FC = () => {
   const renderConversationItem = ({ item }: { item: Conversation }) => (
     <ConversationListItem
       conversation={item}
-      currentUserId={user?.id || ''}
+      currentUserId={user?.id ?? ''}
       onPress={handleConversationPress}
     />
   );

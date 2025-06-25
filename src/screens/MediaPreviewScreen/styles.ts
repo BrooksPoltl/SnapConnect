@@ -50,9 +50,9 @@ export const styles = (theme: Theme) =>
       borderRadius: theme.borderRadius.md,
       minWidth: 80,
       justifyContent: 'center',
-      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      backgroundColor: theme.colors.border,
       borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderColor: theme.colors.textSecondary,
     },
     actionButtonText: {
       fontSize: theme.fontSizes.md,

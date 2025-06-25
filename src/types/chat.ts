@@ -13,6 +13,8 @@ export interface Message {
   created_at: string;
   viewed_at?: string;
   is_own_message: boolean;
+  local_uri?: string;
+  status?: 'sending' | 'sent' | 'failed';
 }
 
 export interface Conversation {

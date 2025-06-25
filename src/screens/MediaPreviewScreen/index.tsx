@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { View, Image, TouchableOpacity, Text, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Video, ResizeMode } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
-import { shareAsync } from 'expo-sharing';
 
 import { useTheme } from '../../styles/theme';
 import Icon from '../../components/Icon';
@@ -25,7 +25,7 @@ type MediaPreviewScreenRouteProp = RouteProp<UserStackParamList, 'MediaPreview'>
  */
 const MediaPreviewScreen: React.FC = () => {
   const route = useRoute<MediaPreviewScreenRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<UserStackParamList>>();
   const { media } = route.params;
 
   const [isMuted, setIsMuted] = useState(false);
@@ -73,17 +73,11 @@ const MediaPreviewScreen: React.FC = () => {
     }
   };
 
-  const handleSend = async () => {
-    try {
-      logger.log('[MediaPreviewScreen] Send button pressed. Sharing media...');
-
-      await shareAsync(media.uri);
-      logger.log('[MediaPreviewScreen] Media shared successfully.');
-      navigation.goBack();
-    } catch (error) {
-      logError('MediaPreviewScreen', 'Error sharing media', error);
-      Alert.alert('Share Error', `Failed to share ${media.type}`);
-    }
+  const handleSend = () => {
+    logger.log(
+      '[MediaPreviewScreen] Send button pressed. Navigating to SelectRecipients screen...',
+    );
+    navigation.navigate('SelectRecipients', { media });
   };
 
   const toggleMute = () => {
@@ -143,7 +137,12 @@ const MediaPreviewScreen: React.FC = () => {
             accessibilityLabel='Save media'
             accessibilityHint='Save to device gallery'
           >
-            <Icon name='download' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
+            <Icon
+              name='download'
+              size={16}
+              color={theme.colors.text}
+              style={dynamicStyles.buttonIcon}
+            />
             <Text style={dynamicStyles.actionButtonText}>Save</Text>
           </TouchableOpacity>
         )}
@@ -166,7 +165,12 @@ const MediaPreviewScreen: React.FC = () => {
           accessibilityLabel='Discard media'
           accessibilityHint='Delete and go back'
         >
-          <Icon name='trash-2' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
+          <Icon
+            name='trash-2'
+            size={16}
+            color={theme.colors.text}
+            style={dynamicStyles.buttonIcon}
+          />
           <Text style={dynamicStyles.actionButtonText}>Discard</Text>
         </TouchableOpacity>
       </View>

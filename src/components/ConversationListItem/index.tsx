@@ -6,11 +6,12 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 import { Icon } from '../';
 import { useTheme } from '../../styles/theme';
 import { ConversationListItemProps, ConversationStatus } from '../../types/chat';
+import { Theme } from '../../types/theme';
 
 import { styles } from './styles';
 
@@ -54,7 +55,7 @@ function getLastMessageDisplayText(
   const { last_message_content, last_message_type } = conversation;
 
   // If we have text content, show it
-  if (last_message_content && last_message_content.trim()) {
+  if (last_message_content?.trim()) {
     return last_message_content;
   }
 
@@ -74,7 +75,7 @@ function getLastMessageDisplayText(
 /**
  * Gets the appropriate icon configuration for the conversation status
  */
-function getStatusIconConfig(status: ConversationStatus, theme: any) {
+function getStatusIconConfig(status: ConversationStatus, theme: Theme) {
   switch (status) {
     case 'new_message':
       return {
@@ -87,15 +88,15 @@ function getStatusIconConfig(status: ConversationStatus, theme: any) {
     case 'sent_unread':
       return {
         name: 'send',
-        color: theme.colors.accent,
+        color: theme.colors.secondary,
         filled: true,
         text: 'Sent',
-        textColor: theme.colors.accent,
+        textColor: theme.colors.secondary,
       };
     case 'sent_read':
       return {
         name: 'send',
-        color: theme.colors.accent,
+        color: theme.colors.secondary,
         filled: false,
         text: 'Opened',
         textColor: theme.colors.text,
@@ -164,7 +165,7 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
           {conversation.other_username}
         </Text>
 
-        {(conversation.last_message_content || conversation.last_message_type) && (
+        {(conversation.last_message_content ?? conversation.last_message_type) && (
           <Text style={dynamicStyles.lastMessage} numberOfLines={1}>
             {getLastMessageDisplayText(conversation)}
           </Text>

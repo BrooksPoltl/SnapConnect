@@ -15,20 +15,29 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import * as ImagePicker from 'expo-image-picker';
 
 import { Icon } from '../../components';
 import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
-import { getChatMessages, sendMessage, markMessagesAsRead } from '../../services/chat';
+import {
+  getChatMessages,
+  sendMessage,
+  markMessagesAsRead,
+  sendMediaToFriends,
+} from '../../services/chat';
 import { supabase } from '../../services/supabase';
 import { useChatStore } from '../../stores';
 import { logger } from '../../utils/logger';
-import { UserStackParamList } from '../../types/navigation';
-import { Message, MessageReadEvent } from '../../types/chat';
+import { useNavigation, UserStackParamList } from '../../types/navigation';
+import { Message } from '../../types/chat';
+import { CapturedMedia } from '../../types/media';
 
 import { styles } from './styles';
 
@@ -95,7 +104,7 @@ const ConversationScreen: React.FC = () => {
     const optimisticMessage: Message = {
       id: Date.now(), // Temporary ID
       sender_id: user.id,
-      sender_username: user.email || 'You',
+      sender_username: user.email ?? 'You',
       content_type: 'text',
       content_text: textToSend,
       storage_path: undefined,
@@ -133,6 +142,62 @@ const ConversationScreen: React.FC = () => {
       setSending(false);
     }
   }, [messageText, sending, chatId, user]);
+
+  /**
+   * Opens the device's image/video library and sends the selected media.
+   */
+  const handlePickMedia = async () => {
+    if (!user) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      if (asset.type !== 'image' && asset.type !== 'video') {
+        Alert.alert('Unsupported File', 'Please select an image or video.');
+        return;
+      }
+
+      const mediaFile: CapturedMedia = {
+        uri: asset.uri,
+        type: asset.type === 'image' ? 'photo' : 'video',
+        width: asset.width,
+        height: asset.height,
+        duration: asset.duration ?? undefined,
+      };
+
+      const optimisticMessage: Message = {
+        id: Date.now(),
+        sender_id: user.id,
+        sender_username: 'You',
+        content_type: mediaFile.type === 'photo' ? 'image' : 'video',
+        created_at: new Date().toISOString(),
+        is_own_message: true,
+        local_uri: mediaFile.uri,
+        status: 'sending',
+      };
+
+      setMessages(prev => [...prev, optimisticMessage]);
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+
+      try {
+        await sendMediaToFriends(mediaFile, [otherUserId]);
+        setMessages(prev =>
+          prev.map(msg => (msg.id === optimisticMessage.id ? { ...msg, status: 'sent' } : msg)),
+        );
+      } catch (error) {
+        logger.error('Error sending media message from picker:', error);
+        Alert.alert('Error', 'Failed to send media.');
+        setMessages(prev =>
+          prev.map(msg => (msg.id === optimisticMessage.id ? { ...msg, status: 'failed' } : msg)),
+        );
+      }
+    }
+  };
 
   /**
    * Sets up real-time subscriptions for this chat
@@ -244,114 +309,122 @@ const ConversationScreen: React.FC = () => {
         logger.info('Cleaned up chat realtime subscriptions');
       }
     };
-  }, [user, chatId]); // Only depend on user and chatId
+  }, [user, chatId, setupRealtimeSubscriptions, realtimeChannel, otherUsername]);
 
   /**
    * Renders a single message
    */
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View
-      style={[
-        dynamicStyles.messageContainer,
-        item.is_own_message ? dynamicStyles.ownMessage : dynamicStyles.otherMessage,
-      ]}
-    >
-      <View
-        style={[
-          dynamicStyles.messageBubble,
-          item.is_own_message ? dynamicStyles.ownMessageBubble : dynamicStyles.otherMessageBubble,
-        ]}
-      >
-        <Text
-          style={[
-            dynamicStyles.messageText,
-            item.is_own_message ? dynamicStyles.ownMessageText : dynamicStyles.otherMessageText,
-          ]}
+  const renderMessage = ({ item }: { item: Message }) => {
+    const isOwn = item.sender_id === user?.id;
+    const messageContainerStyle = isOwn
+      ? dynamicStyles.sentMessageContainer
+      : dynamicStyles.receivedMessageContainer;
+    const messageTextStyle = isOwn
+      ? dynamicStyles.sentMessageText
+      : dynamicStyles.receivedMessageText;
+
+    const renderMediaThumbnail = () => {
+      const sourceUri =
+        item.local_uri ??
+        (item.storage_path
+          ? supabase.storage.from('media').getPublicUrl(item.storage_path).data.publicUrl
+          : null);
+
+      if (!sourceUri) return null;
+
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            if (item.status === 'sent' && item.storage_path) {
+              navigation.navigate('User', {
+                screen: 'MediaViewer',
+                params: {
+                  storage_path: item.storage_path,
+                  content_type: item.content_type as 'image' | 'video',
+                },
+              });
+            }
+          }}
+          disabled={item.status !== 'sent'}
         >
-          {item.content_text}
-        </Text>
-        <Text
-          style={[
-            dynamicStyles.messageTime,
-            item.is_own_message ? dynamicStyles.ownMessageTime : dynamicStyles.otherMessageTime,
-          ]}
-        >
-          {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          {item.is_own_message && (
-            <Text style={dynamicStyles.readStatus}>{item.viewed_at ? ' ✓✓' : ' ✓'}</Text>
+          <Image source={{ uri: sourceUri }} style={dynamicStyles.thumbnail} />
+          {item.status === 'sending' && <ActivityIndicator style={dynamicStyles.absoluteFill} />}
+          {item.status === 'failed' && (
+            <Icon name='alert-circle' style={dynamicStyles.absoluteFill} color='red' />
           )}
+        </TouchableOpacity>
+      );
+    };
+
+    return (
+      <View style={messageContainerStyle}>
+        {item.content_type === 'text' ? (
+          <Text style={messageTextStyle}>{item.content_text}</Text>
+        ) : (
+          renderMediaThumbnail()
+        )}
+        <Text style={dynamicStyles.timestamp}>
+          {new Date(item.created_at).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
         </Text>
       </View>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
-      <SafeAreaView style={dynamicStyles.container}>
-        <View style={dynamicStyles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
-            <Icon name='arrow-left' size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Text style={dynamicStyles.headerTitle}>{otherUsername}</Text>
-          <View style={dynamicStyles.headerRight} />
-        </View>
-        <View style={dynamicStyles.loadingContainer}>
-          <Text style={dynamicStyles.loadingText}>Loading messages...</Text>
-        </View>
-      </SafeAreaView>
+      <View style={dynamicStyles.container}>
+        <ActivityIndicator size='large' color={theme.colors.primary} />
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container}>
+    <SafeAreaView style={dynamicStyles.container} edges={['bottom', 'left', 'right']}>
       <View style={dynamicStyles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name='arrow-left' size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={dynamicStyles.headerTitle}>{otherUsername}</Text>
-        <View style={dynamicStyles.headerRight} />
+        <View style={dynamicStyles.headerSpacer} />
       </View>
-
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        renderItem={renderMessage}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={dynamicStyles.messagesContainer}
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
+      />
       <KeyboardAvoidingView
-        style={dynamicStyles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={item => item.id.toString()}
-          style={dynamicStyles.messagesList}
-          contentContainerStyle={dynamicStyles.messagesContent}
-          showsVerticalScrollIndicator={false}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
-        />
-
         <View style={dynamicStyles.inputContainer}>
+          <TouchableOpacity style={dynamicStyles.mediaButton} onPress={handlePickMedia}>
+            <Icon name='plus' size={24} color={theme.colors.primary} />
+          </TouchableOpacity>
           <TextInput
-            style={dynamicStyles.messageInput}
+            style={dynamicStyles.input}
             value={messageText}
             onChangeText={setMessageText}
             placeholder='Type a message...'
             placeholderTextColor={theme.colors.textSecondary}
             multiline
-            maxLength={1000}
           />
           <TouchableOpacity
-            style={[
-              dynamicStyles.sendButton,
-              (!messageText.trim() || sending) && dynamicStyles.sendButtonDisabled,
-            ]}
+            style={dynamicStyles.sendButton}
             onPress={handleSendMessage}
-            disabled={!messageText.trim() || sending}
+            disabled={sending || !messageText.trim()}
           >
-            <Icon
-              name='send'
-              size={20}
-              color={
-                !messageText.trim() || sending ? theme.colors.textSecondary : theme.colors.white
-              }
-            />
+            {sending ? (
+              <ActivityIndicator size='small' color={theme.colors.white} />
+            ) : (
+              <Icon name='send' size={24} color={theme.colors.white} />
+            )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

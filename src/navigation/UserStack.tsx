@@ -12,7 +12,7 @@ import StoriesScreen from '../screens/StoriesScreen';
 import SpotlightScreen from '../screens/SpotlightScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
 import ConversationScreen from '../screens/ConversationScreen';
-import { logError, logger } from '../utils/logger';
+import { logError } from '../utils/logger';
 import { Icon } from '../components';
 import { useTheme } from '../styles/theme';
 import { UserStackParamList } from '../types/navigation';
@@ -20,6 +20,8 @@ import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 import ChatStack from './ChatStack';
 import FriendsStack from './FriendsStack';
+import { MediaViewerScreen } from '../screens/MediaViewerScreen';
+import { SelectRecipientsScreen } from '../screens/SelectRecipientsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -64,6 +66,29 @@ const MainTabNavigator: React.FC = () => {
     }
   }, [user, initializeRealtime, refreshUnreadCount, reset]);
 
+  const styles = StyleSheet.create({
+    iconContainer: {
+      position: 'relative',
+    },
+    badge: {
+      position: 'absolute',
+      top: -8,
+      right: -8,
+      backgroundColor: theme.colors.primary,
+      borderRadius: 10,
+      minWidth: 20,
+      height: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 6,
+    },
+    badgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.white,
+    },
+  });
+
   const handleLogOut = async () => {
     try {
       await logOut();
@@ -73,23 +98,15 @@ const MainTabNavigator: React.FC = () => {
     }
   };
 
-  const screenOptions = {
-    tabBarShowLabel: false,
-    headerLeft: () => <Button onPress={handleLogOut} title='Log Out' />,
-  };
-
-  /**
-   * Renders the tab icon with optional unread badge for ChatStack
-   */
   const renderTabIcon = (routeName: string, size: number) => {
     const iconName = getIconName(routeName);
 
     if (routeName === 'ChatStack' && unreadCount > 0) {
       return (
-        <View style={tabStyles.iconContainer}>
+        <View style={styles.iconContainer}>
           <Icon name={iconName} size={size || 24} color={theme.colors.white} />
-          <View style={tabStyles.badge}>
-            <Text style={tabStyles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
           </View>
         </View>
       );
@@ -98,12 +115,17 @@ const MainTabNavigator: React.FC = () => {
     return <Icon name={iconName} size={size || 24} color={theme.colors.white} />;
   };
 
+  const screenOptions = {
+    tabBarShowLabel: false,
+    headerLeft: () => <Button onPress={handleLogOut} title='Log Out' />,
+  };
+
   return (
     <Tab.Navigator
       initialRouteName='Camera'
       screenOptions={({ route }) => ({
         tabBarIcon: ({ size }) => renderTabIcon(route.name, size || 24),
-        tabBarStyle: { backgroundColor: '#000' },
+        tabBarStyle: { backgroundColor: theme.colors.background },
       })}
     >
       <Tab.Screen
@@ -162,31 +184,18 @@ const UserStack: React.FC = () => (
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name='MediaViewer'
+        component={MediaViewerScreen}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+      <Stack.Screen
+        name='SelectRecipients'
+        component={SelectRecipientsScreen}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
     </Stack.Navigator>
   </NavigationContainer>
 );
-
-const tabStyles = StyleSheet.create({
-  iconContainer: {
-    position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    backgroundColor: '#007AFF', // iOS blue
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 6,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: 'white',
-  },
-});
 
 export default UserStack;

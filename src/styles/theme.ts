@@ -10,6 +10,8 @@ import {
   Theme,
 } from '../types/theme';
 
+export type { Theme };
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const colors: Colors = {

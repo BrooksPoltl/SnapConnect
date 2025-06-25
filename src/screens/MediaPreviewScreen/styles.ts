@@ -38,32 +38,34 @@ export const styles = (theme: Theme) =>
       flexDirection: 'row',
       justifyContent: 'space-around',
       alignItems: 'center',
-      paddingVertical: theme.spacing.xl,
-      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
       backgroundColor: theme.colors.surface,
     },
     actionButton: {
+      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.borderRadius.circle,
+      borderRadius: theme.borderRadius.md,
       minWidth: 80,
-      minHeight: 60,
+      justifyContent: 'center',
     },
     actionButtonText: {
-      marginTop: theme.spacing.xs,
-      fontSize: theme.fontSizes.xs,
-      fontWeight: theme.fontWeights.medium,
-      color: theme.colors.white,
+      fontSize: theme.fontSizes.md,
+      fontWeight: theme.fontWeights.semibold,
+      color: theme.colors.background,
     },
-    discardButton: {
-      backgroundColor: theme.colors.error,
+    buttonIcon: {
+      marginRight: theme.spacing.xs,
     },
     saveButton: {
       backgroundColor: theme.colors.success,
     },
-    nextButton: {
+    sendButton: {
       backgroundColor: theme.colors.primary,
+    },
+    discardButton: {
+      backgroundColor: theme.colors.error,
     },
   });

@@ -48,7 +48,7 @@ export interface MessageReadEvent {
   message_count: number;
 }
 
-export type ConversationStatus = 
+export type ConversationStatus =
   | 'new_message'
   | 'sent_unread'
   | 'sent_read'
@@ -59,4 +59,4 @@ export interface ConversationListItemProps {
   conversation: Conversation;
   currentUserId: string;
   onPress: (chatId: number, otherUserId: string, otherUsername: string) => void;
-} 
+}

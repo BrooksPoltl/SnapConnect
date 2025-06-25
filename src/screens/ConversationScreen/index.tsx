@@ -1,12 +1,21 @@
 /**
  * ConversationScreen Component
- * 
+ *
  * Displays messages in a one-on-one conversation with real-time updates.
  * Handles sending messages and marking messages as read.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -106,20 +115,18 @@ const ConversationScreen: React.FC = () => {
     try {
       const messageId = await sendMessage(chatId, textToSend);
       logger.info('Message sent successfully');
-      
+
       // Update the optimistic message with the real ID from database
-      setMessages(prev => prev.map(msg => 
-        msg.id === optimisticMessage.id 
-          ? { ...msg, id: messageId }
-          : msg
-      ));
+      setMessages(prev =>
+        prev.map(msg => (msg.id === optimisticMessage.id ? { ...msg, id: messageId } : msg)),
+      );
     } catch (error) {
       logger.error('Error sending message:', error);
       Alert.alert('Error', 'Failed to send message. Please try again.');
-      
+
       // Remove the optimistic message on error
       setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-      
+
       // Restore the message text if sending failed
       setMessageText(textToSend);
     } finally {
@@ -149,10 +156,10 @@ const ConversationScreen: React.FC = () => {
         table: 'messages',
         filter: `chat_id=eq.${chatId}`,
       },
-      (payload) => {
+      payload => {
         logger.info('New message received in chat:', payload);
         const newMessage = payload.new as Message;
-        
+
         // Only add the message if it's not from the current user (to avoid duplicates)
         if (newMessage.sender_id !== user.id) {
           // Add sender username and is_own_message flag
@@ -163,13 +170,13 @@ const ConversationScreen: React.FC = () => {
           };
 
           setMessages(prev => [...prev, messageWithMetadata]);
-          
+
           // Auto-scroll to bottom when new message arrives
           setTimeout(() => {
             flatListRef.current?.scrollToEnd({ animated: true });
           }, 100);
         }
-      }
+      },
     );
 
     // Listen for message updates (when messages are marked as viewed)
@@ -181,21 +188,23 @@ const ConversationScreen: React.FC = () => {
         table: 'messages',
         filter: `chat_id=eq.${chatId}`,
       },
-      (payload) => {
+      payload => {
         logger.info('Message updated in chat:', payload);
         const updatedMessage = payload.new as Message;
-        
+
         // Update the message in local state
-        setMessages(prev => prev.map(msg => {
-          if (msg.id === updatedMessage.id) {
-            return {
-              ...msg,
-              viewed_at: updatedMessage.viewed_at,
-            };
-          }
-          return msg;
-        }));
-      }
+        setMessages(prev =>
+          prev.map(msg => {
+            if (msg.id === updatedMessage.id) {
+              return {
+                ...msg,
+                viewed_at: updatedMessage.viewed_at,
+              };
+            }
+            return msg;
+          }),
+        );
+      },
     );
 
     // Subscribe with error handling
@@ -204,7 +213,7 @@ const ConversationScreen: React.FC = () => {
       if (err) {
         logger.error('Chat realtime subscription error:', err);
       }
-      
+
       if (status === 'SUBSCRIBED') {
         logger.info('Successfully subscribed to chat realtime updates');
       } else if (status === 'CHANNEL_ERROR') {
@@ -216,8 +225,6 @@ const ConversationScreen: React.FC = () => {
 
     setRealtimeChannel(channel);
   }, [user, chatId, otherUsername]);
-
-
 
   // Fetch messages when component mounts
   useEffect(() => {
@@ -243,29 +250,35 @@ const ConversationScreen: React.FC = () => {
    * Renders a single message
    */
   const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[
-      dynamicStyles.messageContainer,
-      item.is_own_message ? dynamicStyles.ownMessage : dynamicStyles.otherMessage,
-    ]}>
-      <View style={[
-        dynamicStyles.messageBubble,
-        item.is_own_message ? dynamicStyles.ownMessageBubble : dynamicStyles.otherMessageBubble,
-      ]}>
-        <Text style={[
-          dynamicStyles.messageText,
-          item.is_own_message ? dynamicStyles.ownMessageText : dynamicStyles.otherMessageText,
-        ]}>
+    <View
+      style={[
+        dynamicStyles.messageContainer,
+        item.is_own_message ? dynamicStyles.ownMessage : dynamicStyles.otherMessage,
+      ]}
+    >
+      <View
+        style={[
+          dynamicStyles.messageBubble,
+          item.is_own_message ? dynamicStyles.ownMessageBubble : dynamicStyles.otherMessageBubble,
+        ]}
+      >
+        <Text
+          style={[
+            dynamicStyles.messageText,
+            item.is_own_message ? dynamicStyles.ownMessageText : dynamicStyles.otherMessageText,
+          ]}
+        >
           {item.content_text}
         </Text>
-        <Text style={[
-          dynamicStyles.messageTime,
-          item.is_own_message ? dynamicStyles.ownMessageTime : dynamicStyles.otherMessageTime,
-        ]}>
+        <Text
+          style={[
+            dynamicStyles.messageTime,
+            item.is_own_message ? dynamicStyles.ownMessageTime : dynamicStyles.otherMessageTime,
+          ]}
+        >
           {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           {item.is_own_message && (
-            <Text style={dynamicStyles.readStatus}>
-              {item.viewed_at ? ' ✓✓' : ' ✓'}
-            </Text>
+            <Text style={dynamicStyles.readStatus}>{item.viewed_at ? ' ✓✓' : ' ✓'}</Text>
           )}
         </Text>
       </View>
@@ -277,7 +290,7 @@ const ConversationScreen: React.FC = () => {
       <SafeAreaView style={dynamicStyles.container}>
         <View style={dynamicStyles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
-            <Icon name="arrow-left" size={24} color={theme.colors.text} />
+            <Icon name='arrow-left' size={24} color={theme.colors.text} />
           </TouchableOpacity>
           <Text style={dynamicStyles.headerTitle}>{otherUsername}</Text>
           <View style={dynamicStyles.headerRight} />
@@ -293,13 +306,13 @@ const ConversationScreen: React.FC = () => {
     <SafeAreaView style={dynamicStyles.container}>
       <View style={dynamicStyles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
-          <Icon name="arrow-left" size={24} color={theme.colors.text} />
+          <Icon name='arrow-left' size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={dynamicStyles.headerTitle}>{otherUsername}</Text>
         <View style={dynamicStyles.headerRight} />
       </View>
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={dynamicStyles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -307,7 +320,7 @@ const ConversationScreen: React.FC = () => {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           style={dynamicStyles.messagesList}
           contentContainerStyle={dynamicStyles.messagesContent}
           showsVerticalScrollIndicator={false}
@@ -319,7 +332,7 @@ const ConversationScreen: React.FC = () => {
             style={dynamicStyles.messageInput}
             value={messageText}
             onChangeText={setMessageText}
-            placeholder="Type a message..."
+            placeholder='Type a message...'
             placeholderTextColor={theme.colors.textSecondary}
             multiline
             maxLength={1000}
@@ -332,10 +345,12 @@ const ConversationScreen: React.FC = () => {
             onPress={handleSendMessage}
             disabled={!messageText.trim() || sending}
           >
-            <Icon 
-              name="send" 
-              size={20} 
-              color={(!messageText.trim() || sending) ? theme.colors.textSecondary : theme.colors.white} 
+            <Icon
+              name='send'
+              size={20}
+              color={
+                !messageText.trim() || sending ? theme.colors.textSecondary : theme.colors.white
+              }
             />
           </TouchableOpacity>
         </View>

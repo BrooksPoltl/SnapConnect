@@ -41,7 +41,7 @@ export const styles = (theme: Theme) =>
     saveButton: {
       backgroundColor: theme.colors.success,
     },
-    shareButton: {
+    sendButton: {
       backgroundColor: theme.colors.primary,
     },
     discardButton: {

@@ -1,6 +1,6 @@
 /**
  * ConversationListItem Component
- * 
+ *
  * Displays a single conversation in the chat list with dynamic status indicators.
  * Shows avatar, username, last message preview, and status icons based on message state.
  */
@@ -24,11 +24,7 @@ function getConversationStatus(
   conversation: ConversationListItemProps['conversation'],
   currentUserId: string,
 ): ConversationStatus {
-  const { 
-    last_message_id, 
-    last_message_sender_id, 
-    last_message_viewed_at 
-  } = conversation;
+  const { last_message_id, last_message_sender_id, last_message_viewed_at } = conversation;
 
   // No messages exchanged yet (new friend)
   if (!last_message_id || last_message_id === 0) {
@@ -52,14 +48,16 @@ function getConversationStatus(
  * @param conversation - The conversation object
  * @returns string - The text to display for the last message
  */
-function getLastMessageDisplayText(conversation: ConversationListItemProps['conversation']): string {
+function getLastMessageDisplayText(
+  conversation: ConversationListItemProps['conversation'],
+): string {
   const { last_message_content, last_message_type } = conversation;
-  
+
   // If we have text content, show it
   if (last_message_content && last_message_content.trim()) {
     return last_message_content;
   }
-  
+
   // If no text content, show appropriate label based on content type
   switch (last_message_type) {
     case 'image':
@@ -151,7 +149,7 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
     <TouchableOpacity
       style={dynamicStyles.container}
       onPress={handlePress}
-      accessibilityRole="button"
+      accessibilityRole='button'
       accessibilityLabel={`Chat with ${conversation.other_username}`}
       accessibilityHint={iconConfig.text}
     >
@@ -165,7 +163,7 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
         <Text style={dynamicStyles.username} numberOfLines={1}>
           {conversation.other_username}
         </Text>
-        
+
         {(conversation.last_message_content || conversation.last_message_type) && (
           <Text style={dynamicStyles.lastMessage} numberOfLines={1}>
             {getLastMessageDisplayText(conversation)}
@@ -179,12 +177,16 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
           name={iconConfig.name}
           size={20}
           color={iconConfig.color}
-          style={iconConfig.filled ? dynamicStyles.statusIcon : {...dynamicStyles.statusIcon, ...dynamicStyles.statusIconOutline}}
+          style={
+            iconConfig.filled
+              ? dynamicStyles.statusIcon
+              : { ...dynamicStyles.statusIcon, ...dynamicStyles.statusIconOutline }
+          }
         />
         <Text style={[dynamicStyles.statusText, { color: iconConfig.textColor }]}>
           {iconConfig.text}
         </Text>
-        
+
         {/* Unread count badge */}
         {conversation.unread_count > 0 && (
           <View style={dynamicStyles.unreadBadge}>
@@ -198,4 +200,4 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
   );
 };
 
-export default ConversationListItem; 
+export default ConversationListItem;

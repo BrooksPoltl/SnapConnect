@@ -20,7 +20,7 @@ type MediaPreviewScreenRouteProp = RouteProp<UserStackParamList, 'MediaPreview'>
  * Features:
  * - Photo display with Image component
  * - Video playback with expo-av Video component
- * - Discard, Save, and Next action buttons
+ * - Save, Send, and Discard action buttons (consistent with PhotoPreview design)
  * - Mute/unmute toggle for videos
  */
 const MediaPreviewScreen: React.FC = () => {
@@ -29,6 +29,7 @@ const MediaPreviewScreen: React.FC = () => {
   const { media } = route.params;
 
   const [isMuted, setIsMuted] = useState(false);
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState(false);
   const videoRef = useRef<Video>(null);
 
   const theme = useTheme();
@@ -36,7 +37,17 @@ const MediaPreviewScreen: React.FC = () => {
 
   React.useEffect(() => {
     logger.log('[MediaPreviewScreen] Screen mounted with media:', media);
+    checkMediaLibraryPermission();
   }, [media]);
+
+  const checkMediaLibraryPermission = async () => {
+    try {
+      const permission = await MediaLibrary.getPermissionsAsync();
+      setHasMediaLibraryPermission(permission.granted);
+    } catch (error) {
+      logError('MediaPreviewScreen', 'Error checking media library permission', error);
+    }
+  };
 
   const handleDiscard = () => {
     logger.log('[MediaPreviewScreen] Discard button pressed');
@@ -62,11 +73,10 @@ const MediaPreviewScreen: React.FC = () => {
     }
   };
 
-  const handleNext = async () => {
+  const handleSend = async () => {
     try {
-      logger.log('[MediaPreviewScreen] Next button pressed. Sharing media...');
+      logger.log('[MediaPreviewScreen] Send button pressed. Sharing media...');
 
-      // For now, share the media. In the future, this could navigate to editing or posting screen
       await shareAsync(media.uri);
       logger.log('[MediaPreviewScreen] Media shared successfully.');
       navigation.goBack();
@@ -123,39 +133,41 @@ const MediaPreviewScreen: React.FC = () => {
       {/* Media display */}
       <View style={dynamicStyles.mediaContainer}>{renderMedia()}</View>
 
-      {/* Action buttons */}
+      {/* Action buttons - consistent with PhotoPreview design */}
       <View style={dynamicStyles.actionsContainer}>
+        {hasMediaLibraryPermission && (
+          <TouchableOpacity
+            style={[dynamicStyles.actionButton, dynamicStyles.saveButton]}
+            onPress={handleSave}
+            accessibilityRole='button'
+            accessibilityLabel='Save media'
+            accessibilityHint='Save to device gallery'
+          >
+            <Icon name='download' size={16} color='background' style={dynamicStyles.buttonIcon} />
+            <Text style={dynamicStyles.actionButtonText}>Save</Text>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          style={[dynamicStyles.actionButton, dynamicStyles.sendButton]}
+          onPress={handleSend}
+          accessibilityRole='button'
+          accessibilityLabel='Send media'
+          accessibilityHint='Send to a friend'
+        >
+          <Icon name='send' size={16} color='background' style={dynamicStyles.buttonIcon} />
+          <Text style={dynamicStyles.actionButtonText}>Send</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={[dynamicStyles.actionButton, dynamicStyles.discardButton]}
           onPress={handleDiscard}
           accessibilityRole='button'
           accessibilityLabel='Discard media'
-          accessibilityHint='Go back to camera without saving'
+          accessibilityHint='Delete and go back'
         >
-          <Icon name='x' size={20} color={theme.colors.white} />
+          <Icon name='trash-2' size={16} color='background' style={dynamicStyles.buttonIcon} />
           <Text style={dynamicStyles.actionButtonText}>Discard</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton, dynamicStyles.saveButton]}
-          onPress={handleSave}
-          accessibilityRole='button'
-          accessibilityLabel='Save media'
-          accessibilityHint='Save to device gallery'
-        >
-          <Icon name='download' size={20} color={theme.colors.white} />
-          <Text style={dynamicStyles.actionButtonText}>Save</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton, dynamicStyles.nextButton]}
-          onPress={handleNext}
-          accessibilityRole='button'
-          accessibilityLabel='Continue'
-          accessibilityHint='Proceed to share or edit'
-        >
-          <Icon name='arrow-right' size={20} color={theme.colors.white} />
-          <Text style={dynamicStyles.actionButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

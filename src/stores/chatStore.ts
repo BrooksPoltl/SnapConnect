@@ -1,6 +1,6 @@
 /**
  * Chat Store - Global state management for chat functionality
- * 
+ *
  * Features:
  * - Unread message count with real-time updates
  * - Conversation list management
@@ -20,14 +20,14 @@ interface ChatState {
   // Unread count state
   unreadCount: number;
   isLoadingUnreadCount: boolean;
-  
+
   // Conversations state
   conversations: Conversation[];
   isLoadingConversations: boolean;
-  
+
   // Real-time subscription
   realtimeChannel: any;
-  
+
   // Actions
   refreshUnreadCount: () => Promise<void>;
   refreshConversations: () => Promise<void>;
@@ -82,7 +82,7 @@ export const useChatStore = create<ChatState>()(
     // Initialize real-time subscriptions
     initializeRealtime: (user: User) => {
       const { cleanup, refreshUnreadCount, refreshConversations } = get();
-      
+
       // Clean up existing subscription
       cleanup();
 
@@ -100,7 +100,7 @@ export const useChatStore = create<ChatState>()(
           logger.info('New message detected, refreshing counts');
           refreshUnreadCount();
           refreshConversations();
-        }
+        },
       );
 
       // Listen for message updates (messages marked as read)
@@ -115,10 +115,10 @@ export const useChatStore = create<ChatState>()(
           logger.info('Message updated, refreshing counts');
           refreshUnreadCount();
           refreshConversations();
-        }
+        },
       );
 
-      channel.subscribe((status) => {
+      channel.subscribe(status => {
         logger.info('Chat store subscription status:', status);
       });
 
@@ -148,23 +148,23 @@ export const useChatStore = create<ChatState>()(
       });
       logger.info('Chat store reset');
     },
-  }))
+  })),
 );
 
 // Helper hook for unread count only
 export const useUnreadCount = () => {
-  const unreadCount = useChatStore((state) => state.unreadCount);
-  const refreshUnreadCount = useChatStore((state) => state.refreshUnreadCount);
-  const isLoading = useChatStore((state) => state.isLoadingUnreadCount);
-  
+  const unreadCount = useChatStore(state => state.unreadCount);
+  const refreshUnreadCount = useChatStore(state => state.refreshUnreadCount);
+  const isLoading = useChatStore(state => state.isLoadingUnreadCount);
+
   return { unreadCount, refreshUnreadCount, isLoading };
 };
 
 // Helper hook for conversations only
 export const useConversations = () => {
-  const conversations = useChatStore((state) => state.conversations);
-  const refreshConversations = useChatStore((state) => state.refreshConversations);
-  const isLoading = useChatStore((state) => state.isLoadingConversations);
-  
+  const conversations = useChatStore(state => state.conversations);
+  const refreshConversations = useChatStore(state => state.refreshConversations);
+  const isLoading = useChatStore(state => state.isLoadingConversations);
+
   return { conversations, refreshConversations, isLoading };
-}; 
+};

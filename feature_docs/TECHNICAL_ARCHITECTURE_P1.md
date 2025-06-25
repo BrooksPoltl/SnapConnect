@@ -79,15 +79,15 @@ user who is a participant. | | _Composite Primary Key on (`chat_id`, `user_id`)_
 
 Stores metadata for all chat messages.
 
-| Column Name    | Data Type     | Constraints                      | Description                               |
-| :------------- | :------------ | :------------------------------- | :---------------------------------------- |
-| `id`           | `bigint`      | Primary Key                      | Unique ID for the message.                |
-| `chat_id`      | `bigint`      | FK to `chats.id`                 | The conversation this message belongs to. |
-| `sender_id`    | `uuid`        | FK to `profiles.id`              | The user who sent the message.            |
-| `content_type` | `text`        | Check (`text`, `image`, `video`) | Type of content in the message.           |
-| `content_text` | `text`        | Nullable                         | The text of the message (if `text`).      |
-| `storage_path` | `text`        | Nullable                         | The path to media in Supabase Storage.    |
-| `created_at`   | `timestamptz` | Not Null, Default `now()`        | Timestamp when the message was sent.        |
+| Column Name    | Data Type     | Constraints                      | Description                                  |
+| :------------- | :------------ | :------------------------------- | :------------------------------------------- |
+| `id`           | `bigint`      | Primary Key                      | Unique ID for the message.                   |
+| `chat_id`      | `bigint`      | FK to `chats.id`                 | The conversation this message belongs to.    |
+| `sender_id`    | `uuid`        | FK to `profiles.id`              | The user who sent the message.               |
+| `content_type` | `text`        | Check (`text`, `image`, `video`) | Type of content in the message.              |
+| `content_text` | `text`        | Nullable                         | The text of the message (if `text`).         |
+| `storage_path` | `text`        | Nullable                         | The path to media in Supabase Storage.       |
+| `created_at`   | `timestamptz` | Not Null, Default `now()`        | Timestamp when the message was sent.         |
 | `viewed_at`    | `timestamptz` | Nullable                         | Timestamp when the message was first viewed. |
 
 ### Table: `stories`
@@ -118,8 +118,9 @@ granted only through explicit policies.
 - **Example (`stories` SELECT Policy)**: A user can see a story if
   `story.created_at` is within 24 hours AND (`story.privacy` is 'public' OR the
   user is an accepted friend of `story.author_id`). For private `messages`, a
-  similar policy will grant access only if the message has not yet been viewed, or
-  if it has been viewed within the last 24 hours (i.e., `now() - viewed_at < '24 hours'::interval`).
+  similar policy will grant access only if the message has not yet been viewed,
+  or if it has been viewed within the last 24 hours (i.e.,
+  `now() - viewed_at < '24 hours'::interval`).
 
 ### 4.2. Content Expiration: Hybrid TTL Model
 
@@ -127,16 +128,20 @@ A two-part system ensures content disappears reliably and the system remains
 performant.
 
 1.  **Instant Invisibility**: RLS policies on `messages` and `stories` prevent
-    users from selecting any expired rows. This provides the exact user experience
-    of content disappearing on time.
-    - For `stories`, policies hide rows where `created_at` is older than 24 hours.
-    - For private `messages`, policies hide rows where `viewed_at` is not null and is older than 24 hours. Unread messages remain visible indefinitely until read.
+    users from selecting any expired rows. This provides the exact user
+    experience of content disappearing on time.
+    - For `stories`, policies hide rows where `created_at` is older than 24
+      hours.
+    - For private `messages`, policies hide rows where `viewed_at` is not null
+      and is older than 24 hours. Unread messages remain visible indefinitely
+      until read.
 2.  **Permanent Deletion**: A scheduled Supabase Edge Function (`daily_cleanup`)
     runs once per day to permanently delete data and associated files from
     Storage that are older than 24 hours. This prevents data accumulation and
     keeps storage costs manageable.
     - The job deletes `stories` where `created_at` is older than 24 hours.
-    - The job also deletes `messages` where `viewed_at` is not null and is older than 24 hours.
+    - The job also deletes `messages` where `viewed_at` is not null and is older
+      than 24 hours.
 
 ### 4.3. User Score Logic
 

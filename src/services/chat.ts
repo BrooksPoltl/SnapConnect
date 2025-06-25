@@ -14,14 +14,14 @@ import type { Conversation, Message } from '../types/chat';
 export async function getConversations(): Promise<Conversation[]> {
   try {
     logger.info('Fetching user conversations');
-    
+
     const { data, error } = await supabase.rpc('get_user_conversations');
-    
+
     if (error) {
       logger.error('Error fetching conversations:', error);
       throw new Error(`Failed to fetch conversations: ${error.message}`);
     }
-    
+
     logger.info(`Successfully fetched ${data?.length || 0} conversations`);
     return data || [];
   } catch (error) {
@@ -37,16 +37,16 @@ export async function getConversations(): Promise<Conversation[]> {
 export async function markMessagesAsRead(chatId: number): Promise<void> {
   try {
     logger.info(`Marking messages as read for chat ${chatId}`);
-    
+
     const { error } = await supabase.rpc('mark_messages_as_viewed', {
       p_chat_id: chatId,
     });
-    
+
     if (error) {
       logger.error('Error marking messages as read:', error);
       throw new Error(`Failed to mark messages as read: ${error.message}`);
     }
-    
+
     logger.info(`Successfully marked messages as read for chat ${chatId}`);
   } catch (error) {
     logger.error('Error in markMessagesAsRead:', error);
@@ -63,17 +63,17 @@ export async function markMessagesAsRead(chatId: number): Promise<void> {
 export async function sendMessage(chatId: number, content: string): Promise<number> {
   try {
     logger.info(`Sending message to chat ${chatId}`);
-    
+
     const { data, error } = await supabase.rpc('send_message', {
       p_chat_id: chatId,
       p_content_text: content,
     });
-    
+
     if (error) {
       logger.error('Error sending message:', error);
       throw new Error(`Failed to send message: ${error.message}`);
     }
-    
+
     logger.info(`Successfully sent message ${data} to chat ${chatId}`);
     return data;
   } catch (error) {
@@ -91,17 +91,17 @@ export async function sendMessage(chatId: number, content: string): Promise<numb
 export async function getChatMessages(chatId: number, limit: number = 50): Promise<Message[]> {
   try {
     logger.info(`Fetching messages for chat ${chatId} (limit: ${limit})`);
-    
+
     const { data, error } = await supabase.rpc('get_chat_messages', {
       p_chat_id: chatId,
       p_limit: limit,
     });
-    
+
     if (error) {
       logger.error('Error fetching chat messages:', error);
       throw new Error(`Failed to fetch chat messages: ${error.message}`);
     }
-    
+
     logger.info(`Successfully fetched ${data?.length || 0} messages for chat ${chatId}`);
     return data || [];
   } catch (error) {
@@ -118,16 +118,16 @@ export async function getChatMessages(chatId: number, limit: number = 50): Promi
 export async function getOrCreateDirectChat(otherUserId: string): Promise<number> {
   try {
     logger.info(`Getting or creating direct chat with user ${otherUserId}`);
-    
+
     const { data, error } = await supabase.rpc('create_direct_chat', {
       other_user_id: otherUserId,
     });
-    
+
     if (error) {
       logger.error('Error creating/getting direct chat:', error);
       throw new Error(`Failed to create/get direct chat: ${error.message}`);
     }
-    
+
     logger.info(`Successfully got/created chat ${data} with user ${otherUserId}`);
     return data;
   } catch (error) {
@@ -143,14 +143,14 @@ export async function getOrCreateDirectChat(otherUserId: string): Promise<number
 export async function getTotalUnreadCount(): Promise<number> {
   try {
     logger.info('Fetching total unread message count');
-    
+
     const { data, error } = await supabase.rpc('get_total_unread_count');
-    
+
     if (error) {
       logger.error('Error fetching total unread count:', error);
       throw new Error(`Failed to fetch total unread count: ${error.message}`);
     }
-    
+
     const count = data || 0;
     logger.info(`Total unread messages: ${count}`);
     return count;
@@ -158,4 +158,4 @@ export async function getTotalUnreadCount(): Promise<number> {
     logger.error('Error in getTotalUnreadCount:', error);
     throw error;
   }
-} 
+}

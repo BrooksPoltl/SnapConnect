@@ -1,6 +1,6 @@
 /**
  * ChatScreen Component
- * 
+ *
  * Displays a list of all active conversations for the current user.
  * Shows real-time updates for new messages and read receipts.
  */
@@ -38,34 +38,33 @@ const ChatScreen: React.FC = () => {
   /**
    * Navigates to the conversation screen
    */
-  const handleConversationPress = useCallback(async (
-    chatId: number,
-    otherUserId: string,
-    otherUsername: string,
-  ) => {
-    try {
-      // If chatId is 0, we need to create a new chat
-      let finalChatId = chatId;
-      if (chatId === 0) {
-        finalChatId = await getOrCreateDirectChat(otherUserId);
-      }
+  const handleConversationPress = useCallback(
+    async (chatId: number, otherUserId: string, otherUsername: string) => {
+      try {
+        // If chatId is 0, we need to create a new chat
+        let finalChatId = chatId;
+        if (chatId === 0) {
+          finalChatId = await getOrCreateDirectChat(otherUserId);
+        }
 
-      navigation.navigate('Conversation', {
-        chatId: finalChatId,
-        otherUserId,
-        otherUsername,
-      });
-    } catch (error) {
-      logger.error('Error navigating to conversation:', error);
-      Alert.alert('Error', 'Failed to open conversation. Please try again.');
-    }
-  }, [navigation]);
+        navigation.navigate('Conversation', {
+          chatId: finalChatId,
+          otherUserId,
+          otherUsername,
+        });
+      } catch (error) {
+        logger.error('Error navigating to conversation:', error);
+        Alert.alert('Error', 'Failed to open conversation. Please try again.');
+      }
+    },
+    [navigation],
+  );
 
   // Refresh conversations when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       refreshConversations();
-    }, [refreshConversations])
+    }, [refreshConversations]),
   );
 
   /**
@@ -109,11 +108,11 @@ const ChatScreen: React.FC = () => {
       <View style={dynamicStyles.header}>
         <Text style={dynamicStyles.headerTitle}>Chat</Text>
       </View>
-      
+
       <FlatList
         data={conversations}
         renderItem={renderConversationItem}
-        keyExtractor={(item) => item.chat_id.toString()}
+        keyExtractor={item => item.chat_id.toString()}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}

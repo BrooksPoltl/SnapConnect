@@ -41,7 +41,7 @@ const PhotoPreview: React.FC<PhotoPreviewProps> = memo(
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={[dynamicStyles.actionButton, dynamicStyles.shareButton]}
+            style={[dynamicStyles.actionButton, dynamicStyles.sendButton]}
             onPress={onSend}
             accessibilityRole='button'
             accessibilityLabel='Send photo'

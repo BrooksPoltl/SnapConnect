@@ -83,20 +83,18 @@ const MainTabNavigator: React.FC = () => {
    */
   const renderTabIcon = (routeName: string, size: number) => {
     const iconName = getIconName(routeName);
-    
+
     if (routeName === 'ChatStack' && unreadCount > 0) {
       return (
         <View style={tabStyles.iconContainer}>
           <Icon name={iconName} size={size || 24} color={theme.colors.white} />
           <View style={tabStyles.badge}>
-            <Text style={tabStyles.badgeText}>
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Text>
+            <Text style={tabStyles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
           </View>
         </View>
       );
     }
-    
+
     return <Icon name={iconName} size={size || 24} color={theme.colors.white} />;
   };
 

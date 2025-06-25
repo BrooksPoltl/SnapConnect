@@ -78,4 +78,4 @@ export const styles = (theme: Theme) =>
       fontWeight: '600',
       color: theme.colors.white,
     },
-  }); 
+  });

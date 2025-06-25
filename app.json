@@ -37,14 +37,6 @@
             "useFrameworks": "static"
           }
         }
-      ],
-      [
-        "react-native-vision-camera",
-        {
-          "cameraPermissionText": "snapconnect needs access to your Camera.",
-          "enableMicrophonePermission": true,
-          "microphonePermissionText": "snapconnect needs access to your Microphone."
-        }
       ]
     ],
     "extra": {

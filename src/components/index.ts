@@ -6,8 +6,6 @@
  */
 
 export { default as AuthButton } from './AuthButton';
-export { default as CameraActions } from './CameraActions';
-export { default as CameraControls } from './CameraControls';
 export { default as CameraOptions } from './CameraOptions';
 export { default as CameraPermissionStatus } from './CameraPermissionStatus';
 export { default as DisclaimerText } from './DisclaimerText';

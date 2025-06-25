@@ -1,3 +1,5 @@
+import { CapturedMedia } from './media';
+
 export type AuthStackParamList = {
   AuthHome: undefined;
   Login: undefined;
@@ -6,6 +8,7 @@ export type AuthStackParamList = {
 };
 
 export type UserStackParamList = {
+  Main: undefined;
   Home: undefined;
   Camera: undefined;
   Chat: undefined;
@@ -13,6 +16,7 @@ export type UserStackParamList = {
   Stories: undefined;
   Spotlight: undefined;
   Profile: undefined;
+  MediaPreview: { media: CapturedMedia };
 };
 
 export type ChatStackParamList = {

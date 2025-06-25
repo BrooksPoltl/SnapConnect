@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import { useTheme } from '../../styles/theme';
-import { Icon } from '../';
+import Icon from '../Icon';
 
 import { styles } from './styles';
 

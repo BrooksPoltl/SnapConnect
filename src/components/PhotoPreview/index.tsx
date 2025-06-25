@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraCapturedPicture } from 'expo-camera';
 
 import { useTheme } from '../../styles/theme';
-import { Icon } from '../';
+import Icon from '../Icon';
 
 import { styles } from './styles';
 

@@ -75,4 +75,77 @@ export const styles = (theme: Theme) =>
     discardButton: {
       backgroundColor: theme.colors.error,
     },
+    // Video recording styles
+    recordingIndicator: {
+      position: 'absolute',
+      top: theme.spacing.xl,
+      left: theme.spacing.lg,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.borderRadius.pill,
+    },
+    recordingDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: '#FF3B30',
+      marginRight: theme.spacing.sm,
+    },
+    recordingText: {
+      color: theme.colors.white,
+      fontSize: theme.fontSizes.sm,
+      fontWeight: theme.fontWeights.semibold,
+    },
+
+    // --- Unified Capture Control Styles ---
+    actionsContainer: {
+      position: 'absolute',
+      bottom: 40,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around', // Use space-around for better distribution
+      paddingHorizontal: 20,
+    },
+
+    sideButton: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+
+    captureButton: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: 'transparent',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 6,
+      borderColor: 'white',
+    },
+
+    captureButtonInner: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: 'white',
+      transform: [{ scale: 1 }],
+    },
+
+    recordingButton: {
+      backgroundColor: '#FF3B30', // A vibrant red for recording
+      transform: [{ scale: 0.6 }], // Shrinks to indicate recording
+    },
+
+    disabledButton: {
+      opacity: 0.3,
+    },
   });

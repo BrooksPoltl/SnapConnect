@@ -127,7 +127,6 @@ export default [
 
       // General rules
       'no-unused-vars': 'off',
-      'no-undef': 'error',
     },
     settings: {
       react: {
@@ -139,6 +138,12 @@ export default [
           project: './tsconfig.json',
         },
       },
+    },
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      'no-undef': 'off',
     },
   },
   {

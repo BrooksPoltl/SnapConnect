@@ -1,0 +1,81 @@
+---
+description: Supabase best practices
+globs: 
+alwaysApply: false
+---
+These rules ensure efficient, secure, and maintainable Supabase integration in React Native projects using Expo. They apply to Supabase logic in `services/` or files with Supabase operations. They build on the [General Rules](mdc:.cursor/rules/base.mdc), [TypeScript Rules](mdc:.cursor/rules/typescript.mdc), [Component Rules](mdc:.cursor/rules/components.mdc), and [Styling Rules](mdc:.cursor/rules/styling.mdc).
+
+## General Guidelines
+- Use the `@supabase/supabase-js` client library for all database operations.
+- Place all Supabase logic in `services/` directory, organized by feature (auth, chat, friends, user).
+- Avoid direct Supabase calls in components; encapsulate logic in services or hooks.
+- Use TypeScript Database types for type-safe queries and operations.
+
+## Client Configuration
+- Initialize Supabase client once in `services/supabase.ts` with environment variables.
+- Configure AsyncStorage for auth persistence in React Native.
+- Enable auto-refresh tokens and persistent sessions for seamless auth.
+- Validate environment variables on initialization to catch config issues early.
+- Example: Client should be configured with `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+
+## Data Operations
+- Use RPC (Remote Procedure Call) functions for complex operations instead of raw SQL.
+- Implement proper pagination using `limit` and `offset` or cursor-based pagination.
+- Prefer database functions over client-side data manipulation for performance.
+- Use batch operations when performing multiple related database changes.
+- Example: Use `supabase.rpc('get_user_conversations')` instead of complex joins in client code.
+
+## Security & RLS
+- Rely on Row Level Security (RLS) policies for data access control.
+- Never bypass RLS; let PostgreSQL policies handle authorization.
+- Use `auth.uid()` in RLS policies to restrict access to user's own data.
+- Implement friend-based visibility through RLS policies for social features.
+- Example: Messages should only be visible to chat participants via RLS policies.
+
+## Type Safety
+- Define Database interface with complete table schemas in `services/supabase.ts`.
+- Use typed Supabase client with `createClient<Database>()` for compile-time safety.
+- Define Row, Insert, and Update types for each table.
+- Import and use specific types in service functions.
+- Example: Function parameters should use `Database['public']['Tables']['users']['Insert']` for user creation.
+
+## Error Handling
+- Wrap all Supabase operations in `try-catch` blocks with meaningful error messages.
+- Log all service operations using the dedicated logger utility.
+- Check for `error` property in Supabase responses before accessing `data`.
+- Throw descriptive errors that include context about the failed operation.
+- Example: Catch database errors and re-throw with user-friendly messages like "Failed to send message".
+
+## Real-time Features
+- Use Supabase Realtime for live updates on messages, notifications, and social features.
+- Subscribe to specific table changes using `supabase.channel()` and filters.
+- Clean up subscriptions in component unmount to prevent memory leaks.
+- Handle connection states and implement retry logic for robustness.
+- Example: Subscribe to new messages in active chat conversations only.
+
+## Storage Operations
+- Use Supabase Storage for media files (images, videos, documents).
+- Organize files in logical buckets (e.g., 'media', 'avatars', 'documents').
+- Generate unique file names using timestamps or UUIDs to prevent conflicts.
+- Handle file upload failures gracefully with cleanup of orphaned files.
+- Example: Upload media files with proper content-type headers and clean up on RPC failures.
+
+## Performance
+- Use database functions (stored procedures) for complex queries and business logic.
+- Minimize client-server round trips by combining operations in single RPC calls.
+- Implement connection pooling and query optimization at the database level.
+- Cache frequently accessed data appropriately, respecting real-time requirements.
+- Example: Use `send_media_to_friends` RPC to handle multiple chat creations and message sends atomically.
+
+## Logging & Monitoring
+- Log all service function calls with context using the logger utility.
+- Include relevant IDs, counts, and operation details in log messages.
+- Log both successful operations and errors for debugging and monitoring.
+- Use structured logging with consistent message formats.
+- Example: Log "Successfully fetched 5 conversations" and "Error sending message: [error details]".
+
+## Notes
+- Monitor Supabase dashboard for query performance and usage patterns.
+- Use Supabase CLI for local development with Docker containers.
+- Apply database migrations systematically using the migrations directory.
+- Refer to Supabase documentation for PostgreSQL-specific features and RLS patterns.

@@ -123,7 +123,9 @@ export const styles = (theme: Theme) =>
     backButton: {
       padding: 10,
     },
-
+    friendsButton: {
+      padding: 10,
+    },
     bottomControlsContainer: {
       position: 'absolute',
       bottom: 0,

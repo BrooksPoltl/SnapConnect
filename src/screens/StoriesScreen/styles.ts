@@ -8,6 +8,23 @@ export const styles = (theme: Theme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
     },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.text,
+    },
+    friendsButton: {
+      padding: 8,
+    },
     content: {
       flex: 1,
       justifyContent: 'center',

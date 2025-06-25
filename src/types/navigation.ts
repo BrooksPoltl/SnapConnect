@@ -15,8 +15,9 @@ export type UserStackParamList = {
   Map: undefined;
   Stories: undefined;
   Spotlight: undefined;
-  Profile: undefined;
+  Profile: { userId?: string };
   MediaPreview: { media: CapturedMedia };
+  Friends: undefined;
 };
 
 export type ChatStackParamList = {

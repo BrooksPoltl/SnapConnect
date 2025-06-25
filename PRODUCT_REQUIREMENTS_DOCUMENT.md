@@ -144,8 +144,8 @@ fostering a more informed and connected financial community.
 5.  **Core Content Features**:
     - Implement the logic for sending disappearing photo/video messages to
       friends.
-    - Implement the backend logic (Postgres metadata) and frontend UI for
-      public and private Stories.
+    - Implement the backend logic (Postgres metadata) and frontend UI for public
+      and private Stories.
     - Set up Supabase Edge Functions and TTL policies to handle the 24-hour
       expiration of all content.
 6.  **Scoring & Finalization**:
@@ -261,8 +261,8 @@ grow through his User Score, all in one seamless experience.
 
 ### 9.1. Integration points
 
-- **Supabase**: For Authentication, Postgres, Realtime, Storage, and
-  Edge Functions.
+- **Supabase**: For Authentication, Postgres, Realtime, Storage, and Edge
+  Functions.
 - **OpenAI**: For embeddings and the language model used in the RAG pipeline.
 - **Vector Database**: A vector database solution (e.g., Pinecone, Weaviate)
   will be required to store and query embeddings from EDGAR documents for the
@@ -284,8 +284,8 @@ grow through his User Score, all in one seamless experience.
 
 ### 9.3. Scalability & performance
 
-- Supabase services are designed for high scalability. Postgres
-  queries must be structured efficiently to minimize cost and latency.
+- Supabase services are designed for high scalability. Postgres queries must be
+  structured efficiently to minimize cost and latency.
 - Media uploads should be optimized for mobile networks, possibly with
   client-side compression before upload.
 - The RAG feature is the most significant performance consideration; the Edge

@@ -16,6 +16,7 @@ import { useTheme } from '../styles/theme';
 import { UserStackParamList } from '../types/navigation';
 
 import ChatStack from './ChatStack';
+import FriendsStack from './FriendsStack';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -104,6 +105,14 @@ const UserStack: React.FC = () => (
       <Stack.Screen
         name='MediaPreview'
         component={MediaPreviewScreen}
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Friends'
+        component={FriendsStack}
         options={{
           presentation: 'modal',
           headerShown: false,

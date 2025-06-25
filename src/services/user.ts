@@ -1,5 +1,6 @@
 /**
- * Database service using Supabase PostgreSQL
+ * User service using Supabase PostgreSQL
+ * Handles all user profile related operations
  * Following official Supabase patterns for React Native
  */
 import { supabase } from './supabase';
@@ -13,25 +14,60 @@ import { logger } from '../utils/logger';
  */
 export const getUserData = async (userId: string): Promise<UserData | null> => {
   try {
-    logger.info('Database', `Fetching user data for ID: ${userId}`);
+    logger.info('UserService', `Fetching user data for ID: ${userId}`);
 
     const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
 
     if (error) {
       if (error.code === 'PGRST116') {
         // No rows returned
-        logger.info('Database', 'User data not found');
+        logger.info('UserService', 'User data not found');
         return null;
       }
       throw error;
     }
 
-    logger.info('Database', 'User data fetched successfully');
+    logger.info('UserService', 'User data fetched successfully');
     return data as UserData;
   } catch (error: unknown) {
-    logger.error('Database', 'Error fetching user data', error);
+    logger.error('UserService', 'Error fetching user data', error);
     throw new Error(
       `Failed to fetch user data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
+};
+
+/**
+ * Fetches a user's public profile (username and score only)
+ * @param userId - User's unique identifier
+ * @returns Public profile data or null if not found
+ */
+export const getUserProfile = async (
+  userId: string,
+): Promise<{ username: string; score: number } | null> => {
+  try {
+    logger.info('UserService', `Fetching public profile for ID: ${userId}`);
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('username, score')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        logger.info('UserService', 'User profile not found');
+        return null;
+      }
+      throw error;
+    }
+
+    logger.info('UserService', 'User profile fetched successfully');
+    return data;
+  } catch (error: unknown) {
+    logger.error('UserService', 'Error fetching user profile', error);
+    throw new Error(
+      `Failed to fetch user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 };
@@ -43,7 +79,7 @@ export const getUserData = async (userId: string): Promise<UserData | null> => {
  */
 export const saveUserData = async (userId: string, userData: Partial<UserData>): Promise<void> => {
   try {
-    logger.info('Database', `Saving user data for ID: ${userId}`);
+    logger.info('UserService', `Saving user data for ID: ${userId}`);
 
     const { error } = await supabase.from('users').upsert(
       {
@@ -58,9 +94,9 @@ export const saveUserData = async (userId: string, userData: Partial<UserData>):
 
     if (error) throw error;
 
-    logger.info('Database', 'User data saved successfully');
+    logger.info('UserService', 'User data saved successfully');
   } catch (error: unknown) {
-    logger.error('Database', 'Error saving user data', error);
+    logger.error('UserService', 'Error saving user data', error);
     throw new Error(
       `Failed to save user data: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
@@ -74,7 +110,7 @@ export const saveUserData = async (userId: string, userData: Partial<UserData>):
  */
 export const updateUserData = async (userId: string, updates: Partial<UserData>): Promise<void> => {
   try {
-    logger.info('Database', `Updating user data for ID: ${userId}`);
+    logger.info('UserService', `Updating user data for ID: ${userId}`);
 
     const { error } = await supabase
       .from('users')
@@ -86,11 +122,35 @@ export const updateUserData = async (userId: string, updates: Partial<UserData>)
 
     if (error) throw error;
 
-    logger.info('Database', 'User data updated successfully');
+    logger.info('UserService', 'User data updated successfully');
   } catch (error: unknown) {
-    logger.error('Database', 'Error updating user data', error);
+    logger.error('UserService', 'Error updating user data', error);
     throw new Error(
       `Failed to update user data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
+};
+
+/**
+ * Securely updates a user's username via backend function
+ * This will call a Postgres function that enforces validation
+ * @param newUsername - The new username to set
+ */
+export const updateUsername = async (newUsername: string): Promise<void> => {
+  try {
+    logger.info('UserService', 'Updating username via secure backend function');
+
+    const { error } = await supabase.rpc('change_username', {
+      new_username: newUsername,
+    });
+
+    if (error) throw error;
+
+    logger.info('UserService', 'Username updated successfully');
+  } catch (error: unknown) {
+    logger.error('UserService', 'Error updating username', error);
+    throw new Error(
+      `Failed to update username: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 };
@@ -101,15 +161,15 @@ export const updateUserData = async (userId: string, updates: Partial<UserData>)
  */
 export const deleteUserData = async (userId: string): Promise<void> => {
   try {
-    logger.info('Database', `Deleting user data for ID: ${userId}`);
+    logger.info('UserService', `Deleting user data for ID: ${userId}`);
 
     const { error } = await supabase.from('users').delete().eq('id', userId);
 
     if (error) throw error;
 
-    logger.info('Database', 'User data deleted successfully');
+    logger.info('UserService', 'User data deleted successfully');
   } catch (error: unknown) {
-    logger.error('Database', 'Error deleting user data', error);
+    logger.error('UserService', 'Error deleting user data', error);
     throw new Error(
       `Failed to delete user data: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
@@ -127,7 +187,7 @@ export const getUsers = async (
   offset: number = 0,
 ): Promise<{ users: UserData[]; hasMore: boolean }> => {
   try {
-    logger.info('Database', `Fetching users with page size: ${pageSize}, offset: ${offset}`);
+    logger.info('UserService', `Fetching users with page size: ${pageSize}, offset: ${offset}`);
 
     const { data, error } = await supabase
       .from('users')
@@ -140,10 +200,10 @@ export const getUsers = async (
     const users = data as UserData[];
     const hasMore = users.length === pageSize;
 
-    logger.info('Database', `Fetched ${users.length} users successfully`);
+    logger.info('UserService', `Fetched ${users.length} users successfully`);
     return { users, hasMore };
   } catch (error: unknown) {
-    logger.error('Database', 'Error fetching users', error);
+    logger.error('UserService', 'Error fetching users', error);
     throw new Error(
       `Failed to fetch users: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
@@ -158,20 +218,20 @@ export const getUsers = async (
  */
 export const searchUsers = async (searchTerm: string, limit: number = 10): Promise<UserData[]> => {
   try {
-    logger.info('Database', `Searching users with term: ${searchTerm}`);
+    logger.info('UserService', `Searching users with term: ${searchTerm}`);
 
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
+      .from('profiles')
+      .select('id, username, score')
       .ilike('username', `%${searchTerm}%`)
       .limit(limit);
 
     if (error) throw error;
 
-    logger.info('Database', `Found ${data.length} matching users`);
+    logger.info('UserService', `Found ${data.length} matching users`);
     return data as UserData[];
   } catch (error: unknown) {
-    logger.error('Database', 'Error searching users', error);
+    logger.error('UserService', 'Error searching users', error);
     throw new Error(
       `Failed to search users: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );

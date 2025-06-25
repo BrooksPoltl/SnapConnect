@@ -262,6 +262,12 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name='close-outline' size={32} color={theme.colors.white} />
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Friends')}
+            style={styles.friendsButton}
+          >
+            <Ionicons name='people-outline' size={28} color={theme.colors.white} />
+          </TouchableOpacity>
         </View>
 
         <CameraOptions

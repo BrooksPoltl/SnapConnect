@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
-import { getUserData } from '../../services/database';
+import { getUserData } from '../../services/user';
 import { AuthenticationResult } from '../../types/auth';
 import { UserData } from '../../types/user';
 import { logError } from '../logger';

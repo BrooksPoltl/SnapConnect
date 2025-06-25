@@ -121,18 +121,18 @@ fostering a more informed and connected financial community.
 
 1.  **Project & Auth Foundation**:
     - Initialize React Native (Expo) project and setup basic file structure.
-    - Implement Firebase Authentication (email/password), including sign-up,
+    - Implement Supabase Authentication (email/password), including sign-up,
       login, and the 18+ confirmation checkbox.
     - Set up basic navigation shell (Auth Stack and Main App Stack).
 2.  **User Profiles & Friend Management**:
-    - Create Firestore schema for user profiles (username, score, etc.).
+    - Create Postgres schema for user profiles (username, score, etc.).
     - Build the user profile UI.
     - Implement friend request logic (send, accept, decline), search by
       username, and friend list display.
     - Implement block/remove friend functionality.
     - Implement the "suggest random active users" feature.
 3.  **Real-Time Chat**:
-    - Set up Firebase Realtime Database for chat messages.
+    - Set up Supabase Realtime for chat messages.
     - Build the chat list screen and the individual chat conversation UI.
     - Implement real-time message sending and receiving.
 4.  **Camera & AR Filter**:
@@ -144,15 +144,15 @@ fostering a more informed and connected financial community.
 5.  **Core Content Features**:
     - Implement the logic for sending disappearing photo/video messages to
       friends.
-    - Implement the backend logic (Firestore metadata) and frontend UI for
+    - Implement the backend logic (Postgres metadata) and frontend UI for
       public and private Stories.
-    - Set up Firebase Cloud Functions and TTL policies to handle the 24-hour
+    - Set up Supabase Edge Functions and TTL policies to handle the 24-hour
       expiration of all content.
 6.  **Scoring & Finalization**:
-    - Implement the User Score logic in Firestore, triggered by sending messages
+    - Implement the User Score logic in Postgres, triggered by sending messages
       and posting stories.
     - Implement basic push notifications for new messages and friend requests
-      using Firebase Cloud Messaging.
+      using Supabase.
     - Polish the overall UI/UX, focusing on the main navigation flow between
       camera, chat, and stories.
 
@@ -165,7 +165,7 @@ fostering a more informed and connected financial community.
       compatible vector store) and create embeddings for the EDGAR data.
     - Index the embeddings for efficient querying.
 2.  **AI Cloud Function**:
-    - Develop and deploy a Firebase Cloud Function that serves as the RAG
+    - Develop and deploy a Supabase Edge Function that serves as the RAG
       endpoint.
     - The function will take a user query (e.g., "Tesla 10-Q"), retrieve
       relevant text chunks from the Vector DB, and pass them as context to the
@@ -177,7 +177,7 @@ fostering a more informed and connected financial community.
     - Integrate the RAG feature into the post-creation flow.
     - Build the UI to present the three generated caption options to the user.
     - Implement the feedback mechanism to log the user's caption choice to
-      Firestore for future personalization.
+      Postgres for future personalization.
 
 ## 6. User experience
 
@@ -255,14 +255,14 @@ grow through his User Score, all in one seamless experience.
 
 - Application crash rate and ANR (Application Not Responding) rate.
 - Median latency for message delivery and media uploads.
-- API uptime and server response times for all Firebase services.
+- API uptime and server response times for all Supabase services.
 
 ## 9. Technical considerations
 
 ### 9.1. Integration points
 
-- **Firebase**: For Authentication, Firestore, Realtime Database, Storage, and
-  Cloud Functions.
+- **Supabase**: For Authentication, Postgres, Realtime, Storage, and
+  Edge Functions.
 - **OpenAI**: For embeddings and the language model used in the RAG pipeline.
 - **Vector Database**: A vector database solution (e.g., Pinecone, Weaviate)
   will be required to store and query embeddings from EDGAR documents for the
@@ -273,22 +273,22 @@ grow through his User Score, all in one seamless experience.
 ### 9.2. Data storage & privacy
 
 - User profiles, friend graphs, scores, and post metadata will be stored in
-  Firestore.
-- Photos and videos will be stored in Firebase Storage.
-- Real-time chat messages will be handled by Firebase Realtime Database.
+  Postgres.
+- Photos and videos will be stored in Supabase Storage.
+- Real-time chat messages will be handled by Supabase Realtime.
 - All user-generated content (messages and stories) will have a 24-hour
   Time-to-Live (TTL) and must be deleted after expiration. This will be managed
-  via backend logic (e.g., Cloud Functions with a cron job).
+  via backend logic (e.g., Edge Functions with a cron job).
 - Direct messages are strictly private between users. Story privacy is
   controlled by the user at the post level.
 
 ### 9.3. Scalability & performance
 
-- Firebase services are designed for high scalability. Firestore and Realtime
-  Database queries must be structured efficiently to minimize cost and latency.
+- Supabase services are designed for high scalability. Postgres
+  queries must be structured efficiently to minimize cost and latency.
 - Media uploads should be optimized for mobile networks, possibly with
   client-side compression before upload.
-- The RAG feature is the most significant performance consideration; the Cloud
+- The RAG feature is the most significant performance consideration; the Edge
   Function must be optimized for fast response times to ensure a good user
   experience.
 

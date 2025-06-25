@@ -4,6 +4,22 @@ SnapConnect is a mobile-first social messaging application designed for the fina
 
 The application allows users—from professional analysts to retail investors and students—to share timely insights, fostering a more informed and connected financial community.
 
+## Table of Contents
+
+- [1. Product Vision](#1-product-vision)
+  - [1.1. The Problem](#11-the-problem)
+  - [1.2. Our Solution](#12-our-solution)
+  - [1.3. Target Audience](#13-target-audience)
+- [2. Key Features](#2-key-features)
+- [3. Development Roadmap](#3-development-roadmap)
+- [4. Technical Architecture](#4-technical-architecture)
+  - [4.1. Technology Stack](#41-technology-stack)
+  - [4.2. Project Structure](#42-project-structure)
+  - [4.3. Core Backend Logic](#43-core-backend-logic)
+- [5. Getting Started](#5-getting-started)
+  - [5.1. Prerequisites](#51-prerequisites)
+  - [5.2. Installation](#52-installation)
+
 ## 1. Product Vision
 
 ### 1.1. The Problem

@@ -39,7 +39,18 @@ export const sendFriendRequest = async (recipientId: string): Promise<void> => {
   try {
     logger.info('FriendsService', `Sending friend request to user: ${recipientId}`);
 
+    // Get current user ID
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const currentUserId = user?.id;
+
+    if (!currentUserId) {
+      throw new Error('User not authenticated');
+    }
+
     const { error } = await supabase.from('friendships').insert({
+      user_id_1: currentUserId,
       user_id_2: recipientId,
       status: 'pending',
     });
@@ -63,6 +74,16 @@ export const getFriendRequests = async (): Promise<FriendRequest[]> => {
   try {
     logger.info('FriendsService', 'Fetching incoming friend requests');
 
+    // Get current user ID
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const currentUserId = user?.id;
+
+    if (!currentUserId) {
+      throw new Error('User not authenticated');
+    }
+
     const { data, error } = await supabase
       .from('friendships')
       .select(
@@ -76,6 +97,7 @@ export const getFriendRequests = async (): Promise<FriendRequest[]> => {
         requester:profiles!friendships_user_id_1_fkey(id, username, score)
       `,
       )
+      .eq('user_id_2', currentUserId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
 

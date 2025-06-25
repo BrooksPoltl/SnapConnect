@@ -45,7 +45,7 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   try {
     logger.info('Auth', 'Attempting to create new user account');
     const { email, password, name, username } = credentials;
-    
+
     // Create the auth user
     const { data, error } = await supabase.auth.signUp({
       email,

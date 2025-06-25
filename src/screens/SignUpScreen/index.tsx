@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { View, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { CommonActions } from '@react-navigation/native';
 
 import { AuthStackParamList } from '../../types/navigation';
 import { supabase } from '../../services/supabase';
@@ -82,33 +81,35 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     setLoading(true);
     try {
       logger.info('SignUpScreen', 'Starting signup process');
-      
+
       // Create user account and profile
       const user = await signUp(credentials);
-      
+
       logger.info('SignUpScreen', 'Signup successful, user created:', user.id);
-      
-             // Check if the user is now authenticated
-       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-       
-       if (sessionError) {
-         logger.error('SignUpScreen', 'Error getting session after signup:', sessionError);
-              } else if (session) {
-         logger.info('SignUpScreen', 'User is authenticated, session exists');
-         
-         // Force a session refresh to trigger the auth state change
-         await supabase.auth.refreshSession();
-         
-         logger.info('SignUpScreen', 'Session refreshed, navigation should occur automatically');
-       } else {
-         logger.warn('SignUpScreen', 'No session found after signup, user may need to verify email');
-         Alert.alert(
-           'Account Created', 
-           'Your account has been created successfully. You may need to verify your email before signing in.',
-           [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-         );
-       }
-      
+
+      // Check if the user is now authenticated
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        logger.error('SignUpScreen', 'Error getting session after signup:', sessionError);
+      } else if (session) {
+        logger.info('SignUpScreen', 'User is authenticated, session exists');
+
+        // Force a session refresh to trigger the auth state change
+        await supabase.auth.refreshSession();
+
+        logger.info('SignUpScreen', 'Session refreshed, navigation should occur automatically');
+      } else {
+        logger.warn('SignUpScreen', 'No session found after signup, user may need to verify email');
+        Alert.alert(
+          'Account Created',
+          'Your account has been created successfully. You may need to verify your email before signing in.',
+          [{ text: 'OK', onPress: () => navigation.navigate('Login') }],
+        );
+      }
     } catch (error) {
       logger.error('SignUpScreen', 'Signup failed:', error);
       const authError = error as AuthError;

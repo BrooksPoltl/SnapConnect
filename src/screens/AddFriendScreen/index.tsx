@@ -196,14 +196,17 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
 
     return (
       <View key={user.id} style={styles.userItem}>
-        <TouchableOpacity style={styles.userInfo} onPress={() => handleViewProfile(user.id!)}>
+        <TouchableOpacity
+          style={styles.userInfo}
+          onPress={() => user.id && handleViewProfile(user.id)}
+        >
           <Text style={styles.username}>{user.username ?? 'Unknown User'}</Text>
           <Text style={styles.score}>Score: {user.score ?? 0}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => handleSendRequest(user.id!, user.username ?? 'Unknown User')}
+          onPress={() => user.id && handleSendRequest(user.id, user.username ?? 'Unknown User')}
         >
           <Ionicons name='person-add' size={20} color={theme.colors.primary} />
         </TouchableOpacity>

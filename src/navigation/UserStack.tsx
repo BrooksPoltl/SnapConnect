@@ -10,6 +10,7 @@ import CameraScreen from '../screens/CameraScreen';
 import StoriesScreen from '../screens/StoriesScreen';
 import SpotlightScreen from '../screens/SpotlightScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
+import ConversationScreen from '../screens/ConversationScreen';
 import { logError } from '../utils/logger';
 import { Icon } from '../components';
 import { useTheme } from '../styles/theme';
@@ -115,6 +116,13 @@ const UserStack: React.FC = () => (
         component={FriendsStack}
         options={{
           presentation: 'modal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name='Conversation'
+        component={ConversationScreen}
+        options={{
           headerShown: false,
         }}
       />

@@ -280,13 +280,7 @@ BEGIN
         c.id as chat_id,
         other_participant.user_id as other_user_id,
         p.username as other_username,
-        COALESCE(latest_msg.content_text, 
-            CASE 
-                WHEN latest_msg.content_type = 'image' THEN '📷 Photo'
-                WHEN latest_msg.content_type = 'video' THEN '🎥 Video'
-                ELSE 'Message'
-            END
-        ) as last_message,
+        latest_msg.content_text as last_message,
         latest_msg.created_at as last_message_at,
         0 as unread_count -- TODO: Implement read receipts
     FROM public.chats c

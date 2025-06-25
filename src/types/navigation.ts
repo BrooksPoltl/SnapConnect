@@ -18,6 +18,7 @@ export type UserStackParamList = {
   Profile: { userId?: string };
   MediaPreview: { media: CapturedMedia };
   Friends: undefined;
+  Conversation: { chatId: number; otherUserId: string; otherUsername: string };
 };
 
 export type ChatStackParamList = {

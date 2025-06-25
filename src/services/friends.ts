@@ -237,8 +237,8 @@ export const getSuggestedFriends = async (limit: number = 10): Promise<Friend[]>
   try {
     logger.info('FriendsService', `Fetching ${limit} suggested friends`);
 
-    const { data, error } = await supabase.rpc('suggest_users', {
-      count: limit,
+    const { data, error } = await supabase.rpc('get_suggested_friends', {
+      limit_count: limit,
     });
 
     if (error) throw error;

@@ -12,13 +12,14 @@ The application allows users—from professional analysts to retail investors an
   - [1.3. Target Audience](#13-target-audience)
 - [2. Key Features](#2-key-features)
 - [3. Development Roadmap](#3-development-roadmap)
-- [4. Technical Architecture](#4-technical-architecture)
-  - [4.1. Technology Stack](#41-technology-stack)
-  - [4.2. Project Structure](#42-project-structure)
-  - [4.3. Core Backend Logic](#43-core-backend-logic)
-- [5. Getting Started](#5-getting-started)
-  - [5.1. Prerequisites](#51-prerequisites)
-  - [5.2. Installation](#52-installation)
+- [4. Design & Planning Documents](#4-design--planning-documents)
+- [5. Technical Architecture](#5-technical-architecture)
+  - [5.1. Technology Stack](#51-technology-stack)
+  - [5.2. Project Structure](#52-project-structure)
+  - [5.3. Core Backend Logic](#53-core-backend-logic)
+- [6. Getting Started](#6-getting-started)
+  - [6.1. Prerequisites](#61-prerequisites)
+  - [6.2. Installation](#62-installation)
 
 ## 1. Product Vision
 
@@ -52,15 +53,24 @@ The project is broken into two main phases:
 - **Focus**: Introduce AI-powered tools to enrich content.
 - **Includes**: A Retrieval-Augmented Generation (RAG) model using official corporate filings (from EDGAR) and OpenAI to help users generate accurate, data-driven captions for their posts.
 
-## 4. Technical Architecture
+## 4. Design & Planning Documents
+
+This project includes detailed documentation covering product requirements, technical architecture, and feature implementation plans. These documents provide essential context for understanding the project's goals and technical foundation.
+
+All planning documents are located in the [`/feature_docs`](./feature_docs/) directory.
+
+- **[Product Requirements Document (PRD)](./PRODUCT_REQUIREMENTS_DOCUMENT.md)**: Outlines the product's vision, user personas, functional requirements, and success metrics.
+- **[Technical Architecture](./feature_docs/TECHNICAL_ARCHITECTURE_P1.md)**: Describes the Supabase-based backend, including the database schema, security model, and core logic.
+
+## 5. Technical Architecture
 
 The application is built with a modern, scalable stack designed for real-time mobile experiences.
 
-### 4.1. Technology Stack
+### 5.1. Technology Stack
 - **Frontend**: React Native (with Expo) and TypeScript.
 - **Backend**: A full Supabase stack, including Auth, a Postgres Database, Storage, Realtime, and Deno-based Edge Functions.
 
-### 4.2. Project Structure
+### 5.2. Project Structure
 The project follows a standard Expo project structure, with the core application logic located in the `src/` directory.
 
 - `src/components`: Reusable UI components.
@@ -71,7 +81,7 @@ The project follows a standard Expo project structure, with the core application
 - `src/types`: TypeScript type definitions.
 - `src/utils`: Shared utilities and hooks.
 
-### 4.3. Core Backend Logic
+### 5.3. Core Backend Logic
 The backend is built around a secure and efficient data model.
 
 - **Security Model (Row Level Security)**: The system is secure by default. RLS is enabled on all tables, and access is granted only through explicit policies that check a user's JWT (`auth.uid()`). For example, a user can only see a "private" story if they are an accepted friend of the author.
@@ -80,15 +90,15 @@ The backend is built around a secure and efficient data model.
     2.  **Permanent Deletion**: A scheduled Supabase Edge Function (`daily-cleanup`) runs once per day to permanently delete the expired data and associated media files from Storage.
 - **Automated User Score**: The user score is updated automatically and efficiently using Postgres triggers. An `on insert` trigger on the `messages` and `stories` tables calls a database function (`update_user_score`) to increment the creator's score atomically.
 
-## 5. Getting Started
+## 6. Getting Started
 
-### 5.1. Prerequisites
+### 6.1. Prerequisites
 - Node.js (LTS version)
 - Yarn
 - Expo Go app on your mobile device or a configured Android/iOS simulator.
 - A Supabase project set up with the required database schema and RLS policies.
 
-### 5.2. Installation
+### 6.2. Installation
 1.  **Clone the repository:**
     ```sh
     git clone <repository-url>

@@ -121,8 +121,8 @@ export const styles = (theme: Theme) =>
       marginRight: 10,
     },
     mediaLabel: {
+      marginLeft: 8,
       fontSize: 16,
-      color: theme.colors.text,
     },
     messageInfo: {
       flexDirection: 'row',
@@ -149,5 +149,21 @@ export const styles = (theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.overlay,
+    },
+    sendButtonText: {
+      color: theme.colors.white,
+      fontWeight: 'bold',
+    },
+    mediaThumbnail: {
+      width: 200,
+      height: 150,
+      borderRadius: 10,
+    },
+    sendingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
     },
   });

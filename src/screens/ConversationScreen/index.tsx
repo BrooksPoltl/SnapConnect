@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -116,15 +117,33 @@ const ConversationScreen: React.FC = () => {
         logger.info('New message received in chat:', payload);
         const newMessage = payload.new as Message;
 
-        if (newMessage.sender_id !== user.id) {
-          const messageWithMetadata: Message = {
-            ...newMessage,
-            sender_username: otherUsername,
-            is_own_message: false,
-          };
-          setMessages(prev => [...prev, messageWithMetadata]);
-          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
-        }
+        const messageWithMetadata: Message = {
+          ...newMessage,
+          sender_username: newMessage.sender_id === user.id ? 'You' : otherUsername,
+          is_own_message: newMessage.sender_id === user.id,
+        };
+
+        setMessages(prev => {
+          // If it's our own message, find and replace the optimistic one
+          if (messageWithMetadata.is_own_message) {
+            // This is a simple replacement based on content and type,
+            // since we don't have the final ID on the optimistic message.
+            // A more robust solution might use a temporary unique ID.
+            const existing = prev.find(
+              m => m.status === 'sending' && m.local_uri === messageWithMetadata.local_uri,
+            );
+            if (existing) {
+              return prev.map(m => (m.id === existing.id ? messageWithMetadata : m));
+            }
+          }
+          // Add the new message if it's not a replacement or from another user
+          if (!prev.some(m => m.id === messageWithMetadata.id)) {
+            return [...prev, messageWithMetadata];
+          }
+          return prev;
+        });
+
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
       },
     );
 
@@ -258,15 +277,13 @@ const ConversationScreen: React.FC = () => {
 
       try {
         await sendMediaToFriends(mediaFile, [otherUserId]);
-        setMessages(prev =>
-          prev.map(msg => (msg.id === optimisticMessage.id ? { ...msg, status: 'sent' } : msg)),
-        );
+        // On success, refresh messages to get the final version from the server
+        await fetchMessages();
       } catch (error) {
         logger.error('Error sending media message from picker:', error);
         Alert.alert('Error', 'Failed to send media.');
-        setMessages(prev =>
-          prev.map(msg => (msg.id === optimisticMessage.id ? { ...msg, status: 'failed' } : msg)),
-        );
+        // On failure, remove the optimistic message
+        setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
       }
     }
   };
@@ -278,31 +295,48 @@ const ConversationScreen: React.FC = () => {
     const isOwn = item.sender_id === user?.id;
 
     const renderMediaThumbnail = () => {
-      if (!item.storage_path) return null;
+      // Optimistic message with a local URI
+      if (item.local_uri) {
+        return (
+          <View>
+            <Image source={{ uri: item.local_uri }} style={dynamicStyles.mediaThumbnail} />
+            {item.status === 'sending' && (
+              <View style={dynamicStyles.sendingOverlay}>
+                <ActivityIndicator size='large' color={theme.colors.white} />
+              </View>
+            )}
+          </View>
+        );
+      }
 
-      const isPhoto = item.content_type === 'image';
-      const iconName = isPhoto ? 'image' : 'video';
-      const label = isPhoto ? 'Photo' : 'Video';
-      const iconColor = isOwn ? theme.colors.white : theme.colors.text;
+      // Server message with a storage path
+      if (item.storage_path) {
+        const isPhoto = item.content_type === 'image';
+        const iconName = isPhoto ? 'image' : 'video';
+        const label = isPhoto ? 'Photo' : 'Video';
+        const iconColor = isOwn ? theme.colors.white : theme.colors.text;
 
-      const handlePress = () => {
-        if (item.storage_path) {
-          navigation.navigate('User', {
-            screen: 'MediaViewer',
-            params: {
-              storage_path: item.storage_path,
-              content_type: item.content_type as 'image' | 'video',
-            },
-          });
-        }
-      };
+        const handlePress = () => {
+          if (item.storage_path) {
+            navigation.navigate('User', {
+              screen: 'MediaViewer',
+              params: {
+                storage_path: item.storage_path!,
+                content_type: item.content_type as 'image' | 'video',
+              },
+            });
+          }
+        };
 
-      return (
-        <TouchableOpacity style={dynamicStyles.mediaContainer} onPress={handlePress}>
-          <Icon name={iconName} size={24} color={iconColor} style={dynamicStyles.mediaIcon} />
-          <Text style={[dynamicStyles.mediaLabel, { color: iconColor }]}>{label}</Text>
-        </TouchableOpacity>
-      );
+        return (
+          <TouchableOpacity style={dynamicStyles.mediaContainer} onPress={handlePress}>
+            <Icon name={iconName} size={24} color={iconColor} style={dynamicStyles.mediaIcon} />
+            <Text style={[dynamicStyles.mediaLabel, { color: iconColor }]}>{label}</Text>
+          </TouchableOpacity>
+        );
+      }
+
+      return null;
     };
 
     return (

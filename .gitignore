@@ -175,3 +175,9 @@ storybook-static/
 /android/
 /ios/
 GoogleService-Info.plist
+
+# Python
+/scripts/edgar_ingestion/venv/
+/scripts/edgar_ingestion/filings_data/
+/scripts/edgar_ingestion/.env
+/scripts/edgar_ingestion/__pycache__/

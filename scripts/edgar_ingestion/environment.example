@@ -1,0 +1,22 @@
+# -----------------------------------------------------------------------------
+# Environment variables for EDGAR Data Ingestion Scripts
+#
+# Instructions:
+# 1. Copy this file to a new file named .env in the same directory.
+# 2. Replace the placeholder values (...) with your actual credentials.
+# 3. Do NOT commit the .env file to version control.
+# -----------------------------------------------------------------------------
+
+# Used by the edgartools library to identify your requests to the SEC.
+# A format like "Firstname Lastname <email@domain.com>" is standard.
+EDGAR_IDENTITY=""
+
+# Your secret API key from OpenAI for generating embeddings.
+OPENAI_API_KEY=""
+
+# Your secret API key from Pinecone.
+PINECONE_API_KEY=""
+
+# The name of the index you want to create and use in Pinecone.
+# e.g., "snapconnect-rag-index"
+PINECONE_INDEX_NAME="snapconnect-financial-data" 

@@ -105,7 +105,8 @@ CREATE TABLE public.friendships (
 CREATE TABLE public.chats (
   id BIGSERIAL PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  chat_type TEXT NOT NULL DEFAULT 'direct'
 );
 ```
 
@@ -138,7 +139,7 @@ CREATE TABLE public.chat_participants (
 
 **RLS Policies:**
 
-- `Users can view chat participants` - Users see participants in their chats
+- `Users can view their own chat participation records` - Users can see their own entry in the table. This is non-recursive and safe.
 - `Users can join chats` - Users can add themselves to chats
 
 ### 6. `public.messages`
@@ -215,6 +216,29 @@ CREATE TABLE public.stories (
 - `Users can create their own stories` - Users can insert their own stories
 - `Users can delete their own stories` - Users can delete their own stories
 
+### 8. `public.story_views`
+
+**Purpose**: Tracks which users have viewed which stories.
+
+```sql
+CREATE TABLE public.story_views (
+    story_id BIGINT NOT NULL REFERENCES public.stories(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    PRIMARY KEY (story_id, user_id)
+);
+```
+
+**Indexes:**
+
+- `story_views_user_id_idx` on `user_id`
+
+**RLS Policies:**
+
+- `Users can view their own story views` - Users can only see their own view records.
+- `Users can insert their own story views` - Users can only insert view records for themselves.
+
 ---
 
 ## Storage Buckets
@@ -225,159 +249,103 @@ CREATE TABLE public.stories (
 
 **Storage Policies:**
 
-- `Allow authenticated uploads to media bucket` - Any authenticated user can
-  upload
-- `Allow authenticated view of media` - Users can view media if they're in the
-  chat where it was sent
+- `Allow authenticated uploads` - Any authenticated user can upload to the `media` bucket.
+- `Allow authenticated read access to media` - Users can view media if:
+    1. They are the owner of the media object.
+    2. They are a participant in a chat where the media was sent.
+    3. They have access to view a story containing the media (respects story RLS).
 
 ---
 
 ## Database Functions
 
-### User Management
+### User & Friend Management
 
 #### `update_username(new_username TEXT)`
-
-**Purpose**: Securely updates a user's username with validation **Security**:
-DEFINER (bypasses RLS for validation) **Validation**:
-
-- Username must be 3-30 characters
-- Only alphanumeric and underscore characters
-- Must be unique
-
-#### `increment_user_score(user_id UUID, points INTEGER)`
-
-**Purpose**: Atomically increments a user's score **Called by**: Database
-triggers on message/story creation
-
-#### `create_user_profile(user_id UUID, user_username TEXT, user_score INTEGER)`
-
-**Purpose**: Creates user profile during signup with validation
-
-### Friend Management
+- **Purpose**: Securely updates a user's username with validation.
+- **Security**: `DEFINER`
+- **Validation**: Checks for length (3-30), format (alphanumeric, underscore), and uniqueness.
 
 #### `accept_friend_request(request_id BIGINT)`
-
-**Purpose**: Accepts a pending friend request **Security**: Validates user is
-the recipient
+- **Purpose**: Accepts a pending friend request.
+- **Security**: `DEFINER`. Checks that the caller is the recipient of the request.
 
 #### `decline_friend_request(request_id BIGINT)`
+- **Purpose**: Declines and deletes a pending friend request.
+- **Security**: `DEFINER`. Checks that the caller is the recipient.
 
-**Purpose**: Declines/deletes a pending friend request **Security**: Validates
-user is the recipient
-
-#### `get_suggested_friends(limit_count INTEGER DEFAULT 10)`
-
-**Purpose**: Returns random users who aren't already friends **Returns**: Table
-of `(id UUID, username TEXT, score INTEGER)`
+#### `get_suggested_friends(limit_count INTEGER)`
+- **Purpose**: Returns a list of random users who are not already friends with the current user.
+- **Security**: `DEFINER`.
 
 ### Chat & Messaging
 
-#### `create_direct_chat(other_user_id UUID)`
-
-**Purpose**: Creates or retrieves existing direct chat between friends
-**Security**: Validates users are friends **Returns**: `BIGINT` (chat_id)
-
-#### `get_user_conversations()`
-
-**Purpose**: Retrieves user's conversation list including friends without chats
-**Returns**: Complex table with chat info, last message, and unread counts
-**Features**:
-
-- Shows existing chats with message history
-- Shows friends without chats (chat_id = 0)
-- Includes unread message counts
-- Ordered by last activity
-
-#### `mark_messages_as_viewed(p_chat_id BIGINT)`
-
-**Purpose**: Marks unread messages as viewed by current user **Features**:
-
-- Only updates messages from other users
-- Sends PostgreSQL notification for real-time updates
-- Security validated (user must be chat participant)
+#### `get_or_create_direct_chat(p_user_id1 uuid, p_user_id2 uuid)`
+- **Purpose**: Finds an existing direct chat between two users or creates a new one if it doesn't exist. Prevents duplicate chat rooms.
+- **Security**: `DEFINER`.
+- **Returns**: `BIGINT` (the `chat_id`).
 
 #### `send_message(p_chat_id BIGINT, p_content_text TEXT)`
-
-**Purpose**: Sends a text message to a chat **Security**: Validates user is chat
-participant **Features**:
-
-- Updates chat's updated_at timestamp
-- Triggers score increment **Returns**: `BIGINT` (message_id)
-
-#### `get_chat_messages(p_chat_id BIGINT, p_limit INTEGER DEFAULT 50)`
-
-**Purpose**: Retrieves messages for a specific chat **Security**: Validates user
-is chat participant **Features**:
-
-- Applies TTL policy (unread or read within 24 hours)
-- Includes sender information
-- Marks user's own messages **Returns**: Table with message details
-
-#### `get_total_unread_count()`
-
-**Purpose**: Gets total unread message count for current user **Returns**:
-`INTEGER`
+- **Purpose**: Sends a text message to a specified chat.
+- **Security**: `DEFINER`. Verifies that the sender is a participant of the chat.
 
 #### `send_media_to_friends(p_storage_path TEXT, p_content_type TEXT, p_recipient_ids UUID[])`
+- **Purpose**: Sends a media message (image/video) to multiple friends simultaneously. It finds or creates a direct chat with each recipient and inserts the message.
+- **Security**: `DEFINER`.
 
-**Purpose**: Sends media file to multiple friends atomically **Features**:
+#### `mark_messages_as_viewed(p_chat_id BIGINT)`
+- **Purpose**: Marks all unread messages in a chat as read by the current user. Also broadcasts a `message_read` notification via `pg_notify`.
+- **Security**: `DEFINER`.
 
-- Creates direct chats with each recipient
-- Inserts media message for each chat
-- Updates chat timestamps
+#### `get_user_conversations()`
+- **Purpose**: Fetches the user's complete list of conversations. Includes friends with no chat history.
+- **Returns**: A table including `chat_id`, `other_user_id`, `other_username`, last message details, and `unread_count`.
+- **Security**: `DEFINER`.
 
----
+#### `get_chat_messages(p_chat_id BIGINT, p_limit INTEGER)`
+- **Purpose**: Fetches a paginated list of messages for a specific chat.
+- **Security**: `DEFINER`. Verifies the user is a participant.
 
-## Real-time Features
+#### `get_total_unread_count()`
+- **Purpose**: Returns the total number of unread messages for the current user across all chats.
+- **Security**: `DEFINER`.
+- **Returns**: `INTEGER`.
 
-### Enabled Tables
+### Stories
 
-- `public.messages` - For live message updates
+#### `post_story(p_storage_path TEXT, p_media_type TEXT, p_privacy TEXT)`
+- **Purpose**: Creates a new story record in the database.
+- **Security**: `DEFINER`.
+- **Validation**: Checks for valid `media_type` and `privacy` settings.
 
-### PostgreSQL Notifications
+#### `get_stories_feed()`
+- **Purpose**: Fetches the stories feed, grouped by author. It respects all RLS policies.
+- **Returns**: A `JSON` object containing an array of authors, each with their username and a list of their stories. Each story includes an `is_viewed` flag, and each author group has an `all_stories_viewed` flag.
+- **Security**: `INVOKER`.
 
-- `message_read` - Notified when messages are marked as viewed
-
----
-
-## Triggers
-
-### Automatic Timestamps
-
-- `profiles_updated_at` - Updates `updated_at` on profile changes
-- `friendships_updated_at` - Updates `updated_at` on friendship changes
-- `chats_updated_at` - Updates `updated_at` on chat changes
-
-### User Creation
-
-- `on_auth_user_created` - Automatically creates profile when auth user is
-  created
-
-### Scoring System
-
-- `messages_increment_score` - Awards 5 points for sending messages
-- `stories_increment_score` - Awards 10 points for posting stories
+#### `mark_story_viewed(p_story_id BIGINT)`
+- **Purpose**: Marks a story as viewed by the current user. Inserts a record into the `story_views` table.
+- **Security**: `INVOKER`. It will only mark a story as viewed if the user has permission to see it.
 
 ---
 
-## Data Relationships
+## Database Triggers
 
-```
-auth.users (1) ──────── (1) profiles
-    │
-    └── friendships (M:M self-relation)
-            │
-            └── user_id_1, user_id_2
+### `handle_new_user()`
+- **Event**: `AFTER INSERT ON auth.users`
+- **Purpose**: Automatically creates a new `profile` record when a new user signs up in Supabase Auth. It intelligently generates a unique username based on the user's metadata or email.
 
-profiles (M) ──────── (M) chats
-    │                    │
-    └── chat_participants └── messages (1:M)
-    │                           │
-    └── stories (1:M)           └── storage_path → media bucket
-            │
-            └── storage_path → media bucket
-```
+### `handle_updated_at()`
+- **Event**: `BEFORE UPDATE` on `profiles`, `friendships`, `chats`
+- **Purpose**: Automatically updates the `updated_at` timestamp on any row that is modified.
+
+### `increment_score_on_message()`
+- **Event**: `AFTER INSERT ON public.messages`
+- **Purpose**: Awards the sender **5 points** by calling `increment_user_score` every time they send a message.
+
+### `increment_score_on_story()`
+- **Event**: `AFTER INSERT ON public.stories`
+- **Purpose**: Awards the author **10 points** by calling `increment_user_score` every time they post a new story.
 
 ---
 

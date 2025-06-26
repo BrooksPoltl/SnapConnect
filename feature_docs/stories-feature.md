@@ -18,14 +18,14 @@ in the future to address this.
 
 ### **Backend**
 
-| Priority | Task Description                          | Task Document                                | Code Pointers (Proposed) | Dependencies    | Status      |
+| Priority | Task Description                          | Task Document                                | Code Pointers (Proposed) | Dependencies    | Status  |
 | :------- | :---------------------------------------- | :------------------------------------------- | :----------------------- | :-------------- | :------ |
 | **High** | **Create `post_story` DB Function**       | [View Plan](./stories/backend_post_story.md) | `supabase/migrations/`   | `stories` Table | ✅ Done |
 | **High** | **Create `get_stories_feed` DB Function** | [View Plan](./stories/backend_get_feed.md)   | `supabase/migrations/`   | `stories` Table | ✅ Done |
 
 ### **Frontend**
 
-| Priority | Task Description                 | Task Document                                           | Code Pointers (Proposed)                     | Dependencies      | Status      |
+| Priority | Task Description                 | Task Document                                           | Code Pointers (Proposed)                     | Dependencies      | Status  |
 | :------- | :------------------------------- | :------------------------------------------------------ | :------------------------------------------- | :---------------- | :------ |
 | **High** | **Update Types**                 | [View Plan](./stories/frontend_types.md)                | `src/types/stories.ts`, `src/types/index.ts` | -                 | ✅ Done |
 | **High** | **Create `stories` Service**     | [View Plan](./stories/frontend_service.md)              | `src/services/stories.ts`                    | Backend Functions | ✅ Done |

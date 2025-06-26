@@ -86,16 +86,22 @@ export const StoriesScreen: React.FC = () => {
       <View style={dynamicStyles.content}>
         {isLoading && <ActivityIndicator />}
         {error && <Text>{error}</Text>}
-        {!isLoading && !error && (
-          <FlatList
-            data={feed}
-            renderItem={renderStoryItem}
-            keyExtractor={item => item.author_id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={dynamicStyles.storiesBar}
-          />
-        )}
+        {!isLoading &&
+          !error &&
+          (feed.length > 0 ? (
+            <FlatList
+              data={feed}
+              renderItem={renderStoryItem}
+              keyExtractor={item => item.author_id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={dynamicStyles.storiesBar}
+            />
+          ) : (
+            <View style={dynamicStyles.placeholderContainer}>
+              <Text style={dynamicStyles.placeholderText}>No stories to show.</Text>
+            </View>
+          ))}
       </View>
     </SafeAreaView>
   );

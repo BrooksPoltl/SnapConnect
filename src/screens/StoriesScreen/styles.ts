@@ -42,6 +42,16 @@ export const styles = (theme: Theme) =>
       color: theme.colors.textSecondary,
       textAlign: 'center',
     },
+    placeholderContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    placeholderText: {
+      fontSize: theme.fontSizes.md,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
     storiesBar: {
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.sm,

@@ -15,7 +15,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -277,59 +276,63 @@ const ConversationScreen: React.FC = () => {
    */
   const renderMessage = ({ item }: { item: Message }) => {
     const isOwn = item.sender_id === user?.id;
-    const messageContainerStyle = isOwn
-      ? dynamicStyles.sentMessageContainer
-      : dynamicStyles.receivedMessageContainer;
-    const messageTextStyle = isOwn
-      ? dynamicStyles.sentMessageText
-      : dynamicStyles.receivedMessageText;
 
     const renderMediaThumbnail = () => {
-      const sourceUri =
-        item.local_uri ??
-        (item.storage_path
-          ? supabase.storage.from('media').getPublicUrl(item.storage_path).data.publicUrl
-          : null);
+      if (!item.storage_path) return null;
 
-      if (!sourceUri) return null;
+      const isPhoto = item.content_type === 'image';
+      const iconName = isPhoto ? 'image' : 'video';
+      const label = isPhoto ? 'Photo' : 'Video';
+      const iconColor = isOwn ? theme.colors.white : theme.colors.text;
+
+      const handlePress = () => {
+        if (item.storage_path) {
+          navigation.navigate('User', {
+            screen: 'MediaViewer',
+            params: {
+              storage_path: item.storage_path,
+              content_type: item.content_type as 'image' | 'video',
+            },
+          });
+        }
+      };
 
       return (
-        <TouchableOpacity
-          onPress={() => {
-            if (item.status === 'sent' && item.storage_path) {
-              navigation.navigate('User', {
-                screen: 'MediaViewer',
-                params: {
-                  storage_path: item.storage_path,
-                  content_type: item.content_type as 'image' | 'video',
-                },
-              });
-            }
-          }}
-          disabled={item.status !== 'sent'}
-        >
-          <Image source={{ uri: sourceUri }} style={dynamicStyles.thumbnail} />
-          {item.status === 'sending' && <ActivityIndicator style={dynamicStyles.absoluteFill} />}
-          {item.status === 'failed' && (
-            <Icon name='alert-circle' style={dynamicStyles.absoluteFill} color='red' />
-          )}
+        <TouchableOpacity style={dynamicStyles.mediaContainer} onPress={handlePress}>
+          <Icon name={iconName} size={24} color={iconColor} style={dynamicStyles.mediaIcon} />
+          <Text style={[dynamicStyles.mediaLabel, { color: iconColor }]}>{label}</Text>
         </TouchableOpacity>
       );
     };
 
     return (
-      <View style={messageContainerStyle}>
+      <View
+        style={[
+          dynamicStyles.messageContainer,
+          isOwn ? dynamicStyles.ownMessageContainer : dynamicStyles.otherMessageContainer,
+        ]}
+      >
         {item.content_type === 'text' ? (
-          <Text style={messageTextStyle}>{item.content_text}</Text>
+          <Text style={isOwn ? dynamicStyles.ownMessageText : dynamicStyles.otherMessageText}>
+            {item.content_text}
+          </Text>
         ) : (
           renderMediaThumbnail()
         )}
-        <Text style={dynamicStyles.timestamp}>
-          {new Date(item.created_at).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </Text>
+        <View style={dynamicStyles.messageInfo}>
+          <Text
+            style={[
+              dynamicStyles.timestamp,
+              isOwn ? dynamicStyles.ownMessageText : dynamicStyles.otherMessageText,
+            ]}
+          >
+            {new Date(item.created_at).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+          {isOwn && item.viewed_at && <Icon name='eye' size={14} color={theme.colors.white} />}
+        </View>
       </View>
     );
   };

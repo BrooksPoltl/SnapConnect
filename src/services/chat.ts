@@ -8,6 +8,7 @@ import { logger } from '../utils/logger';
 import type { Conversation, Message } from '../types/chat';
 import type { CapturedMedia } from '../types/media';
 import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
 
 /**
  * Fetches all conversations for the current user
@@ -177,15 +178,16 @@ async function uploadMedia(file: CapturedMedia, bucket: string): Promise<string>
     const filePath = `${fileName}`;
     const contentType = type === 'photo' ? 'image/jpeg' : 'video/mp4';
 
-    // Read the file from the local URI into a blob
-    const fileData = await FileSystem.readAsStringAsync(uri, {
+    const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
 
-    const { data, error } = await supabase.storage.from(bucket).upload(filePath, fileData, {
-      contentType,
-      upsert: true,
-    });
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, decode(base64), {
+        contentType,
+        upsert: true,
+      });
 
     if (error) {
       logger.error('Error uploading media with Supabase client:', error);

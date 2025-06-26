@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Button, View, Text, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { logOut } from '../services/auth';
@@ -156,48 +155,46 @@ const MainTabNavigator: React.FC = () => {
  * Includes tab navigation and modal/overlay screens like MediaPreview
  */
 const UserStack: React.FC = () => (
-  <NavigationContainer>
-    <Stack.Navigator
-      screenOptions={{
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
+    <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen
+      name='MediaPreview'
+      component={MediaPreviewScreen}
+      options={{
+        presentation: 'modal',
         headerShown: false,
       }}
-    >
-      <Stack.Screen name='Main' component={MainTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen
-        name='MediaPreview'
-        component={MediaPreviewScreen}
-        options={{
-          presentation: 'modal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name='Friends'
-        component={FriendsStack}
-        options={{
-          presentation: 'modal',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name='Conversation'
-        component={ConversationScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name='MediaViewer'
-        component={MediaViewerScreen}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-      <Stack.Screen
-        name='SelectRecipients'
-        component={SelectRecipientsScreen}
-        options={{ presentation: 'modal', headerShown: false }}
-      />
-    </Stack.Navigator>
-  </NavigationContainer>
+    />
+    <Stack.Screen
+      name='Friends'
+      component={FriendsStack}
+      options={{
+        presentation: 'modal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='Conversation'
+      component={ConversationScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='MediaViewer'
+      component={MediaViewerScreen}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name='SelectRecipients'
+      component={SelectRecipientsScreen}
+      options={{ presentation: 'modal', headerShown: false }}
+    />
+  </Stack.Navigator>
 );
 
 export default UserStack;

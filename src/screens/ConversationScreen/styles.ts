@@ -91,11 +91,49 @@ export const styles = (theme: Theme) =>
       borderRadius: 15,
       overflow: 'hidden',
     },
+    messageContainer: {
+      maxWidth: '80%',
+      marginVertical: 5,
+      padding: 10,
+      borderRadius: 15,
+    },
+    ownMessageContainer: {
+      alignSelf: 'flex-end',
+      backgroundColor: theme.colors.primary,
+    },
+    otherMessageContainer: {
+      alignSelf: 'flex-start',
+      backgroundColor: theme.colors.surface,
+    },
+    ownMessageText: {
+      color: theme.colors.white,
+    },
+    otherMessageText: {
+      color: theme.colors.text,
+    },
+    mediaContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+    },
+    mediaIcon: {
+      fontSize: 24,
+      marginRight: 10,
+    },
+    mediaLabel: {
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    messageInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf: 'flex-end',
+      marginTop: 4,
+    },
     timestamp: {
       fontSize: 10,
       color: theme.colors.textSecondary,
-      marginTop: 5,
-      alignSelf: 'flex-end',
+      marginRight: 5,
     },
     thumbnail: {
       width: 200,

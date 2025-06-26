@@ -4,19 +4,29 @@
 
 ## 1. Objective
 
-To create a secure and reliable PostgreSQL function in Supabase, `post_story`, that allows an authenticated user to insert a new record into the `stories` table. This function will serve as the primary RPC for creating new stories from the client-side application.
+To create a secure and reliable PostgreSQL function in Supabase, `post_story`,
+that allows an authenticated user to insert a new record into the `stories`
+table. This function will serve as the primary RPC for creating new stories from
+the client-side application.
 
 ## 2. Technical Approach
 
-The function will be written in `pl/pgsql` and defined with `SECURITY DEFINER` to ensure it runs with the necessary permissions to `INSERT` into the `stories` table while still leveraging the `auth.uid()` of the calling user for ownership. It will accept the media's storage path, type, and the user-defined privacy level as arguments.
+The function will be written in `pl/pgsql` and defined with `SECURITY DEFINER`
+to ensure it runs with the necessary permissions to `INSERT` into the `stories`
+table while still leveraging the `auth.uid()` of the calling user for ownership.
+It will accept the media's storage path, type, and the user-defined privacy
+level as arguments.
 
-The existing `increment_score_on_story` trigger on the `stories` table will automatically handle awarding the user 10 points, so no explicit score logic is needed in this function.
+The existing `increment_score_on_story` trigger on the `stories` table will
+automatically handle awarding the user 10 points, so no explicit score logic is
+needed in this function.
 
 ## 3. Implementation Steps
 
 ### Step 1: Create a New Migration File
 
-A new SQL migration file will be created in the `supabase/migrations/` directory to contain the function definition.
+A new SQL migration file will be created in the `supabase/migrations/` directory
+to contain the function definition.
 
 ### Step 2: Define the `post_story` Function
 
@@ -67,7 +77,11 @@ The frontend will call this function via the Supabase client library:
 // src/services/stories.ts (example)
 import { supabase } from './supabase';
 
-async function postStory(storagePath: string, mediaType: 'image' | 'video', privacy: 'public' | 'private_friends') {
+async function postStory(
+  storagePath: string,
+  mediaType: 'image' | 'video',
+  privacy: 'public' | 'private_friends',
+) {
   const { error } = await supabase.rpc('post_story', {
     p_storage_path: storagePath,
     p_media_type: mediaType,
@@ -84,5 +98,6 @@ async function postStory(storagePath: string, mediaType: 'image' | 'video', priv
 
 ## 5. Dependencies
 
--   The `public.stories` table must exist with the correct schema as defined in `20241223000002_create_messaging_and_stories.sql`.
--   The `increment_score_on_story` trigger must be active on the `stories` table. 
+- The `public.stories` table must exist with the correct schema as defined in
+  `20241223000002_create_messaging_and_stories.sql`.
+- The `increment_score_on_story` trigger must be active on the `stories` table.

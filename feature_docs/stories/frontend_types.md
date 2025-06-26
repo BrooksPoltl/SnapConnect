@@ -4,11 +4,16 @@
 
 ## 1. Objective
 
-To define and export the necessary TypeScript types and interfaces for the Stories feature. Creating clear, strongly-typed data structures is essential for ensuring type safety, improving developer experience, and preventing bugs when handling data from the Supabase API.
+To define and export the necessary TypeScript types and interfaces for the
+Stories feature. Creating clear, strongly-typed data structures is essential for
+ensuring type safety, improving developer experience, and preventing bugs when
+handling data from the Supabase API.
 
 ## 2. Technical Approach
 
-A new file, `src/types/stories.ts`, will be created to house all interfaces related to the Stories feature. These new types will then be exported from the main `src/types/index.ts` barrel file for easy importing across the application.
+A new file, `src/types/stories.ts`, will be created to house all interfaces
+related to the Stories feature. These new types will then be exported from the
+main `src/types/index.ts` barrel file for easy importing across the application.
 
 ## 3. Implementation Steps
 
@@ -18,7 +23,8 @@ Create a new file at `src/types/stories.ts`.
 
 ### Step 2: Define Story-Related Interfaces
 
-The following interfaces will be added to the new file. They are designed to match the data structures returned by the `get_stories_feed` database function.
+The following interfaces will be added to the new file. They are designed to
+match the data structures returned by the `get_stories_feed` database function.
 
 ```typescript
 // src/types/stories.ts
@@ -48,7 +54,8 @@ export interface StoryFeedItem {
 
 ### Step 3: Export from Barrel File
 
-The new types will be exported from `src/types/index.ts` to make them accessible to the rest of the application.
+The new types will be exported from `src/types/index.ts` to make them accessible
+to the rest of the application.
 
 ```typescript
 // src/types/index.ts
@@ -59,7 +66,8 @@ export * from './stories';
 
 ## 4. Usage Example
 
-These types will be used to type the state and props in our React components and service functions.
+These types will be used to type the state and props in our React components and
+service functions.
 
 ```typescript
 // src/services/stories.ts (example)
@@ -76,4 +84,4 @@ const [stories, setStories] = useState<StoryFeedItem[]>([]);
 
 ## 5. Dependencies
 
--   None. This task only involves creating type definitions. 
+- None. This task only involves creating type definitions.

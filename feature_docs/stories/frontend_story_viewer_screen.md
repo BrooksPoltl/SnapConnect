@@ -4,11 +4,17 @@
 
 ## 1. Objective
 
-To build a new, simple, full-screen component, `StoryViewerScreen`, that displays story content (a photo or video). This screen will be launched when a user taps on a story from the `StoriesScreen`.
+To build a new, simple, full-screen component, `StoryViewerScreen`, that
+displays story content (a photo or video). This screen will be launched when a
+user taps on a story from the `StoriesScreen`.
 
 ## 2. Technical Approach
 
-The screen will receive an array of a specific user's stories as a navigation parameter. For this initial version, it will only display the first story in the array. It will use a `View` with a dark background to create an immersive experience. An `Image` or `Video` component (`expo-av`) will be used to render the content. A simple "Close" button will allow the user to dismiss the viewer.
+The screen will receive an array of a specific user's stories as a navigation
+parameter. For this initial version, it will only display the first story in the
+array. It will use a `View` with a dark background to create an immersive
+experience. An `Image` or `Video` component (`expo-av`) will be used to render
+the content. A simple "Close" button will allow the user to dismiss the viewer.
 
 ## 3. Implementation Steps
 
@@ -16,12 +22,13 @@ The screen will receive an array of a specific user's stories as a navigation pa
 
 Create the following new files:
 
--   `src/screens/StoryViewerScreen/index.tsx`
--   `src/screens/StoryViewerScreen/styles.ts`
+- `src/screens/StoryViewerScreen/index.tsx`
+- `src/screens/StoryViewerScreen/styles.ts`
 
 ### Step 2: Set Up the Component
 
-In `index.tsx`, set up a basic functional component that retrieves the stories data from the route params.
+In `index.tsx`, set up a basic functional component that retrieves the stories
+data from the route params.
 
 ```typescript
 // src/screens/StoryViewerScreen/index.tsx
@@ -38,7 +45,7 @@ type StoryViewerRouteProp = RouteProp<UserStackParamList, 'StoryViewer'>;
 export function StoryViewerScreen() {
   const navigation = useNavigation();
   const route = useRoute<StoryViewerRouteProp>();
-  
+
   const { stories, username } = route.params;
 
   // For V1, we only show the first story.
@@ -63,10 +70,13 @@ export function StoryViewerScreen() {
 
 ### Step 3: Render Media Content
 
-Conditionally render an `<Image>` or `<Video>` component based on the `media_type` of the `currentStory`.
+Conditionally render an `<Image>` or `<Video>` component based on the
+`media_type` of the `currentStory`.
 
--   The `source` for the media will be constructed using the `storage_path` from the story object and the public URL from the Supabase client.
--   The `Video` component from `expo-av` should be configured to autoplay, loop, and be muted by default.
+- The `source` for the media will be constructed using the `storage_path` from
+  the story object and the public URL from the Supabase client.
+- The `Video` component from `expo-av` should be configured to autoplay, loop,
+  and be muted by default.
 
 ```tsx
 // Inside the component's return statement
@@ -80,15 +90,19 @@ return (
   <View style={styles.container}>
     {/* Header with username and close button */}
     <View style={styles.header}>
-        <Text style={styles.username}>{username}</Text>
-        <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>X</Text>
-        </Pressable>
+      <Text style={styles.username}>{username}</Text>
+      <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
+        <Text style={styles.closeButtonText}>X</Text>
+      </Pressable>
     </View>
 
     {/* Media Content */}
     {currentStory.media_type === 'image' ? (
-      <Image source={{ uri: mediaURL.publicUrl }} style={styles.media} resizeMode="contain" />
+      <Image
+        source={{ uri: mediaURL.publicUrl }}
+        style={styles.media}
+        resizeMode='contain'
+      />
     ) : (
       <Video
         source={{ uri: mediaURL.publicUrl }}
@@ -96,7 +110,7 @@ return (
         shouldPlay
         isLooping
         isMuted
-        resizeMode="contain"
+        resizeMode='contain'
       />
     )}
   </View>
@@ -105,7 +119,8 @@ return (
 
 ### Step 4: Add Styles
 
-In `styles.ts`, add styles for the container, media element, header, username, and close button to ensure it looks like a proper full-screen modal.
+In `styles.ts`, add styles for the container, media element, header, username,
+and close button to ensure it looks like a proper full-screen modal.
 
 ```typescript
 // src/screens/StoryViewerScreen/styles.ts
@@ -146,8 +161,8 @@ export const styles = StyleSheet.create({
 
 ## 4. Dependencies
 
--   `react-native`: `View`, `Image`, `Text`, `Pressable`.
--   `@react-navigation/native`: `useNavigation`, `useRoute`.
--   `expo-av`: For the `Video` component.
--   `src/services/supabase.ts`: To get the public URL for media.
--   `src/types`: `UserStackParamList`, `Story`. 
+- `react-native`: `View`, `Image`, `Text`, `Pressable`.
+- `@react-navigation/native`: `useNavigation`, `useRoute`.
+- `expo-av`: For the `Video` component.
+- `src/services/supabase.ts`: To get the public URL for media.
+- `src/types`: `UserStackParamList`, `Story`.

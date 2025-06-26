@@ -4,11 +4,18 @@
 
 ## 1. Objective
 
-To create a dedicated service module at `src/services/stories.ts` that encapsulates all client-side logic for interacting with the Stories feature's backend functions. This follows the project's established pattern of separating API-related concerns into modular services.
+To create a dedicated service module at `src/services/stories.ts` that
+encapsulates all client-side logic for interacting with the Stories feature's
+backend functions. This follows the project's established pattern of separating
+API-related concerns into modular services.
 
 ## 2. Technical Approach
 
-The service will be a standard TypeScript module exporting async functions. It will use the singleton `supabase` client instance from `src/services/supabase.ts` to perform its operations. This service will be responsible for uploading media to Supabase Storage and calling the `post_story` and `get_stories_feed` RPCs.
+The service will be a standard TypeScript module exporting async functions. It
+will use the singleton `supabase` client instance from
+`src/services/supabase.ts` to perform its operations. This service will be
+responsible for uploading media to Supabase Storage and calling the `post_story`
+and `get_stories_feed` RPCs.
 
 ## 3. Implementation Steps
 
@@ -28,7 +35,10 @@ import { StoryFeedItem } from '../types';
 import { decode } from 'base64-arraybuffer';
 
 // A helper to generate a unique file path for storage
-const generateStoryFilePath = (userId: string, mediaType: 'image' | 'video') => {
+const generateStoryFilePath = (
+  userId: string,
+  mediaType: 'image' | 'video',
+) => {
   const fileExtension = mediaType === 'image' ? 'jpg' : 'mp4';
   return `${userId}/story_${new Date().toISOString()}.${fileExtension}`;
 };
@@ -60,11 +70,11 @@ export async function postStory(
   mediaUri: string,
   mediaType: 'image' | 'video',
   privacy: 'public' | 'private_friends',
-  userId: string
+  userId: string,
 ): Promise<void> {
   // 1. Generate a unique file path
   const filePath = generateStoryFilePath(userId, mediaType);
-  
+
   // 2. Read the file from the local URI and upload to Supabase Storage
   // Note: This step might need a helper function to read the file into a buffer,
   // depending on the filesystem access provided by React Native/Expo.
@@ -110,8 +120,10 @@ export * from './stories';
 
 ## 4. Dependencies
 
--   `src/services/supabase.ts`: For the configured Supabase client.
--   `src/types/stories.ts`: For the `StoryFeedItem` type.
--   `base64-arraybuffer`: A utility that might be needed for file uploads depending on the final implementation.
--   Backend RPCs: `post_story` and `get_stories_feed` must be deployed in the database.
--   Supabase Storage: The `media` bucket must exist. 
+- `src/services/supabase.ts`: For the configured Supabase client.
+- `src/types/stories.ts`: For the `StoryFeedItem` type.
+- `base64-arraybuffer`: A utility that might be needed for file uploads
+  depending on the final implementation.
+- Backend RPCs: `post_story` and `get_stories_feed` must be deployed in the
+  database.
+- Supabase Storage: The `media` bucket must exist.

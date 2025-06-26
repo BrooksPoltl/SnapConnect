@@ -4,17 +4,28 @@
 
 ## 1. Objective
 
-To create an efficient PostgreSQL function, `get_stories_feed`, that retrieves all active stories and groups them by author. This function will power the main "stories bar" UI on the `StoriesScreen`, providing all necessary data in a single network request.
+To create an efficient PostgreSQL function, `get_stories_feed`, that retrieves
+all active stories and groups them by author. This function will power the main
+"stories bar" UI on the `StoriesScreen`, providing all necessary data in a
+single network request.
 
 ## 2. Technical Approach
 
-The function will be written in `pl/pgsql` and will return a JSON array. It will run with `SECURITY INVOKER` permissions (the PostgreSQL default), which is a critical security detail. This ensures that the existing Row Level Security (RLS) policies on the `stories` table are automatically enforced for the user calling the function. The database will correctly filter for stories that are public or private-to-friends based on the caller's identity, preventing any data leaks. The function then aggregates the visible stories by author and returns them as a single JSON response.
+The function will be written in `pl/pgsql` and will return a JSON array. It will
+run with `SECURITY INVOKER` permissions (the PostgreSQL default), which is a
+critical security detail. This ensures that the existing Row Level Security
+(RLS) policies on the `stories` table are automatically enforced for the user
+calling the function. The database will correctly filter for stories that are
+public or private-to-friends based on the caller's identity, preventing any data
+leaks. The function then aggregates the visible stories by author and returns
+them as a single JSON response.
 
 ## 3. Implementation Steps
 
 ### Step 1: Add Function to Migration File
 
-The following SQL will be added to the new migration file created in the previous step (`supabase/migrations/YYYYMMDDHHMMSS_add_stories_functions.sql`).
+The following SQL will be added to the new migration file created in the
+previous step (`supabase/migrations/YYYYMMDDHHMMSS_add_stories_functions.sql`).
 
 ### Step 2: Define the `get_stories_feed` Function
 
@@ -64,7 +75,8 @@ GRANT EXECUTE ON FUNCTION public.get_stories_feed() TO authenticated;
 
 ## 4. Client-Side Interaction
 
-The frontend will call this function via the Supabase client library. The return type will need to be cast to the appropriate TypeScript interface.
+The frontend will call this function via the Supabase client library. The return
+type will need to be cast to the appropriate TypeScript interface.
 
 ```typescript
 // src/services/stories.ts (example)
@@ -86,5 +98,5 @@ async function getStoriesFeed(): Promise<StoryFeedItem[]> {
 
 ## 5. Dependencies
 
--   The `public.stories` and `public.profiles` tables must exist.
--   The RLS policies on `public.stories` must be active to ensure data privacy. 
+- The `public.stories` and `public.profiles` tables must exist.
+- The RLS policies on `public.stories` must be active to ensure data privacy.

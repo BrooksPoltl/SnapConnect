@@ -7,6 +7,7 @@ import { useChatStore, useUnreadCount } from '../stores';
 
 import AIHomeScreen from '../screens/AIHomeScreen';
 import AIChatScreen from '../screens/AIChatScreen';
+import CreateAIPostScreen from '../screens/CreateAIPostScreen';
 import CameraScreen from '../screens/CameraScreen';
 import { StoriesScreen } from '../screens/StoriesScreen';
 import FeedScreen from '../screens/FeedScreen';
@@ -215,6 +216,14 @@ const UserStack: React.FC = () => (
       name='AIChatScreen'
       component={AIChatScreen}
       options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='CreateAIPostScreen'
+      component={CreateAIPostScreen}
+      options={{
+        presentation: 'modal',
         headerShown: false,
       }}
     />

@@ -151,8 +151,11 @@ const AIChatScreen: React.FC = () => {
     if (!selectedMessage) return;
     setShowShareModal(false);
     // TODO: Navigate to CreateAIPostScreen
-    // TODO: Implement CreateAIPostScreen navigation
-    Alert.alert('Coming Soon', 'Post to Feed feature will be available soon!');
+    // @ts-ignore - Navigation type needs to be updated to include CreateAIPostScreen
+    navigation.navigate('CreateAIPostScreen', {
+      aiResponse: selectedMessage.content,
+      sourceLink: undefined, // TODO: Add source link if available
+    });
   };
 
   /**

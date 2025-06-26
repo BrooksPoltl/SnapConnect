@@ -9,6 +9,7 @@ import type { Conversation, Message } from '../types/chat';
 import type { CapturedMedia } from '../types/media';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
+import { uploadMedia } from './media';
 
 /**
  * Fetches all conversations for the current user
@@ -165,47 +166,6 @@ export async function getTotalUnreadCount(): Promise<number> {
 }
 
 /**
- * Uploads a media file to a specified Supabase Storage bucket.
- * @param file - The media file to upload.
- * @param bucket - The bucket to upload the file to.
- * @returns Promise<string> - The storage path of the uploaded file.
- */
-async function uploadMedia(file: CapturedMedia, bucket: string): Promise<string> {
-  try {
-    const { uri, type } = file;
-    const fileExt = uri.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `${fileName}`;
-    const contentType = type === 'photo' ? 'image/jpeg' : 'video/mp4';
-
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, decode(base64), {
-        contentType,
-        upsert: true,
-      });
-
-    if (error) {
-      logger.error('Error uploading media with Supabase client:', error);
-      throw new Error(`Failed to upload media: ${error.message}`);
-    }
-
-    logger.info(`Successfully uploaded media. Path: ${data.path}`);
-    return data.path;
-  } catch (error) {
-    logger.error('Error in uploadMedia:', error);
-    if (error instanceof Error) {
-      throw new Error(`Failed to upload media: ${error.message}`);
-    }
-    throw new Error('An unknown error occurred during media upload.');
-  }
-}
-
-/**
  * Uploads a media file and calls an RPC to send it to multiple friends.
  * @param mediaFile - The local media file to send.
  * @param recipientIds - An array of friend UUIDs to send to.
@@ -221,10 +181,21 @@ export async function sendMediaToFriends(
 
   try {
     logger.info(`Sending media to ${recipientIds.length} friends.`);
-    // 1. Upload the media file to the 'media' bucket.
-    const storagePath = await uploadMedia(mediaFile, 'media');
 
-    // 2. Call the RPC to distribute the message to all recipients.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated to send media.');
+
+    // 1. Generate a unique file path for the media.
+    const fileExt = mediaFile.uri.split('.').pop() ?? 'jpg';
+    const fileName = `chat_${Date.now()}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
+
+    // 2. Upload the media file using the centralized service.
+    const storagePath = await uploadMedia(mediaFile, 'media', filePath);
+
+    // 3. Call the RPC to distribute the message to all recipients.
     const { error } = await supabase.rpc('send_media_to_friends', {
       p_storage_path: storagePath,
       p_content_type: mediaFile.type === 'photo' ? 'image' : 'video',

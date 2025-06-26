@@ -7,7 +7,7 @@ import { useChatStore, useUnreadCount } from '../stores';
 
 import MapScreen from '../screens/MapScreen';
 import CameraScreen from '../screens/CameraScreen';
-import StoriesScreen from '../screens/StoriesScreen';
+import { StoriesScreen } from '../screens/StoriesScreen';
 import SpotlightScreen from '../screens/SpotlightScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
 import ConversationScreen from '../screens/ConversationScreen';
@@ -21,6 +21,7 @@ import ChatStack from './ChatStack';
 import FriendsStack from './FriendsStack';
 import { MediaViewerScreen } from '../screens/MediaViewerScreen';
 import { SelectRecipientsScreen } from '../screens/SelectRecipientsScreen';
+import { StoryViewerScreen } from '../screens/StoryViewerScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -193,6 +194,13 @@ const UserStack: React.FC = () => (
       name='SelectRecipients'
       component={SelectRecipientsScreen}
       options={{ presentation: 'modal', headerShown: false }}
+    />
+    <Stack.Screen
+      name='StoryViewer'
+      component={StoryViewerScreen}
+      options={{
+        presentation: 'modal',
+      }}
     />
   </Stack.Navigator>
 );

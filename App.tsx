@@ -1,6 +1,6 @@
 import React from 'react';
 import { RootNavigation } from './src/navigation/RootNavigation';
 
-export default function App() {
-  return <RootNavigation />;
-}
+const App: React.FC = () => <RootNavigation />;
+
+export default App;

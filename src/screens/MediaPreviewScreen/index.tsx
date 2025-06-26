@@ -1,5 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { View, Image, TouchableOpacity, Text, Alert } from 'react-native';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+  Alert,
+  ActivityIndicator,
+  Modal,
+  Pressable,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -10,6 +19,8 @@ import { useTheme } from '../../styles/theme';
 import Icon from '../../components/Icon';
 import { UserStackParamList } from '../../types/navigation';
 import { logger, logError } from '../../utils/logger';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { postStory } from '../../services/stories';
 
 import { styles } from './styles';
 
@@ -27,10 +38,13 @@ const MediaPreviewScreen: React.FC = () => {
   const route = useRoute<MediaPreviewScreenRouteProp>();
   const navigation = useNavigation<StackNavigationProp<UserStackParamList>>();
   const { media } = route.params;
+  const { user } = useAuthentication();
 
   const [isMuted, setIsMuted] = useState(false);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState(false);
   const videoRef = useRef<Video>(null);
+  const [isPrivacyModalVisible, setPrivacyModalVisible] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
 
   const theme = useTheme();
   const dynamicStyles = styles(theme);
@@ -67,16 +81,31 @@ const MediaPreviewScreen: React.FC = () => {
       await MediaLibrary.saveToLibraryAsync(media.uri);
       logger.log('[MediaPreviewScreen] Media saved successfully.');
       Alert.alert('Success', `${media.type === 'photo' ? 'Photo' : 'Video'} saved to gallery!`);
-    } catch (error) {
-      logError('MediaPreviewScreen', 'Error saving media', error);
+    } catch (saveError) {
+      logError('MediaPreviewScreen', 'Error saving media', saveError);
       Alert.alert('Save Error', `Failed to save ${media.type}`);
     }
   };
 
+  const handlePostStory = async (privacy: 'public' | 'private_friends') => {
+    if (!user) return;
+
+    setPrivacyModalVisible(false);
+    setIsPosting(true);
+
+    try {
+      const mediaType = media.type === 'photo' ? 'image' : 'video';
+      await postStory(media.uri, mediaType, privacy, user.id);
+      navigation.navigate('Main', { screen: 'Stories' });
+    } catch (postError) {
+      Alert.alert('Error', 'Failed to post story. Please try again.');
+      logError('MediaPreviewScreen', 'Error posting story', postError);
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
   const handleSend = () => {
-    logger.log(
-      '[MediaPreviewScreen] Send button pressed. Navigating to SelectRecipients screen...',
-    );
     navigation.navigate('SelectRecipients', { media });
   };
 
@@ -159,6 +188,20 @@ const MediaPreviewScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          style={[dynamicStyles.actionButton]}
+          onPress={() => setPrivacyModalVisible(true)}
+          disabled={isPosting}
+        >
+          <Icon
+            name='plus-square'
+            size={16}
+            color={theme.colors.text}
+            style={dynamicStyles.buttonIcon}
+          />
+          <Text style={dynamicStyles.actionButtonText}>Story</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={[dynamicStyles.actionButton, dynamicStyles.discardButton]}
           onPress={handleDiscard}
           accessibilityRole='button'
@@ -174,6 +217,40 @@ const MediaPreviewScreen: React.FC = () => {
           <Text style={dynamicStyles.actionButtonText}>Discard</Text>
         </TouchableOpacity>
       </View>
+
+      {isPosting && <ActivityIndicator size='large' color='#fff' style={dynamicStyles.loader} />}
+
+      <Modal
+        transparent={true}
+        visible={isPrivacyModalVisible}
+        onRequestClose={() => setPrivacyModalVisible(false)}
+        animationType='slide'
+      >
+        <View style={dynamicStyles.modalContainer}>
+          <View style={dynamicStyles.modalContent}>
+            <Text style={dynamicStyles.modalTitle}>Who can see your story?</Text>
+            <Pressable style={dynamicStyles.modalButton} onPress={() => handlePostStory('public')}>
+              <Text style={dynamicStyles.modalButtonText}>Public</Text>
+            </Pressable>
+            <Pressable
+              style={dynamicStyles.modalButton}
+              onPress={() => handlePostStory('private_friends')}
+            >
+              <Text style={dynamicStyles.modalButtonText}>Friends Only</Text>
+            </Pressable>
+            <Pressable
+              style={[dynamicStyles.modalButton, dynamicStyles.cancelButton]}
+              onPress={() => setPrivacyModalVisible(false)}
+            >
+              <Text style={dynamicStyles.modalButtonText}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Pressable style={dynamicStyles.closeButton} onPress={() => navigation.goBack()}>
+        <Icon name='x' size={32} color='white' />
+      </Pressable>
     </SafeAreaView>
   );
 };

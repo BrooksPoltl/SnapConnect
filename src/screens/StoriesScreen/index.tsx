@@ -1,18 +1,61 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, FlatList, Pressable, Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-
-import { useTheme } from '../../styles/theme';
-import { UserStackParamList } from '../../types/navigation';
-
+import { getStoriesFeed } from '../../services';
+import { StoryFeedItem, UserStackParamList } from '../../types';
 import { styles } from './styles';
+import { useTheme } from '../../styles/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { logError } from '../../utils/logger';
 
-const StoriesScreen: React.FC = () => {
+export const StoriesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
   const theme = useTheme();
   const dynamicStyles = styles(theme);
+  const [feed, setFeed] = useState<StoryFeedItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchFeed = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const data = await getStoriesFeed();
+          // Filter out users who have no visible stories
+          const filteredData = data.filter(item => item.stories && item.stories.length > 0);
+          setFeed(filteredData);
+        } catch (e) {
+          setError('Failed to load stories. Please try again.');
+          logError('StoriesScreen', 'Failed to fetch stories feed', e);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchFeed();
+    }, []),
+  );
+
+  const renderStoryItem = ({ item }: { item: StoryFeedItem }) => (
+    <Pressable
+      style={dynamicStyles.storyItem}
+      onPress={() =>
+        navigation.navigate('StoryViewer', {
+          stories: item.stories,
+          username: item.username,
+        })
+      }
+    >
+      <View style={dynamicStyles.avatarBorder}>
+        {/* Placeholder for an avatar component */}
+        <View style={dynamicStyles.avatar} />
+      </View>
+      <Text style={dynamicStyles.username}>{item.username}</Text>
+    </Pressable>
+  );
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
@@ -26,11 +69,19 @@ const StoriesScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
       <View style={dynamicStyles.content}>
-        <Text style={dynamicStyles.title}>Stories Screen</Text>
-        <Text style={dynamicStyles.subtitle}>Stories functionality coming soon!</Text>
+        {isLoading && <ActivityIndicator />}
+        {error && <Text>{error}</Text>}
+        {!isLoading && !error && (
+          <FlatList
+            data={feed}
+            renderItem={renderStoryItem}
+            keyExtractor={item => item.author_id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={dynamicStyles.storiesBar}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
 };
-
-export default StoriesScreen;

@@ -71,4 +71,49 @@ export const styles = (theme: Theme) =>
     discardButton: {
       // All buttons now use the same neutral styling
     },
+    loader: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 60,
+      left: 20,
+      zIndex: 1,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.surface,
+      padding: theme.spacing.lg,
+      borderTopLeftRadius: theme.borderRadius.lg,
+      borderTopRightRadius: theme.borderRadius.lg,
+    },
+    modalTitle: {
+      fontSize: theme.fontSizes.lg,
+      fontWeight: theme.fontWeights.bold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.lg,
+      textAlign: 'center',
+    },
+    modalButton: {
+      backgroundColor: theme.colors.primary,
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.md,
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    modalButtonText: {
+      color: theme.colors.surface,
+      fontSize: theme.fontSizes.md,
+      fontWeight: theme.fontWeights.bold,
+    },
+    cancelButton: {
+      backgroundColor: theme.colors.textSecondary,
+    },
   });

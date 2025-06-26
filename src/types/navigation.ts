@@ -4,6 +4,7 @@ import {
 } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CapturedMedia } from './media';
+import { Story } from './stories';
 
 export type AuthStackParamList = {
   AuthHome: undefined;
@@ -37,6 +38,10 @@ export type UserStackParamList = {
   Conversation: { chatId: number; otherUserId: string; otherUsername: string };
   MediaViewer: { storage_path: string; content_type: 'image' | 'video' };
   SelectRecipients: { media: CapturedMedia };
+  StoryViewer: {
+    stories: Story[];
+    username: string;
+  };
 };
 
 export type ChatStackParamList = {

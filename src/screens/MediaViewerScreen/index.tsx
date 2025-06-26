@@ -11,7 +11,7 @@ import { Video, ResizeMode } from 'expo-av';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { supabase } from '../../services/supabase';
+import { getSignedMediaUrl } from '../../services/media';
 import { styles } from './styles';
 import { logger } from '../../utils/logger';
 import type { RootStackScreenProps } from '../../types/navigation';
@@ -42,15 +42,8 @@ export const MediaViewerScreen: React.FC = () => {
 
       try {
         setIsLoading(true);
-        const { data, error } = await supabase.storage
-          .from('media')
-          .createSignedUrl(storage_path, 60); // URL is valid for 60 seconds
-
-        if (error) {
-          throw error;
-        }
-
-        setMediaUrl(data.signedUrl);
+        const signedUrl = await getSignedMediaUrl(storage_path);
+        setMediaUrl(signedUrl);
       } catch (error) {
         logger.error('Error getting signed URL for media:', {
           path: storage_path,

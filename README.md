@@ -2,12 +2,13 @@
 
 SnapConnect is a mobile-first social messaging application designed for the
 financial community. It combines the engaging, ephemeral nature of platforms
-like Snapchat with powerful, finance-specific tools and **AI-powered insights**, 
-allowing users to share timely insights through disappearing photo and video messages.
+like Snapchat with powerful, finance-specific tools and **AI-powered insights**,
+allowing users to share timely insights through disappearing photo and video
+messages.
 
 The application allows users—from professional analysts to retail investors and
-students—to share timely insights and **interact with AI for financial analysis**, 
-fostering a more informed and connected financial community.
+students—to share timely insights and **interact with AI for financial
+analysis**, fostering a more informed and connected financial community.
 
 ## Table of Contents
 
@@ -38,11 +39,12 @@ shared quickly among a trusted network.
 ### 1.2. Our Solution
 
 SnapConnect provides a mobile-first platform for ephemeral, media-rich financial
-content with **integrated AI-powered insights**. By creating a sense of urgency 
-with disappearing messages and stories, it encourages daily engagement. A gamified 
-user score motivates content creation, and **implemented AI tools** help creators 
-generate accurate, data-driven content more efficiently through RAG (Retrieval-Augmented 
-Generation) technology powered by SEC filings and OpenAI.
+content with **integrated AI-powered insights**. By creating a sense of urgency
+with disappearing messages and stories, it encourages daily engagement. A
+gamified user score motivates content creation, and **implemented AI tools**
+help creators generate accurate, data-driven content more efficiently through
+RAG (Retrieval-Augmented Generation) technology powered by SEC filings and
+OpenAI.
 
 ### 1.3. Target Audience
 
@@ -55,12 +57,16 @@ Generation) technology powered by SEC filings and OpenAI.
 ## 2. Key Features
 
 ### 🤖 AI-Powered Financial Insights
-- **RAG Chat Interface**: Interactive AI assistant powered by SEC filing data and OpenAI
+
+- **RAG Chat Interface**: Interactive AI assistant powered by SEC filing data
+  and OpenAI
 - **Conversation History**: Persistent, titled conversation threads with the AI
 - **Financial Context**: AI responses grounded in real EDGAR filing data
-- **Share AI Insights**: Post AI responses to public/friend feeds or send to friends
+- **Share AI Insights**: Post AI responses to public/friend feeds or send to
+  friends
 
 ### 💬 Social Messaging
+
 - **Ephemeral Messaging & Stories**: Send photo and video messages, or post
   stories to a public or private audience. All content is automatically deleted
   after 24 hours, creating a sense of urgency.
@@ -69,6 +75,7 @@ Generation) technology powered by SEC filings and OpenAI.
 - **AI Feed**: Browse public and friend-only AI insights and commentary
 
 ### 🎮 Engagement Features
+
 - **Gamified User Score**: A simple and visible metric for engagement. Users
   gain points for creating content (+10 for a story, +5 for a message) to build
   their profile score and reputation.
@@ -93,8 +100,8 @@ The project is broken into two main phases:
 - **Includes**: A Retrieval-Augmented Generation (RAG) model using official
   corporate filings (from EDGAR) and OpenAI to help users generate accurate,
   data-driven insights and responses.
-- **Implementation**: Full chat interface, conversation management, AI feed system,
-  and Node.js API with Pinecone vector search integration.
+- **Implementation**: Full chat interface, conversation management, AI feed
+  system, and Node.js API with Pinecone vector search integration.
 
 ## 4. Design & Planning Documents
 
@@ -126,7 +133,7 @@ mobile experiences.
 - **Frontend**: React Native (with Expo) and TypeScript.
 - **Backend**: A full Supabase stack, including Auth, a Postgres Database,
   Storage, Realtime, and Edge Functions.
-- **AI Infrastructure**: Node.js TypeScript API with OpenAI GPT-4o-mini and 
+- **AI Infrastructure**: Node.js TypeScript API with OpenAI GPT-4o-mini and
   Pinecone vector database for RAG functionality.
 - **Data Sources**: SEC EDGAR filings for financial context and insights.
 

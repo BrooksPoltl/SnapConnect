@@ -7,24 +7,25 @@
 ## 1. Overview
 
 This document outlines the technical architecture for the SnapConnect Messenger
-application. The backend is built on the Supabase platform with **AI-powered 
-RAG (Retrieval-Augmented Generation) capabilities**, providing a scalable, 
-secure, and real-time foundation for a mobile-first social messenger with 
-intelligent financial insights.
+application. The backend is built on the Supabase platform with **AI-powered RAG
+(Retrieval-Augmented Generation) capabilities**, providing a scalable, secure,
+and real-time foundation for a mobile-first social messenger with intelligent
+financial insights.
 
 The architecture prioritizes a secure-by-default posture using Row Level
 Security (RLS) and efficient data management for the application's core
 requirement of ephemeral content and AI-powered financial analysis.
 
 This design covers the foundational features: User Authentication, Profiles,
-Friend Management, Real-Time Chat, Ephemeral Stories (Photo & Video), and 
-**AI Chat with RAG Integration**.
+Friend Management, Real-Time Chat, Ephemeral Stories (Photo & Video), and **AI
+Chat with RAG Integration**.
 
 ## 2. Technology Stack
 
 The backend leverages the following integrated services:
 
 ### Core Platform (Supabase)
+
 - **Supabase Auth**: For user sign-up, login, and JWT-based session management.
 - **Supabase Database (Postgres)**: The primary relational database for storing
   all application data, including user profiles, relationships, message
@@ -32,14 +33,17 @@ The backend leverages the following integrated services:
 - **Supabase Storage**: For storing all user-generated media (photos and videos
   for messages and stories).
 - **Supabase Realtime**: For broadcasting and receiving chat messages instantly.
-- **Supabase Edge Functions**: For scheduled server-side tasks,
-  specifically for data cleanup.
+- **Supabase Edge Functions**: For scheduled server-side tasks, specifically for
+  data cleanup.
 
 ### AI Infrastructure
+
 - **Node.js TypeScript API**: Custom API endpoint for RAG functionality
 - **OpenAI GPT-4o-mini**: Language model for generating financial insights
-- **Pinecone Vector Database**: Vector storage and similarity search for EDGAR filings
-- **SEC EDGAR Data**: Corporate filings providing financial context for AI responses
+- **Pinecone Vector Database**: Vector storage and similarity search for EDGAR
+  filings
+- **SEC EDGAR Data**: Corporate filings providing financial context for AI
+  responses
 
 ## 3. Database Schema
 
@@ -121,38 +125,38 @@ The following tables support the AI-powered chat and feed functionality.
 
 Stores AI chat conversation metadata with user-defined titles.
 
-| Column Name  | Data Type     | Constraints                        | Description                                    |
-| :----------- | :------------ | :--------------------------------- | :--------------------------------------------- |
-| `id`         | `uuid`        | Primary Key, Default `gen_random_uuid()` | Unique ID for the AI conversation.         |
-| `user_id`    | `uuid`        | FK to `profiles.id`, Not Null      | The user who owns this conversation.           |
-| `title`      | `text`        | Not Null, Default 'untitled conversation' | User-editable conversation title.         |
-| `created_at` | `timestamptz` | Not Null, Default `now()`          | Timestamp of conversation creation.            |
+| Column Name  | Data Type     | Constraints                               | Description                          |
+| :----------- | :------------ | :---------------------------------------- | :----------------------------------- |
+| `id`         | `uuid`        | Primary Key, Default `gen_random_uuid()`  | Unique ID for the AI conversation.   |
+| `user_id`    | `uuid`        | FK to `profiles.id`, Not Null             | The user who owns this conversation. |
+| `title`      | `text`        | Not Null, Default 'untitled conversation' | User-editable conversation title.    |
+| `created_at` | `timestamptz` | Not Null, Default `now()`                 | Timestamp of conversation creation.  |
 
 ### Table: `ai_messages`
 
 Stores individual messages within AI conversations.
 
-| Column Name       | Data Type     | Constraints                      | Description                                 |
-| :---------------- | :------------ | :------------------------------- | :------------------------------------------ |
-| `id`              | `uuid`        | Primary Key, Default `gen_random_uuid()` | Unique ID for the AI message.          |
-| `conversation_id` | `uuid`        | FK to `ai_conversations.id`, Not Null | The conversation this message belongs to. |
-| `sender`          | `text`        | Check (`user`, `ai`), Not Null   | Whether message is from user or AI.        |
-| `content`         | `text`        | Not Null                         | The message content.                        |
-| `created_at`      | `timestamptz` | Not Null, Default `now()`        | Timestamp when the message was sent.       |
+| Column Name       | Data Type     | Constraints                              | Description                               |
+| :---------------- | :------------ | :--------------------------------------- | :---------------------------------------- |
+| `id`              | `uuid`        | Primary Key, Default `gen_random_uuid()` | Unique ID for the AI message.             |
+| `conversation_id` | `uuid`        | FK to `ai_conversations.id`, Not Null    | The conversation this message belongs to. |
+| `sender`          | `text`        | Check (`user`, `ai`), Not Null           | Whether message is from user or AI.       |
+| `content`         | `text`        | Not Null                                 | The message content.                      |
+| `created_at`      | `timestamptz` | Not Null, Default `now()`                | Timestamp when the message was sent.      |
 
 ### Table: `ai_posts`
 
 Stores AI-generated content shared to public/friend feeds.
 
-| Column Name      | Data Type     | Constraints                      | Description                                |
-| :--------------- | :------------ | :------------------------------- | :----------------------------------------- |
-| `id`             | `uuid`        | Primary Key, Default `gen_random_uuid()` | Unique ID for the AI post.             |
-| `user_id`        | `uuid`        | FK to `profiles.id`, Not Null    | The user who created this post.            |
-| `user_commentary`| `text`        | Nullable                         | User's commentary on the AI response.     |
-| `ai_response`    | `text`        | Not Null                         | The AI-generated content being shared.     |
-| `source_link`    | `text`        | Nullable                         | Link to source material (e.g., SEC filing).|
-| `privacy`        | `text`        | Check (`public`, `friends`), Not Null | Visibility of the post.               |
-| `created_at`     | `timestamptz` | Not Null, Default `now()`        | Timestamp of post creation.                |
+| Column Name       | Data Type     | Constraints                              | Description                                 |
+| :---------------- | :------------ | :--------------------------------------- | :------------------------------------------ |
+| `id`              | `uuid`        | Primary Key, Default `gen_random_uuid()` | Unique ID for the AI post.                  |
+| `user_id`         | `uuid`        | FK to `profiles.id`, Not Null            | The user who created this post.             |
+| `user_commentary` | `text`        | Nullable                                 | User's commentary on the AI response.       |
+| `ai_response`     | `text`        | Not Null                                 | The AI-generated content being shared.      |
+| `source_link`     | `text`        | Nullable                                 | Link to source material (e.g., SEC filing). |
+| `privacy`         | `text`        | Check (`public`, `friends`), Not Null    | Visibility of the post.                     |
+| `created_at`      | `timestamptz` | Not Null, Default `now()`                | Timestamp of post creation.                 |
 
 ## 4. Core Backend Logic
 
@@ -222,32 +226,46 @@ efficiency.
 
 ### 4.5. AI-Powered RAG System
 
-The AI system provides financial insights through a Retrieval-Augmented Generation (RAG) architecture.
+The AI system provides financial insights through a Retrieval-Augmented
+Generation (RAG) architecture.
 
 #### Architecture Components:
-1. **Vector Database (Pinecone)**: Stores embeddings of SEC filing content for similarity search
-2. **Node.js API Endpoint**: Handles RAG queries with context retrieval and AI generation
-3. **OpenAI Integration**: Uses GPT-4o-mini for generating contextual financial insights
-4. **Conversation Persistence**: Automatically saves user queries and AI responses
+
+1. **Vector Database (Pinecone)**: Stores embeddings of SEC filing content for
+   similarity search
+2. **Node.js API Endpoint**: Handles RAG queries with context retrieval and AI
+   generation
+3. **OpenAI Integration**: Uses GPT-4o-mini for generating contextual financial
+   insights
+4. **Conversation Persistence**: Automatically saves user queries and AI
+   responses
 
 #### RAG Process Flow:
+
 1. **User Query**: User sends financial question via chat interface
-2. **Context Retrieval**: Query is embedded and used to search Pinecone for relevant SEC filing content
-3. **Context Augmentation**: Retrieved filing excerpts are combined with user query
-4. **AI Generation**: OpenAI generates response using retrieved context and financial expertise
-5. **Response Delivery**: AI response is returned to user and saved to conversation history
+2. **Context Retrieval**: Query is embedded and used to search Pinecone for
+   relevant SEC filing content
+3. **Context Augmentation**: Retrieved filing excerpts are combined with user
+   query
+4. **AI Generation**: OpenAI generates response using retrieved context and
+   financial expertise
+5. **Response Delivery**: AI response is returned to user and saved to
+   conversation history
 6. **Sharing Options**: Users can share AI responses to feeds or send to friends
 
 #### Security & RLS for AI Tables:
+
 - **ai_conversations**: Users can only access their own conversations
 - **ai_messages**: Messages are filtered by conversation ownership
-- **ai_posts**: Public posts visible to all, friend posts visible to accepted friends only
+- **ai_posts**: Public posts visible to all, friend posts visible to accepted
+  friends only
 
 ## 5. Server-Side Components
 
 ### 5.1. Database Functions
 
 #### Core Functions
+
 - **`function update_user_score(user_id uuid, points integer)`**: A reusable
   `pl/pgsql` function that safely increments a user's score.
 - **`function suggest_users(user_id uuid, count integer)`**: Returns a set of
@@ -259,18 +277,20 @@ The AI system provides financial insights through a Retrieval-Augmented Generati
   invoked via RPC from the client.
 
 #### AI Functions
-- **`function get_user_ai_conversations(user_uuid uuid)`**: Returns all AI conversations
-  for a user with metadata including message count and last activity timestamp.
-- **`function get_ai_conversation_messages(conv_id uuid)`**: Fetches all messages
-  for a specific AI conversation, ordered chronologically.
-- **`function update_ai_conversation_title(conv_id uuid, new_title text)`**: Allows
-  users to update the title of their AI conversations.
-- **`function create_ai_conversation(user_uuid uuid, title text)`**: Creates a new
-  AI conversation with optional custom title.
-- **`function add_ai_message(conv_id uuid, sender_type text, content text)`**: Adds
-  messages (user or AI) to conversations with validation.
-- **`function get_public_feed(limit_count integer, offset_count integer)`**: Returns
-  paginated public AI posts with user profile information.
+
+- **`function get_user_ai_conversations(user_uuid uuid)`**: Returns all AI
+  conversations for a user with metadata including message count and last
+  activity timestamp.
+- **`function get_ai_conversation_messages(conv_id uuid)`**: Fetches all
+  messages for a specific AI conversation, ordered chronologically.
+- **`function update_ai_conversation_title(conv_id uuid, new_title text)`**:
+  Allows users to update the title of their AI conversations.
+- **`function create_ai_conversation(user_uuid uuid, title text)`**: Creates a
+  new AI conversation with optional custom title.
+- **`function add_ai_message(conv_id uuid, sender_type text, content text)`**:
+  Adds messages (user or AI) to conversations with validation.
+- **`function get_public_feed(limit_count integer, offset_count integer)`**:
+  Returns paginated public AI posts with user profile information.
 - **`function get_friend_feed(user_uuid uuid, limit_count integer, offset_count integer)`**:
   Returns paginated AI posts from user's accepted friends.
 - **`function create_ai_post(user_uuid uuid, user_commentary text, ai_response text, source_url text, privacy_setting text)`**:

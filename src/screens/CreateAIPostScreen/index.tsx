@@ -29,7 +29,7 @@ interface RouteParams {
 const CreateAIPostScreen: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  
+
   const { aiResponse, sourceLink } = (route.params as RouteParams) ?? {};
 
   const [commentary, setCommentary] = useState('');
@@ -47,10 +47,10 @@ const CreateAIPostScreen: React.FC = () => {
 
     try {
       setIsPosting(true);
-      logger.log('CreateAIPostScreen: Creating AI post', { 
-        privacy, 
+      logger.log('CreateAIPostScreen: Creating AI post', {
+        privacy,
         hasCommentary: !!commentary,
-        hasSourceLink: !!sourceLink 
+        hasSourceLink: !!sourceLink,
       });
 
       await createAIPost({
@@ -62,9 +62,8 @@ const CreateAIPostScreen: React.FC = () => {
 
       logger.log('CreateAIPostScreen: Successfully created AI post');
       Alert.alert('Success', 'Your AI insight has been posted!', [
-        { text: 'OK', onPress: () => navigation.goBack() }
+        { text: 'OK', onPress: () => navigation.goBack() },
       ]);
-
     } catch (error) {
       logger.error('CreateAIPostScreen: Error creating post', error);
       Alert.alert('Error', 'Failed to post. Please try again.');
@@ -81,8 +80,8 @@ const CreateAIPostScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
@@ -90,11 +89,11 @@ const CreateAIPostScreen: React.FC = () => {
         <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-        
+
         <Text style={styles.headerTitle}>Share AI Insight</Text>
-        
-        <TouchableOpacity 
-          onPress={handlePost} 
+
+        <TouchableOpacity
+          onPress={handlePost}
           style={[styles.postButton, isPosting && styles.postButtonDisabled]}
           disabled={isPosting}
         >
@@ -110,41 +109,33 @@ const CreateAIPostScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Who can see this?</Text>
           <View style={styles.privacyContainer}>
             <TouchableOpacity
-              style={[
-                styles.privacyOption,
-                privacy === 'public' && styles.privacyOptionSelected
-              ]}
+              style={[styles.privacyOption, privacy === 'public' && styles.privacyOptionSelected]}
               onPress={() => setPrivacy('public')}
             >
-              <Ionicons 
-                name="globe-outline" 
-                size={20} 
-                color={privacy === 'public' ? '#007AFF' : '#666'} 
+              <Ionicons
+                name='globe-outline'
+                size={20}
+                color={privacy === 'public' ? '#007AFF' : '#666'}
               />
-              <Text style={[
-                styles.privacyText,
-                privacy === 'public' && styles.privacyTextSelected
-              ]}>
+              <Text
+                style={[styles.privacyText, privacy === 'public' && styles.privacyTextSelected]}
+              >
                 Public
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.privacyOption,
-                privacy === 'friends' && styles.privacyOptionSelected
-              ]}
+              style={[styles.privacyOption, privacy === 'friends' && styles.privacyOptionSelected]}
               onPress={() => setPrivacy('friends')}
             >
-              <Ionicons 
-                name="people-outline" 
-                size={20} 
-                color={privacy === 'friends' ? '#007AFF' : '#666'} 
+              <Ionicons
+                name='people-outline'
+                size={20}
+                color={privacy === 'friends' ? '#007AFF' : '#666'}
               />
-              <Text style={[
-                styles.privacyText,
-                privacy === 'friends' && styles.privacyTextSelected
-              ]}>
+              <Text
+                style={[styles.privacyText, privacy === 'friends' && styles.privacyTextSelected]}
+              >
                 Friends Only
               </Text>
             </TouchableOpacity>
@@ -156,17 +147,15 @@ const CreateAIPostScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Your thoughts (optional)</Text>
           <TextInput
             style={styles.commentaryInput}
-            placeholder="Add your commentary or insights..."
-            placeholderTextColor="#999"
+            placeholder='Add your commentary or insights...'
+            placeholderTextColor='#999'
             value={commentary}
             onChangeText={setCommentary}
             multiline
             maxLength={500}
-            textAlignVertical="top"
+            textAlignVertical='top'
           />
-          <Text style={styles.characterCount}>
-            {commentary.length}/500
-          </Text>
+          <Text style={styles.characterCount}>{commentary.length}/500</Text>
         </View>
 
         {/* AI Response Preview */}
@@ -174,13 +163,13 @@ const CreateAIPostScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>AI Response</Text>
           <View style={styles.aiResponseContainer}>
             <View style={styles.aiResponseHeader}>
-              <Ionicons name="sparkles" size={16} color="#007AFF" />
+              <Ionicons name='sparkles' size={16} color='#007AFF' />
               <Text style={styles.aiResponseLabel}>AI Insight</Text>
             </View>
             <Text style={styles.aiResponseText}>{aiResponse}</Text>
             {sourceLink && (
               <View style={styles.sourceContainer}>
-                <Ionicons name="link-outline" size={14} color="#666" />
+                <Ionicons name='link-outline' size={14} color='#666' />
                 <Text style={styles.sourceText}>Source: SEC Filing</Text>
               </View>
             )}
@@ -198,21 +187,19 @@ const CreateAIPostScreen: React.FC = () => {
                 <Text style={styles.previewTimestamp}>Now</Text>
               </View>
               <View style={styles.previewPrivacyBadge}>
-                <Ionicons 
-                  name={privacy === 'public' ? 'globe-outline' : 'people-outline'} 
-                  size={12} 
-                  color="#666" 
+                <Ionicons
+                  name={privacy === 'public' ? 'globe-outline' : 'people-outline'}
+                  size={12}
+                  color='#666'
                 />
               </View>
             </View>
-            
-            {commentary.trim() && (
-              <Text style={styles.previewCommentary}>{commentary.trim()}</Text>
-            )}
-            
+
+            {commentary.trim() && <Text style={styles.previewCommentary}>{commentary.trim()}</Text>}
+
             <View style={styles.previewAiResponse}>
               <View style={styles.previewAiHeader}>
-                <Ionicons name="sparkles" size={14} color="#007AFF" />
+                <Ionicons name='sparkles' size={14} color='#007AFF' />
                 <Text style={styles.previewAiLabel}>AI Insight</Text>
               </View>
               <Text style={styles.previewAiText}>{aiResponse}</Text>
@@ -224,4 +211,4 @@ const CreateAIPostScreen: React.FC = () => {
   );
 };
 
-export default CreateAIPostScreen; 
+export default CreateAIPostScreen;

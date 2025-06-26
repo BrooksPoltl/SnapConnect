@@ -2,12 +2,12 @@
 
 SnapConnect is a mobile-first social messaging application designed for the
 financial community. It combines the engaging, ephemeral nature of platforms
-like Snapchat with powerful, finance-specific tools, allowing users to share
-timely insights through disappearing photo and video messages.
+like Snapchat with powerful, finance-specific tools and **AI-powered insights**, 
+allowing users to share timely insights through disappearing photo and video messages.
 
 The application allows users—from professional analysts to retail investors and
-students—to share timely insights, fostering a more informed and connected
-financial community.
+students—to share timely insights and **interact with AI for financial analysis**, 
+fostering a more informed and connected financial community.
 
 ## Table of Contents
 
@@ -38,10 +38,11 @@ shared quickly among a trusted network.
 ### 1.2. Our Solution
 
 SnapConnect provides a mobile-first platform for ephemeral, media-rich financial
-content. By creating a sense of urgency with disappearing messages and stories,
-it encourages daily engagement. A gamified user score motivates content
-creation, and planned AI tools will help creators generate accurate, data-driven
-content more efficiently.
+content with **integrated AI-powered insights**. By creating a sense of urgency 
+with disappearing messages and stories, it encourages daily engagement. A gamified 
+user score motivates content creation, and **implemented AI tools** help creators 
+generate accurate, data-driven content more efficiently through RAG (Retrieval-Augmented 
+Generation) technology powered by SEC filings and OpenAI.
 
 ### 1.3. Target Audience
 
@@ -53,11 +54,21 @@ content more efficiently.
 
 ## 2. Key Features
 
+### 🤖 AI-Powered Financial Insights
+- **RAG Chat Interface**: Interactive AI assistant powered by SEC filing data and OpenAI
+- **Conversation History**: Persistent, titled conversation threads with the AI
+- **Financial Context**: AI responses grounded in real EDGAR filing data
+- **Share AI Insights**: Post AI responses to public/friend feeds or send to friends
+
+### 💬 Social Messaging
 - **Ephemeral Messaging & Stories**: Send photo and video messages, or post
   stories to a public or private audience. All content is automatically deleted
   after 24 hours, creating a sense of urgency.
 - **Real-Time Chat**: Engage in one-on-one text conversations with real-time
   message delivery, powered by Supabase Realtime.
+- **AI Feed**: Browse public and friend-only AI insights and commentary
+
+### 🎮 Engagement Features
 - **Gamified User Score**: A simple and visible metric for engagement. Users
   gain points for creating content (+10 for a story, +5 for a message) to build
   their profile score and reputation.
@@ -70,18 +81,20 @@ content more efficiently.
 
 The project is broken into two main phases:
 
-### Phase 1: Core Social Messenger (Current)
+### Phase 1: Core Social Messenger ✅ **COMPLETED**
 
 - **Focus**: Build the foundational social features.
 - **Includes**: User Authentication, Profiles, Friend Management, Real-Time
   Chat, Ephemeral Stories, and the User Score system.
 
-### Phase 2: RAG-Enhanced Content Creation
+### Phase 2: RAG-Enhanced Content Creation ✅ **COMPLETED**
 
 - **Focus**: Introduce AI-powered tools to enrich content.
 - **Includes**: A Retrieval-Augmented Generation (RAG) model using official
   corporate filings (from EDGAR) and OpenAI to help users generate accurate,
-  data-driven captions for their posts.
+  data-driven insights and responses.
+- **Implementation**: Full chat interface, conversation management, AI feed system,
+  and Node.js API with Pinecone vector search integration.
 
 ## 4. Design & Planning Documents
 
@@ -99,6 +112,9 @@ directory.
 - **[Technical Architecture](./feature_docs/TECHNICAL_ARCHITECTURE_P1.md)**:
   Describes the Supabase-based backend, including the database schema, security
   model, and core logic.
+- **[AI RAG Chat Feature](./feature_docs/ai-rag-chat.md)**: ✅ **COMPLETED**
+  Comprehensive implementation plan and status for the AI-powered chat feature
+  with RAG integration.
 
 ## 5. Technical Architecture
 
@@ -109,7 +125,10 @@ mobile experiences.
 
 - **Frontend**: React Native (with Expo) and TypeScript.
 - **Backend**: A full Supabase stack, including Auth, a Postgres Database,
-  Storage, Realtime, and Deno-based Edge Functions.
+  Storage, Realtime, and Edge Functions.
+- **AI Infrastructure**: Node.js TypeScript API with OpenAI GPT-4o-mini and 
+  Pinecone vector database for RAG functionality.
+- **Data Sources**: SEC EDGAR filings for financial context and insights.
 
 ### 5.2. Project Structure
 
@@ -118,11 +137,13 @@ logic located in the `src/` directory.
 
 - `src/components`: Reusable UI components.
 - `src/navigation`: Navigation logic, including stacks and routes.
-- `src/screens`: Top-level screen components.
-- `src/services`: Supabase client and interaction logic.
+- `src/screens`: Top-level screen components, including AI chat interfaces.
+- `src/services`: Supabase client, AI service, and interaction logic.
 - `src/styles`: Theme, shared styles, and styling utilities.
-- `src/types`: TypeScript type definitions.
+- `src/types`: TypeScript type definitions, including AI-related types.
 - `src/utils`: Shared utilities and hooks.
+- `api/`: Node.js TypeScript API endpoints for AI/RAG functionality.
+- `supabase/migrations/`: Database schema and function definitions.
 
 ### 5.3. Core Backend Logic
 

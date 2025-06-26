@@ -18,6 +18,8 @@ export default [
       '.expo/**',
       'dist/**',
       'build/**',
+      'api/**',
+      'scripts/**',
       '*.config.js',
       '*.config.ts',
       'babel.config.js',

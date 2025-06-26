@@ -5,10 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { logOut } from '../services/auth';
 import { useChatStore, useUnreadCount } from '../stores';
 
-import MapScreen from '../screens/MapScreen';
+import AIHomeScreen from '../screens/AIHomeScreen';
+import AIChatScreen from '../screens/AIChatScreen';
 import CameraScreen from '../screens/CameraScreen';
 import { StoriesScreen } from '../screens/StoriesScreen';
-import SpotlightScreen from '../screens/SpotlightScreen';
+import FeedScreen from '../screens/FeedScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
 import ConversationScreen from '../screens/ConversationScreen';
 import { logError } from '../utils/logger';
@@ -133,7 +134,7 @@ const MainTabNavigator: React.FC = () => {
     >
       <Tab.Screen
         name='Insights'
-        component={MapScreen}
+        component={AIHomeScreen}
         options={{ ...screenOptions, headerShown: false }}
       />
       <Tab.Screen
@@ -147,7 +148,7 @@ const MainTabNavigator: React.FC = () => {
         options={{ ...screenOptions, headerShown: false }}
       />
       <Tab.Screen name='Stories' component={StoriesScreen} options={screenOptions} />
-      <Tab.Screen name='Spotlight' component={SpotlightScreen} options={screenOptions} />
+      <Tab.Screen name='Spotlight' component={FeedScreen} options={screenOptions} />
     </Tab.Navigator>
   );
 };
@@ -208,6 +209,13 @@ const UserStack: React.FC = () => (
       component={MyStoryViewerScreen}
       options={{
         presentation: 'modal',
+      }}
+    />
+    <Stack.Screen
+      name='AIChatScreen'
+      component={AIChatScreen}
+      options={{
+        headerShown: false,
       }}
     />
   </Stack.Navigator>

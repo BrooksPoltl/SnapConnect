@@ -45,6 +45,14 @@ export type UserStackParamList = {
   MyStoryViewer: {
     stories: Story[];
   };
+  AIChatScreen: {
+    conversationId?: string | null;
+    conversationTitle?: string;
+  };
+  CreateAIPostScreen: {
+    aiResponse: string;
+    sourceLink?: string;
+  };
 };
 
 export type ChatStackParamList = {

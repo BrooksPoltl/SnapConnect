@@ -1,6 +1,6 @@
 # Task: Create `post_story` Database Function
 
-**Status**: Planning
+**Status**: Implemented
 
 ## 1. Objective
 

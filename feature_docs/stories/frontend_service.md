@@ -1,6 +1,6 @@
 # Task: Create `stories` Service
 
-**Status**: Planning
+**Status**: Implemented
 
 ## 1. Objective
 

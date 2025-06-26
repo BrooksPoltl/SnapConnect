@@ -1,6 +1,6 @@
 # Task: Create `StoryViewerScreen`
 
-**Status**: Planning
+**Status**: Implemented
 
 ## 1. Objective
 

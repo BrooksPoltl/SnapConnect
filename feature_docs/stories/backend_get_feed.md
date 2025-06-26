@@ -1,6 +1,6 @@
 # Task: Create `get_stories_feed` Database Function
 
-**Status**: Planning
+**Status**: Implemented
 
 ## 1. Objective
 

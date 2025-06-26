@@ -1,6 +1,6 @@
 # Task: Implement `StoriesScreen` UI
 
-**Status**: Planning
+**Status**: Implemented
 
 ## 1. Objective
 

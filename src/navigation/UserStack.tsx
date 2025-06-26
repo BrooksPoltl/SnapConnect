@@ -22,6 +22,7 @@ import FriendsStack from './FriendsStack';
 import { MediaViewerScreen } from '../screens/MediaViewerScreen';
 import { SelectRecipientsScreen } from '../screens/SelectRecipientsScreen';
 import { StoryViewerScreen } from '../screens/StoryViewerScreen';
+import { MyStoryViewerScreen } from '../screens/MyStoryViewerScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -198,6 +199,13 @@ const UserStack: React.FC = () => (
     <Stack.Screen
       name='StoryViewer'
       component={StoryViewerScreen}
+      options={{
+        presentation: 'modal',
+      }}
+    />
+    <Stack.Screen
+      name='MyStoryViewer'
+      component={MyStoryViewerScreen}
       options={{
         presentation: 'modal',
       }}

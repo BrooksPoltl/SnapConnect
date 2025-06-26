@@ -42,6 +42,9 @@ export type UserStackParamList = {
     stories: Story[];
     username: string;
   };
+  MyStoryViewer: {
+    stories: Story[];
+  };
 };
 
 export type ChatStackParamList = {

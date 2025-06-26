@@ -321,7 +321,7 @@ const ConversationScreen: React.FC = () => {
             navigation.navigate('User', {
               screen: 'MediaViewer',
               params: {
-                storage_path: item.storage_path!,
+                storage_path: item.storage_path,
                 content_type: item.content_type as 'image' | 'video',
               },
             });

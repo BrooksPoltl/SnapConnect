@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
-import { CapturedMedia, StoryFeedItem } from '../types';
-import { logError } from '../utils/logger';
+import { CapturedMedia, MyStoryAnalytics, StoryFeedItem } from '../types';
+import { logger } from '../utils/logger';
 import { uploadMedia } from './media';
 
 // A helper to generate a unique file path for storage
@@ -17,6 +17,7 @@ export async function getStoriesFeed(): Promise<StoryFeedItem[]> {
   const { data, error } = await supabase.rpc('get_stories_feed');
 
   if (error) {
+    logger.error('Error fetching stories feed:', error);
     throw new Error(error.message);
   }
 
@@ -33,7 +34,6 @@ export async function markStoryViewed(storyId: number): Promise<void> {
   });
 
   if (error) {
-    logError('markStoryViewed', 'Error marking story as viewed:', error);
     // We don't throw here to avoid interrupting the user experience for a non-critical error.
   }
 }
@@ -74,6 +74,40 @@ export async function postStory(
   if (rpcError) {
     // Attempt to clean up the uploaded file if the DB insert fails
     await supabase.storage.from('media').remove([filePath]);
+    logger.error('Error creating story record:', rpcError);
     throw new Error(rpcError.message);
   }
+}
+
+/**
+ * Deletes a story. This calls the delete_story RPC.
+ * @param storyId - The ID of the story to delete.
+ */
+export async function deleteStory(storyId: number): Promise<void> {
+  const { error } = await supabase.rpc('delete_story', {
+    p_story_id: storyId,
+  });
+
+  if (error) {
+    logger.error('Error deleting story:', error);
+    throw new Error(error.message);
+  }
+}
+
+/**
+ * Fetches the viewers for a given story.
+ * @param storyId - The ID of the story to fetch viewers for.
+ * @returns A promise that resolves to the story's analytics.
+ */
+export async function getStoryViewers(storyId: number): Promise<MyStoryAnalytics> {
+  const { data, error } = await supabase.rpc('get_story_viewers', {
+    p_story_id: storyId,
+  });
+
+  if (error) {
+    logger.error('Error fetching story viewers:', error);
+    throw new Error(error.message);
+  }
+
+  return data as MyStoryAnalytics;
 }

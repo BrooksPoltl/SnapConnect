@@ -9,11 +9,13 @@ import { useTheme } from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { logError } from '../../utils/logger';
 import { Avatar } from '../../components/Avatar';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
 
 export const StoriesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
   const theme = useTheme();
   const dynamicStyles = styles(theme);
+  const { user } = useAuthentication();
   const [feed, setFeed] = useState<StoryFeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,22 +42,35 @@ export const StoriesScreen: React.FC = () => {
     }, []),
   );
 
-  const renderStoryItem = ({ item }: { item: StoryFeedItem }) => (
-    <Pressable
-      style={dynamicStyles.storyItem}
-      onPress={() =>
+  const renderStoryItem = ({ item }: { item: StoryFeedItem }) => {
+    const isOwnStory = item.author_id === user?.id;
+
+    const handlePress = () => {
+      if (isOwnStory) {
+        navigation.navigate('MyStoryViewer', {
+          stories: item.stories,
+        });
+      } else {
         navigation.navigate('StoryViewer', {
           stories: item.stories,
           username: item.username,
-        })
+        });
       }
-    >
-      <Avatar username={item.username} isViewed={item.all_stories_viewed} size={60} />
-      <Text style={dynamicStyles.username} numberOfLines={1}>
-        {item.username}
-      </Text>
-    </Pressable>
-  );
+    };
+
+    return (
+      <Pressable style={dynamicStyles.storyItem} onPress={handlePress}>
+        <Avatar
+          username={isOwnStory ? 'Your Story' : item.username}
+          isViewed={item.all_stories_viewed}
+          size={60}
+        />
+        <Text style={dynamicStyles.username} numberOfLines={1}>
+          {isOwnStory ? 'Your Story' : item.username}
+        </Text>
+      </Pressable>
+    );
+  };
 
   return (
     <SafeAreaView style={dynamicStyles.container}>

@@ -21,3 +21,21 @@ export interface StoryFeedItem {
   stories: Story[];
   all_stories_viewed: boolean;
 }
+
+/**
+ * Represents a user who has viewed a story.
+ */
+export interface StoryViewer {
+  user_id: string;
+  username: string;
+  viewed_at: string;
+}
+
+/**
+ * Represents the analytics for a single story, including
+ * the total view count and a list of viewers.
+ */
+export interface MyStoryAnalytics {
+  view_count: number;
+  viewers: StoryViewer[];
+}

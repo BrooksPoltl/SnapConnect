@@ -12,16 +12,16 @@ Follow these steps to run the end-to-end test:
 
 1.  **Create a Virtual Environment:**
     It's recommended to use a virtual environment to manage dependencies.
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
 2.  **Install Dependencies:**
     Install the required Python packages from the `requirements.txt` file.
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+pip install -r requirements.txt
+```
 
 3.  **Configure Environment Variables:**
     Create a `.env` file by copying the example template. This file will be automatically loaded by the script.
@@ -37,8 +37,8 @@ Follow these steps to run the end-to-end test:
 
 4.  **Run the Test Script:**
     Execute the script from within the `scripts/edgar_ingestion` directory.
-    ```bash
-    python test_ingestion_e2e.py
-    ```
+```bash
+python test_ingestion_e2e.py
+```
 
     The script will print its progress to the console, showing the fetching, processing, and upserting steps. If it completes successfully, your Pinecone index will contain the vectorized data from the sample filing. 

@@ -80,17 +80,42 @@ export async function postStory(
 }
 
 /**
- * Deletes a story. This calls the delete_story RPC.
+ * Deletes a story. This calls the delete_story RPC to delete the database
+ * record, and then uses the returned storage path to delete the object from
+ * Supabase Storage.
  * @param storyId - The ID of the story to delete.
  */
 export async function deleteStory(storyId: number): Promise<void> {
-  const { error } = await supabase.rpc('delete_story', {
-    p_story_id: storyId,
-  });
+  // 1. Call the RPC to delete the database record and get the storage path.
+  const { data: storagePath, error: rpcError } = await supabase.rpc(
+    'delete_story',
+    {
+      p_story_id: storyId,
+    },
+  );
 
-  if (error) {
-    logger.error('Error deleting story:', error);
-    throw new Error(error.message);
+  if (rpcError) {
+    logger.error('Error deleting story record:', rpcError);
+    throw new Error(rpcError.message);
+  }
+
+  if (!storagePath) {
+    logger.warn('No storage path returned for deleted story, skipping storage deletion.', { storyId });
+    // This might happen if the story had no media, so we don't throw an error.
+    return;
+  }
+
+  // 2. Delete the actual file from Supabase Storage.
+  const { error: storageError } = await supabase.storage
+    .from('media')
+    .remove([storagePath]);
+
+  if (storageError) {
+    // Log the error, but don't throw. The DB record is gone, which is the most
+    // important part. We don't want the user to see an error if only the
+    // storage cleanup failed. The file will be orphaned, which is not ideal,
+    // but better than a failed user experience.
+    logger.error('Error deleting story object from storage:', { storyId, storagePath, storageError });
   }
 }
 

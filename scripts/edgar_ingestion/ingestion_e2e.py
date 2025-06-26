@@ -59,7 +59,7 @@ def fetch_and_save_filings(year: int):
         for filing in tqdm(filings, desc=f"Processing {year} 10-K filings"):
             try:
                 company = filing.company
-                cik = company.cik
+                cik = filing.cik
                 accession_number = filing.accession_no
                 
                 # Check if we have already processed this filing
@@ -69,9 +69,9 @@ def fetch_and_save_filings(year: int):
                     continue
 
                 filing_content = {
-                    "company_name": company.name,
+                    "company": company,
                     "cik": cik,
-                    "form_type": filing.form,
+                    "form": filing.form,
                     "filing_date": str(filing.filing_date),
                     "accession_number": accession_number,
                     "sections": {}
@@ -96,7 +96,7 @@ def fetch_and_save_filings(year: int):
                 time.sleep(0.3)
 
             except Exception as e:
-                tqdm.write(f"Error processing filing {filing.accession_no} for {filing.company.name if filing.company else 'Unknown'}: {e}")
+                tqdm.write(f"Error processing filing {filing.accession_no} for {filing.company if filing.company else 'Unknown'}: {e}")
                 error_count += 1
                 continue
 
@@ -178,9 +178,9 @@ def process_and_upsert_filings():
                     chunk_id_counter += 1
                     
                     metadata = {
-                        "company_name": filing_data.get("company_name", ""),
+                        "company": filing_data.get("company", ""),
                         "cik": str(filing_data.get("cik", "")),
-                        "form_type": filing_data.get("form_type", ""),
+                        "form": filing_data.get("form", ""),
                         "filing_date": filing_data.get("filing_date", ""),
                         "accession_number": filing_data.get("accession_number", ""),
                         "section": section_name,
@@ -221,32 +221,7 @@ if __name__ == "__main__":
     
     # Run Phase 1: Fetch and save data locally
     fetch_and_save_filings(target_year)
-    
     # Run Phase 2: Process local data and upload to Pinecone
-    process_and_upsert_filings()
+    # process_and_upsert_filings()
 
     print("\n--- Ingestion process complete. ---")
-
-    # Example query to test the ingested data
-    print("\n--- Running a test query ---")
-    try:
-        query_text = "What are the main risk factors for Apple?"
-        query_embedding_response = client.embeddings.create(input=[query_text], model=EMBEDDING_MODEL)
-        query_embedding = query_embedding_response.data[0].embedding
-
-        query_results = index.query(
-            vector=query_embedding,
-            top_k=3,
-            include_metadata=True
-        )
-
-        print(f"Query: '{query_text}'")
-        for result in query_results.get('matches', []):
-            print(f"  - Score: {result['score']:.4f}")
-            metadata = result.get('metadata', {})
-            print(f"    Company: {metadata.get('company_name')}")
-            print(f"    Filing: {metadata.get('form_type')} ({metadata.get('filing_date')})")
-            print(f"    Section: {metadata.get('section')}")
-            print(f"    Text: '{metadata.get('text', '')[:200]}...'")
-    except Exception as e:
-        print(f"Error running test query: {e}") 

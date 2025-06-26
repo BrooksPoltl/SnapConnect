@@ -58,9 +58,15 @@ def fetch_and_save_filings(year: int):
 
         for filing in tqdm(filings, desc=f"Processing {year} 10-K filings"):
             try:
-                company = filing.company
-                cik = filing.cik
-                accession_number = filing.accession_no
+                # Safely extract filing attributes with defaults
+                company = getattr(filing, 'company', 'Unknown Company')
+                cik = getattr(filing, 'cik', 'Unknown CIK')
+                accession_number = getattr(filing, 'accession_no', None)
+                
+                if not accession_number:
+                    tqdm.write(f"Skipping filing with missing accession number for {company}")
+                    skipped_count += 1
+                    continue
                 
                 # Check if we have already processed this filing
                 file_path = os.path.join(FILINGS_DATA_DIR, f"{cik}_{accession_number}.json")
@@ -71,32 +77,69 @@ def fetch_and_save_filings(year: int):
                 filing_content = {
                     "company": company,
                     "cik": cik,
-                    "form": filing.form,
-                    "filing_date": str(filing.filing_date),
+                    "form": getattr(filing, 'form', '10-K'),
+                    "filing_date": str(getattr(filing, 'filing_date', '')),
                     "accession_number": accession_number,
                     "sections": {}
                 }
 
-                # Extract sections
-                sections = filing.sections()
-                if not sections:
+                # Extract sections with proper error handling
+                try:
+                    sections = filing.sections()
+                    if not sections:
+                        skipped_count += 1
+                        continue
+                    
+                    # Handle different return types from sections()
+                    if isinstance(sections, dict):
+                        for section_name, section_text in sections.items():
+                            if section_text and isinstance(section_text, str) and section_text.strip():
+                                filing_content["sections"][section_name] = section_text.strip()
+                    elif isinstance(sections, list):
+                        # If sections is a list, create numbered sections
+                        for i, section_content in enumerate(sections):
+                            if section_content:
+                                if isinstance(section_content, str) and section_content.strip():
+                                    filing_content["sections"][f"section_{i}"] = section_content.strip()
+                                elif hasattr(section_content, 'text') and section_content.text:
+                                    filing_content["sections"][f"section_{i}"] = str(section_content.text).strip()
+                    else:
+                        # Try to extract text from other object types
+                        if hasattr(sections, 'text') and sections.text:
+                            filing_content["sections"]["main_content"] = str(sections.text).strip()
+                        else:
+                            tqdm.write(f"Unexpected sections type for {company} ({accession_number}): {type(sections)}")
+                            skipped_count += 1
+                            continue
+                        
+                except Exception as section_error:
+                    tqdm.write(f"Error extracting sections for {filing.accession_no}: {section_error}")
                     skipped_count += 1
                     continue
-                
-                for section_name, section_text in sections.items():
-                    filing_content["sections"][section_name] = section_text
 
-                # Save to JSON
-                with open(file_path, "w") as f:
-                    json.dump(filing_content, f, indent=2)
-                
-                saved_count += 1
+                # Only save if we have some content
+                if filing_content["sections"]:
+                    # Save to JSON
+                    with open(file_path, "w") as f:
+                        json.dump(filing_content, f, indent=2)
+                    saved_count += 1
+                else:
+                    tqdm.write(f"No sections found for {company} ({accession_number}), skipping")
+                    skipped_count += 1
                 
                 # To avoid hitting SEC rate limits
                 time.sleep(0.3)
 
             except Exception as e:
-                tqdm.write(f"Error processing filing {filing.accession_no} for {filing.company if filing.company else 'Unknown'}: {e}")
+                # More detailed error reporting
+                company_name = 'Unknown'
+                accession_num = 'Unknown'
+                try:
+                    company_name = getattr(filing, 'company', 'Unknown')
+                    accession_num = getattr(filing, 'accession_no', 'Unknown')
+                except:
+                    pass
+                tqdm.write(f"Error processing filing {accession_num} for {company_name}: {e}")
                 error_count += 1
                 continue
 

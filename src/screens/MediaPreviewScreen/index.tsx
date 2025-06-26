@@ -172,7 +172,6 @@ const MediaPreviewScreen: React.FC = () => {
               color={theme.colors.text}
               style={dynamicStyles.buttonIcon}
             />
-            <Text style={dynamicStyles.actionButtonText}>Save</Text>
           </TouchableOpacity>
         )}
 
@@ -184,7 +183,6 @@ const MediaPreviewScreen: React.FC = () => {
           accessibilityHint='Send to a friend'
         >
           <Icon name='send' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
-          <Text style={dynamicStyles.actionButtonText}>Send</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -198,7 +196,6 @@ const MediaPreviewScreen: React.FC = () => {
             color={theme.colors.text}
             style={dynamicStyles.buttonIcon}
           />
-          <Text style={dynamicStyles.actionButtonText}>Story</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -214,7 +211,6 @@ const MediaPreviewScreen: React.FC = () => {
             color={theme.colors.text}
             style={dynamicStyles.buttonIcon}
           />
-          <Text style={dynamicStyles.actionButtonText}>Discard</Text>
         </TouchableOpacity>
       </View>
 

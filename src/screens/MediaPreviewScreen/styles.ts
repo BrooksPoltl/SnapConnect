@@ -54,13 +54,8 @@ export const styles = (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.textSecondary,
     },
-    actionButtonText: {
-      fontSize: theme.fontSizes.md,
-      fontWeight: theme.fontWeights.semibold,
-      color: theme.colors.text,
-    },
     buttonIcon: {
-      marginRight: theme.spacing.xs,
+      // No styles needed here anymore, the icon is self-contained
     },
     saveButton: {
       // All buttons now use the same neutral styling
@@ -73,7 +68,7 @@ export const styles = (theme: Theme) =>
     },
     loader: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: theme.colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
     },

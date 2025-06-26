@@ -139,7 +139,8 @@ CREATE TABLE public.chat_participants (
 
 **RLS Policies:**
 
-- `Users can view their own chat participation records` - Users can see their own entry in the table. This is non-recursive and safe.
+- `Users can view their own chat participation records` - Users can see their
+  own entry in the table. This is non-recursive and safe.
 - `Users can join chats` - Users can add themselves to chats
 
 ### 6. `public.messages`
@@ -225,7 +226,7 @@ CREATE TABLE public.story_views (
     story_id BIGINT NOT NULL REFERENCES public.stories(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    
+
     PRIMARY KEY (story_id, user_id)
 );
 ```
@@ -236,8 +237,10 @@ CREATE TABLE public.story_views (
 
 **RLS Policies:**
 
-- `Users can view their own story views` - Users can only see their own view records.
-- `Users can insert their own story views` - Users can only insert view records for themselves.
+- `Users can view their own story views` - Users can only see their own view
+  records.
+- `Users can insert their own story views` - Users can only insert view records
+  for themselves.
 
 ---
 
@@ -249,11 +252,12 @@ CREATE TABLE public.story_views (
 
 **Storage Policies:**
 
-- `Allow authenticated uploads` - Any authenticated user can upload to the `media` bucket.
+- `Allow authenticated uploads` - Any authenticated user can upload to the
+  `media` bucket.
 - `Allow authenticated read access to media` - Users can view media if:
-    1. They are the owner of the media object.
-    2. They are a participant in a chat where the media was sent.
-    3. They have access to view a story containing the media (respects story RLS).
+  1. They are the owner of the media object.
+  2. They are a participant in a chat where the media was sent.
+  3. They have access to view a story containing the media (respects story RLS).
 
 ---
 
@@ -262,90 +266,129 @@ CREATE TABLE public.story_views (
 ### User & Friend Management
 
 #### `update_username(new_username TEXT)`
+
 - **Purpose**: Securely updates a user's username with validation.
 - **Security**: `DEFINER`
-- **Validation**: Checks for length (3-30), format (alphanumeric, underscore), and uniqueness.
+- **Validation**: Checks for length (3-30), format (alphanumeric, underscore),
+  and uniqueness.
 
 #### `accept_friend_request(request_id BIGINT)`
+
 - **Purpose**: Accepts a pending friend request.
-- **Security**: `DEFINER`. Checks that the caller is the recipient of the request.
+- **Security**: `DEFINER`. Checks that the caller is the recipient of the
+  request.
 
 #### `decline_friend_request(request_id BIGINT)`
+
 - **Purpose**: Declines and deletes a pending friend request.
 - **Security**: `DEFINER`. Checks that the caller is the recipient.
 
 #### `get_suggested_friends(limit_count INTEGER)`
-- **Purpose**: Returns a list of random users who are not already friends with the current user.
+
+- **Purpose**: Returns a list of random users who are not already friends with
+  the current user.
 - **Security**: `DEFINER`.
 
 ### Chat & Messaging
 
 #### `get_or_create_direct_chat(p_user_id1 uuid, p_user_id2 uuid)`
-- **Purpose**: Finds an existing direct chat between two users or creates a new one if it doesn't exist. Prevents duplicate chat rooms.
+
+- **Purpose**: Finds an existing direct chat between two users or creates a new
+  one if it doesn't exist. Prevents duplicate chat rooms.
 - **Security**: `DEFINER`.
 - **Returns**: `BIGINT` (the `chat_id`).
 
 #### `send_message(p_chat_id BIGINT, p_content_text TEXT)`
+
 - **Purpose**: Sends a text message to a specified chat.
-- **Security**: `DEFINER`. Verifies that the sender is a participant of the chat.
+- **Security**: `DEFINER`. Verifies that the sender is a participant of the
+  chat.
 
 #### `send_media_to_friends(p_storage_path TEXT, p_content_type TEXT, p_recipient_ids UUID[])`
-- **Purpose**: Sends a media message (image/video) to multiple friends simultaneously. It finds or creates a direct chat with each recipient and inserts the message.
+
+- **Purpose**: Sends a media message (image/video) to multiple friends
+  simultaneously. It finds or creates a direct chat with each recipient and
+  inserts the message.
 - **Security**: `DEFINER`.
 
 #### `mark_messages_as_viewed(p_chat_id BIGINT)`
-- **Purpose**: Marks all unread messages in a chat as read by the current user. Also broadcasts a `message_read` notification via `pg_notify`.
+
+- **Purpose**: Marks all unread messages in a chat as read by the current user.
+  Also broadcasts a `message_read` notification via `pg_notify`.
 - **Security**: `DEFINER`.
 
 #### `get_user_conversations()`
-- **Purpose**: Fetches the user's complete list of conversations. Includes friends with no chat history.
-- **Returns**: A table including `chat_id`, `other_user_id`, `other_username`, last message details, and `unread_count`.
+
+- **Purpose**: Fetches the user's complete list of conversations. Includes
+  friends with no chat history.
+- **Returns**: A table including `chat_id`, `other_user_id`, `other_username`,
+  last message details, and `unread_count`.
 - **Security**: `DEFINER`.
 
 #### `get_chat_messages(p_chat_id BIGINT, p_limit INTEGER)`
+
 - **Purpose**: Fetches a paginated list of messages for a specific chat.
 - **Security**: `DEFINER`. Verifies the user is a participant.
 
 #### `get_total_unread_count()`
-- **Purpose**: Returns the total number of unread messages for the current user across all chats.
+
+- **Purpose**: Returns the total number of unread messages for the current user
+  across all chats.
 - **Security**: `DEFINER`.
 - **Returns**: `INTEGER`.
 
 ### Stories
 
 #### `post_story(p_storage_path TEXT, p_media_type TEXT, p_privacy TEXT)`
+
 - **Purpose**: Creates a new story record in the database.
 - **Security**: `DEFINER`.
 - **Validation**: Checks for valid `media_type` and `privacy` settings.
 
 #### `get_stories_feed()`
-- **Purpose**: Fetches the stories feed, grouped by author. It respects all RLS policies.
-- **Returns**: A `JSON` object containing an array of authors, each with their username and a list of their stories. Each story includes an `is_viewed` flag, and each author group has an `all_stories_viewed` flag.
+
+- **Purpose**: Fetches the stories feed, grouped by author. It respects all RLS
+  policies.
+- **Returns**: A `JSON` object containing an array of authors, each with their
+  username and a list of their stories. Each story includes an `is_viewed` flag,
+  and each author group has an `all_stories_viewed` flag.
 - **Security**: `INVOKER`.
 
 #### `mark_story_viewed(p_story_id BIGINT)`
-- **Purpose**: Marks a story as viewed by the current user. Inserts a record into the `story_views` table.
-- **Security**: `INVOKER`. It will only mark a story as viewed if the user has permission to see it.
+
+- **Purpose**: Marks a story as viewed by the current user. Inserts a record
+  into the `story_views` table.
+- **Security**: `INVOKER`. It will only mark a story as viewed if the user has
+  permission to see it.
 
 ---
 
 ## Database Triggers
 
 ### `handle_new_user()`
+
 - **Event**: `AFTER INSERT ON auth.users`
-- **Purpose**: Automatically creates a new `profile` record when a new user signs up in Supabase Auth. It intelligently generates a unique username based on the user's metadata or email.
+- **Purpose**: Automatically creates a new `profile` record when a new user
+  signs up in Supabase Auth. It intelligently generates a unique username based
+  on the user's metadata or email.
 
 ### `handle_updated_at()`
+
 - **Event**: `BEFORE UPDATE` on `profiles`, `friendships`, `chats`
-- **Purpose**: Automatically updates the `updated_at` timestamp on any row that is modified.
+- **Purpose**: Automatically updates the `updated_at` timestamp on any row that
+  is modified.
 
 ### `increment_score_on_message()`
+
 - **Event**: `AFTER INSERT ON public.messages`
-- **Purpose**: Awards the sender **5 points** by calling `increment_user_score` every time they send a message.
+- **Purpose**: Awards the sender **5 points** by calling `increment_user_score`
+  every time they send a message.
 
 ### `increment_score_on_story()`
+
 - **Event**: `AFTER INSERT ON public.stories`
-- **Purpose**: Awards the author **10 points** by calling `increment_user_score` every time they post a new story.
+- **Purpose**: Awards the author **10 points** by calling `increment_user_score`
+  every time they post a new story.
 
 ---
 

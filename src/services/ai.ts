@@ -13,6 +13,7 @@ import type {
   QueryAIResponse,
   CreateAIPostRequest,
 } from '../types';
+import { Alert } from 'react-native';
 
 /**
  * Query the AI model with a prompt and optional conversation context
@@ -23,33 +24,14 @@ export async function queryAI(request: QueryAIRequest): Promise<QueryAIResponse>
       prompt: `${request.prompt.substring(0, 50)}...`,
     });
 
-    // Get the current session for auth headers
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      throw new Error('No active session');
+    const { data, error } = await supabase.functions.invoke('query-rag-model-deno', {
+      body: request,
+    });
+
+    if (error) {
+      throw error;
     }
 
-    // Call the Node.js API endpoint
-    const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001'}/api/query-rag-model`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(request),
-      },
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.error ?? `HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
     logger.log('AI Service: Successfully received AI response');
     return data;
   } catch (error) {
@@ -233,3 +215,55 @@ export async function createAIPost(request: CreateAIPostRequest): Promise<string
     throw error;
   }
 }
+
+/**
+ * Generates a caption for a photo using the AI service.
+ * @param image - The base64-encoded image data.
+ * @returns The generated caption or null if an error occurs.
+ */
+export const generatePhotoCaption = async (image: string): Promise<string | null> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('generate-photo-caption', {
+      body: { image },
+    });
+
+    if (error) throw error;
+    if (!data.caption) throw new Error('No caption was generated.');
+
+    return data.caption;
+  } catch (error: unknown) {
+    Alert.alert('Error', (error as Error).message ?? 'Failed to generate photo caption.');
+    return null;
+  }
+};
+
+/**
+ * Transcribes the audio from a video file.
+ * @param audioUri - The local URI of the audio file.
+ * @returns The transcribed text or null if an error occurs.
+ */
+export const transcribeVideoAudio = async (audioUri: string): Promise<string | null> => {
+  try {
+    const formData = new FormData();
+
+    // The asset URI needs to be converted to something that can be sent in FormData.
+    // This is a workaround for React Native's FormData typing limitations.
+    formData.append('file', {
+      uri: audioUri,
+      name: 'audio.m4a',
+      type: 'audio/m4a',
+    } as unknown as Blob);
+
+    const { data, error } = await supabase.functions.invoke('transcribe-video-audio', {
+      body: formData,
+    });
+
+    if (error) throw error;
+    if (!data.transcript) throw new Error('No transcript was generated.');
+
+    return data.transcript;
+  } catch (error: unknown) {
+    Alert.alert('Error', (error as Error).message ?? 'Failed to transcribe audio.');
+    return null;
+  }
+};

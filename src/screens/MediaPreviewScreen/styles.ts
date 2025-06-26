@@ -28,6 +28,7 @@ export const styles = (theme: Theme) =>
       top: '45%',
       left: 0,
       right: 0,
+      flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 10,
@@ -80,7 +81,17 @@ export const styles = (theme: Theme) =>
       // All buttons now use the same neutral styling
     },
     sendButton: {
-      // All buttons now use the same neutral styling
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.borderRadius.lg,
+    },
+    sendButtonText: {
+      color: theme.colors.white,
+      fontWeight: theme.fontWeights.bold,
+      marginRight: theme.spacing.sm,
     },
     discardButton: {
       // All buttons now use the same neutral styling
@@ -175,6 +186,44 @@ export const styles = (theme: Theme) =>
       paddingHorizontal: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
       fontSize: theme.fontSizes.lg,
+    },
+    topControls: {
+      position: 'absolute',
+      top: 60,
+      left: 20,
+      zIndex: 1,
+    },
+    bottomControls: {
+      position: 'absolute',
+      bottom: 40,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      zIndex: 1,
+    },
+    controlButton: {
+      padding: theme.spacing.sm,
+    },
+    aiButton: {
+      padding: theme.spacing.sm,
+      marginLeft: theme.spacing.sm,
+    },
+    captionInputContainer: {
+      position: 'absolute',
+      top: '45%',
+      left: 0,
+      right: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 10,
+    },
+    captionDisplay: {
+      backgroundColor: theme.colors.overlayDark,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.borderRadius.md,
     },
     // Debug styles removed - no longer needed
   });

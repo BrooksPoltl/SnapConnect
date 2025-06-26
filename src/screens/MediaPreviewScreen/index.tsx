@@ -26,6 +26,7 @@ import { UserStackParamList } from '../../types/navigation';
 import { logError } from '../../utils/logger';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { postStory } from '../../services/stories';
+import { generatePhotoCaption, transcribeVideoAudio } from '../../services/ai';
 
 import { styles } from './styles';
 
@@ -48,7 +49,6 @@ const MediaPreviewScreen: React.FC = () => {
 
   const [media] = useState(originalMedia);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState(false);
   const videoRef = useRef<Video>(null);
 
   const [isPrivacyModalVisible, setPrivacyModalVisible] = useState(false);
@@ -56,6 +56,7 @@ const MediaPreviewScreen: React.FC = () => {
   const [caption, setCaption] = useState('');
   const [isCaptioning, setIsCaptioning] = useState(false);
   const [skiaImage, setSkiaImage] = useState<SkImage | null>(null);
+  const [isGeneratingCaption, setIsGeneratingCaption] = useState(false);
 
   const theme = useTheme();
   const dynamicStyles = styles(theme);
@@ -66,11 +67,7 @@ const MediaPreviewScreen: React.FC = () => {
   });
 
   React.useEffect(() => {
-    checkMediaLibraryPermission();
-  }, [media]);
-
-  // Load image for Skia rendering
-  React.useEffect(() => {
+    // Load image for Skia rendering when media changes
     const loadSkiaImage = async () => {
       if (media.type === 'photo') {
         try {
@@ -95,12 +92,45 @@ const MediaPreviewScreen: React.FC = () => {
     loadSkiaImage();
   }, [media.uri, media.type]);
 
-  const checkMediaLibraryPermission = async () => {
+  const handleGenerateCaption = async () => {
+    setIsGeneratingCaption(true);
     try {
-      const permission = await MediaLibrary.getPermissionsAsync();
-      setHasMediaLibraryPermission(permission.granted);
+      let generatedCaption: string | null = null;
+      if (media.type === 'photo') {
+        const base64Data = await FileSystem.readAsStringAsync(media.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        const fullBase64 = `data:image/jpeg;base64,${base64Data}`;
+        generatedCaption = await generatePhotoCaption(fullBase64);
+      } else if (media.type === 'video') {
+        // For videos, we assume the URI is a local file that can be used.
+        // The `transcribeVideoAudio` service expects a URI that can be fetched.
+        // NOTE: This assumes the video file has an audio track.
+        // We might need a library to extract audio if this is not a direct file path.
+        // For now, we will attempt to send the URI directly.
+
+        // This is a placeholder for audio extraction if needed.
+        // For now, we are assuming the service can handle the video file and extract audio.
+        // This part may require `expo-av` to prepare the audio file.
+        // Let's create a temporary audio file from video
+        const audioFileInfo = await FileSystem.getInfoAsync(media.uri);
+        if (!audioFileInfo.exists) {
+          throw new Error('Video file does not exist.');
+        }
+
+        // This is a simplified approach. A more robust solution would use expo-av to extract
+        // and process the audio into a specific format like m4a.
+        generatedCaption = await transcribeVideoAudio(media.uri);
+      }
+
+      if (generatedCaption) {
+        setCaption(generatedCaption);
+      }
     } catch (error) {
-      logError('MediaPreviewScreen', 'Error checking media library permission', error);
+      logError('MediaPreviewScreen', 'Error generating AI caption', error);
+      Alert.alert('Error', 'Failed to generate AI caption.');
+    } finally {
+      setIsGeneratingCaption(false);
     }
   };
 
@@ -302,111 +332,101 @@ const MediaPreviewScreen: React.FC = () => {
         {renderMedia()}
       </Pressable>
 
-      {isCaptioning && media.type === 'photo' && (
-        <View style={dynamicStyles.captionContainer}>
-          <TextInput
-            style={dynamicStyles.captionInput}
-            value={caption}
-            onChangeText={setCaption}
-            placeholder='Add a caption...'
-            placeholderTextColor={theme.colors.textSecondary}
-            autoFocus
-            onBlur={() => setIsCaptioning(false)}
-          />
-        </View>
-      )}
-
-      {/* Action buttons - consistent with PhotoPreview design */}
-      <View style={dynamicStyles.actionsContainer}>
-        {hasMediaLibraryPermission && (
-          <TouchableOpacity
-            style={[dynamicStyles.actionButton, dynamicStyles.saveButton]}
-            onPress={handleSave}
-            accessibilityRole='button'
-            accessibilityLabel='Save media'
-            accessibilityHint='Save to device gallery'
-          >
-            <Icon
-              name='download'
-              size={16}
-              color={theme.colors.text}
-              style={dynamicStyles.buttonIcon}
-            />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton, dynamicStyles.sendButton]}
-          onPress={handleSend}
-          accessibilityRole='button'
-          accessibilityLabel='Send media'
-          accessibilityHint='Send to a friend'
-        >
-          <Icon name='send' size={16} color={theme.colors.text} style={dynamicStyles.buttonIcon} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton]}
-          onPress={() => setPrivacyModalVisible(true)}
-          disabled={isPosting}
-        >
-          <Icon
-            name='plus-square'
-            size={16}
-            color={theme.colors.text}
-            style={dynamicStyles.buttonIcon}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton, dynamicStyles.discardButton]}
-          onPress={handleDiscard}
-          accessibilityRole='button'
-          accessibilityLabel='Discard media'
-          accessibilityHint='Delete and go back'
-        >
-          <Icon
-            name='trash-2'
-            size={16}
-            color={theme.colors.text}
-            style={dynamicStyles.buttonIcon}
-          />
+      <View style={dynamicStyles.topControls}>
+        <TouchableOpacity onPress={handleDiscard} style={dynamicStyles.controlButton}>
+          <Icon name='x' size={32} color='white' />
         </TouchableOpacity>
       </View>
 
-      {isPosting && <ActivityIndicator size='large' color='#fff' style={dynamicStyles.loader} />}
+      {isCaptioning ? (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={dynamicStyles.captionInputContainer}>
+            <TextInput
+              style={dynamicStyles.captionInput}
+              value={caption}
+              onChangeText={setCaption}
+              placeholder='Type a caption...'
+              placeholderTextColor={theme.colors.text}
+              autoFocus
+              onSubmitEditing={() => setIsCaptioning(false)}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      ) : (
+        <View style={dynamicStyles.captionContainer}>
+          <TouchableOpacity
+            onPress={() => setIsCaptioning(true)}
+            style={dynamicStyles.captionDisplay}
+          >
+            <Text style={dynamicStyles.captionText}>{caption || 'Add a caption...'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleGenerateCaption}
+            style={dynamicStyles.aiButton}
+            disabled={isGeneratingCaption}
+          >
+            {isGeneratingCaption ? (
+              <ActivityIndicator color={theme.colors.primary} />
+            ) : (
+              <Icon name='sparkles' size={24} color={theme.colors.primary} />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={dynamicStyles.bottomControls}>
+        <TouchableOpacity onPress={handleSave} style={dynamicStyles.controlButton}>
+          <Icon name='download' size={24} color='white' />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleSend} style={dynamicStyles.sendButton}>
+          <Text style={dynamicStyles.sendButtonText}>Send</Text>
+          <Icon name='arrow-right' size={20} color='white' />
+        </TouchableOpacity>
+
+        {media.type === 'video' && (
+          <TouchableOpacity onPress={toggleMute} style={dynamicStyles.controlButton}>
+            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color='white' />
+          </TouchableOpacity>
+        )}
+      </View>
 
       <Modal
+        animationType='slide'
         transparent={true}
         visible={isPrivacyModalVisible}
         onRequestClose={() => setPrivacyModalVisible(false)}
-        animationType='slide'
       >
         <View style={dynamicStyles.modalContainer}>
           <View style={dynamicStyles.modalContent}>
-            <Text style={dynamicStyles.modalTitle}>Who can see your story?</Text>
-            <Pressable style={dynamicStyles.modalButton} onPress={() => handlePostStory('public')}>
+            <Text style={dynamicStyles.modalTitle}>Post to Story</Text>
+            <TouchableOpacity
+              style={dynamicStyles.modalButton}
+              onPress={() => handlePostStory('public')}
+            >
               <Text style={dynamicStyles.modalButtonText}>Public</Text>
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               style={dynamicStyles.modalButton}
               onPress={() => handlePostStory('private_friends')}
             >
               <Text style={dynamicStyles.modalButtonText}>Friends Only</Text>
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[dynamicStyles.modalButton, dynamicStyles.cancelButton]}
               onPress={() => setPrivacyModalVisible(false)}
             >
               <Text style={dynamicStyles.modalButtonText}>Cancel</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      <Pressable style={dynamicStyles.closeButton} onPress={() => navigation.goBack()}>
-        <Icon name='x' size={32} color='white' />
-      </Pressable>
+      {isPosting && (
+        <View style={dynamicStyles.loadingOverlay}>
+          <ActivityIndicator size='large' color={theme.colors.primary} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

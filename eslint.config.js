@@ -20,6 +20,7 @@ export default [
       'build/**',
       'api/**',
       'scripts/**',
+      'supabase/functions/**',
       '*.config.js',
       '*.config.ts',
       'babel.config.js',

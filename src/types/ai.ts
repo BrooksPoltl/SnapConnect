@@ -46,3 +46,19 @@ export interface CreateAIPostRequest {
   source_url?: string;
   post_privacy: 'public' | 'friends';
 }
+
+export interface GeneratePhotoCaptionRequest {
+  image: string; // base64 encoded image
+}
+
+export interface GeneratePhotoCaptionResponse {
+  caption: string;
+}
+
+export interface TranscribeVideoAudioRequest {
+  file: FormData; // FormData containing the audio file
+}
+
+export interface TranscribeVideoAudioResponse {
+  transcript: string;
+}

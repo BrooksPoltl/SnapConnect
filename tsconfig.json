@@ -13,5 +13,5 @@
     "types": ["node"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules", "api"]
+  "exclude": ["node_modules", "api", "supabase/functions"]
 }

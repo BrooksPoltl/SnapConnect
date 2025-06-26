@@ -23,10 +23,22 @@ export async function uploadMedia(
     const { uri, type } = mediaFile;
     const contentType = type === 'photo' ? 'image/jpeg' : 'video/mp4';
 
+    logger.log('[uploadMedia] Starting upload:', { uri, type, bucket, filePath });
+
+    // Check if file exists before trying to read it
+    const fileInfo = await FileSystem.getInfoAsync(uri);
+    logger.log('[uploadMedia] File info:', fileInfo);
+
+    if (!fileInfo.exists) {
+      throw new Error(`File does not exist at URI: ${uri}`);
+    }
+
     // Read the file from its local URI into a base64 string
+    logger.log('[uploadMedia] Reading file from URI:', uri);
     const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
+    logger.log('[uploadMedia] Successfully read file, base64 length:', base64.length);
 
     // Upload the decoded base64 string (which becomes an ArrayBuffer)
     const { data, error } = await supabase.storage.from(bucket).upload(filePath, decode(base64), {

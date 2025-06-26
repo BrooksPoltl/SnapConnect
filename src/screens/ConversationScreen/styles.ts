@@ -161,7 +161,7 @@ export const styles = (theme: Theme) =>
     },
     sendingOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.4)',
+      backgroundColor: theme.colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 10,

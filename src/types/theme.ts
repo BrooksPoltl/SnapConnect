@@ -19,6 +19,7 @@ export interface ColorPalette {
   black: string;
   transparent: string;
   overlay: string;
+  overlayDark: string;
   shadow: string;
 }
 
@@ -39,6 +40,7 @@ export interface Colors {
     black: string;
     transparent: string;
     overlay: string;
+    overlayDark: string;
     shadow: string;
   };
   dark: {
@@ -57,6 +59,7 @@ export interface Colors {
     black: string;
     transparent: string;
     overlay: string;
+    overlayDark: string;
     shadow: string;
   };
 }

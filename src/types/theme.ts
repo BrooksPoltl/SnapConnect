@@ -16,6 +16,7 @@ export interface ColorPalette {
   warning: string;
   disabled: string;
   white: string;
+  black: string;
   transparent: string;
   overlay: string;
   shadow: string;
@@ -35,6 +36,7 @@ export interface Colors {
     warning: string;
     disabled: string;
     white: string;
+    black: string;
     transparent: string;
     overlay: string;
     shadow: string;
@@ -52,6 +54,7 @@ export interface Colors {
     warning: string;
     disabled: string;
     white: string;
+    black: string;
     transparent: string;
     overlay: string;
     shadow: string;

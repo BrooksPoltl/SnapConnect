@@ -1,49 +1,82 @@
 import { StyleSheet } from 'react-native';
-import { Theme } from '../../types/theme';
+import { Theme } from '../../styles/theme';
 
 export const styles = (theme: Theme) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#000',
-      justifyContent: 'center',
-    },
     gestureHandler: {
       flex: 1,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.black,
+      justifyContent: 'center',
     },
     header: {
       position: 'absolute',
       top: 50,
       left: 10,
       right: 10,
+      zIndex: 1,
+      paddingHorizontal: 10,
+    },
+    progressBarContainer: {
+      flexDirection: 'row',
+      height: 2,
+      width: '100%',
+      marginBottom: 10,
+    },
+    progressBar: {
+      flex: 1,
+      height: '100%',
+      marginHorizontal: 2,
+    },
+    progressBarActive: {
+      backgroundColor: theme.colors.white,
+    },
+    progressBarInactive: {
+      backgroundColor: theme.colors.overlay,
+    },
+    userInfo: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      zIndex: 1,
     },
     username: {
       color: theme.colors.white,
       fontWeight: 'bold',
+      fontSize: 16,
     },
     closeButton: {
-      padding: 5,
+      padding: 8,
+    },
+    closeButtonText: {
+      color: theme.colors.white,
+      fontSize: 24,
+      fontWeight: 'bold',
+      textShadowColor: theme.colors.shadow,
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 2,
     },
     media: {
       flex: 1,
       width: '100%',
       height: '100%',
     },
-    tapContainer: {
+    errorText: {
+      color: theme.colors.white,
+      textAlign: 'center',
+    },
+    prevNextArea: {
       position: 'absolute',
       top: 0,
       bottom: 0,
-      left: 0,
-      right: 0,
-      flexDirection: 'row',
-      zIndex: 0,
+      width: '30%',
     },
-    tapArea: {
-      flex: 1,
+    prevArea: {
+      left: 0,
+    },
+    nextArea: {
+      right: 0,
     },
     footer: {
       position: 'absolute',
@@ -58,7 +91,7 @@ export const styles = (theme: Theme) =>
     footerButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: theme.colors.overlay,
       paddingVertical: 8,
       paddingHorizontal: 15,
       borderRadius: 20,

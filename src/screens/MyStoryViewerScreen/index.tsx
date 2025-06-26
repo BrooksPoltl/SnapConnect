@@ -4,13 +4,13 @@
  * This screen allows a user to view their own stories, see analytics,
  * and delete them.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { View, Text, Image, Pressable, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../styles/theme';
 import { styles as createStyles } from './styles';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { UserStackParamList, MyStoryAnalytics, StoryViewer } from '../../types';
+import { UserStackParamList, MyStoryAnalytics, StoryViewer, Story } from '../../types';
 import { supabase } from '../../services/supabase';
 import { Video, ResizeMode } from 'expo-av';
 import { Icon } from '../../components';
@@ -21,7 +21,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { logger } from '../../utils/logger';
+import { logError } from '../../utils/logger';
 
 type MyStoryViewerRouteProp = RouteProp<UserStackParamList, 'MyStoryViewer'>;
 
@@ -34,20 +34,61 @@ export const MyStoryViewerScreen: React.FC = () => {
   const { stories } = route.params;
 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [analytics, setAnalytics] = useState<MyStoryAnalytics | null>(null);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
 
   // Bottom sheet setup
-  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const snapPoints = React.useMemo(() => ['25%', '50%'], []);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['25%', '50%'], []);
 
   const currentStory = stories[currentStoryIndex];
 
-  // Memoize the public URL to avoid re-calculating on every render
-  const mediaUrl = React.useMemo(() => {
-    if (!currentStory?.storage_path) return null;
-    const { data } = supabase.storage.from('media').getPublicUrl(currentStory.storage_path);
-    return data.publicUrl;
+  const fetchMediaUrl = useCallback(
+    async (story: Story | undefined) => {
+      if (!story) return;
+      setIsLoading(true);
+      setMediaUrl(null);
+      try {
+        const { data } = await supabase.storage
+          .from('media')
+          .createSignedUrl(story.storage_path, 60 * 5); // 5 minute expiry
+
+        if (!data?.signedUrl) {
+          throw new Error('Failed to create signed URL');
+        }
+        setMediaUrl(data.signedUrl);
+      } catch (error) {
+        logError('MyStoryViewerScreen', 'Error fetching story media URL', {
+          error,
+          story,
+        });
+        navigation.goBack();
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [navigation],
+  );
+
+  useEffect(() => {
+    if (currentStory) {
+      fetchMediaUrl(currentStory);
+    }
+  }, [currentStory, fetchMediaUrl]);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!currentStory) return;
+      try {
+        const data = await getStoryViewers(currentStory.id);
+        setAnalytics(data);
+      } catch (err) {
+        // Silently fail on analytics fetch, not critical for user
+        logError('MyStoryViewerScreen', 'Failed to fetch story analytics', err);
+      }
+    };
+    fetchAnalytics();
   }, [currentStory]);
 
   const goToNextStory = () => {
@@ -80,10 +121,9 @@ export const MyStoryViewerScreen: React.FC = () => {
             setIsLoading(true);
             try {
               await deleteStory(currentStory.id);
-              // If successful, go back to the previous screen.
               navigation.goBack();
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (_error) {
+            } catch (e) {
+              logError('MyStoryViewerScreen', 'Failed to delete story', e);
               Alert.alert('Error', 'Failed to delete story. Please try again.');
             } finally {
               setIsLoading(false);
@@ -94,22 +134,9 @@ export const MyStoryViewerScreen: React.FC = () => {
     );
   };
 
-  const handleShowViewers = async () => {
+  const handleShowViewers = () => {
     bottomSheetModalRef.current?.present();
   };
-
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const data = await getStoryViewers(currentStory.id);
-        setAnalytics(data);
-      } catch (err) {
-        // Silently fail on analytics fetch, not critical for user
-        logger.error('Failed to fetch story analytics', err);
-      }
-    };
-    fetchAnalytics();
-  }, [currentStory]);
 
   const renderViewerItem = ({ item }: { item: StoryViewer }) => (
     <View style={styles.viewerItem}>
@@ -138,30 +165,54 @@ export const MyStoryViewerScreen: React.FC = () => {
             />
           )}
           <View style={styles.header}>
-            <Text style={styles.username}>Your Story</Text>
-            <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
-              <Icon name='x' size={24} color={theme.colors.white} />
-            </Pressable>
+            <View style={styles.progressBarContainer}>
+              {stories.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.progressBar,
+                    index <= currentStoryIndex
+                      ? styles.progressBarActive
+                      : styles.progressBarInactive,
+                  ]}
+                />
+              ))}
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.username}>Your Story</Text>
+              <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
+                <Icon name='x' size={24} color={theme.colors.white} />
+              </Pressable>
+            </View>
           </View>
 
           {/* Media Content */}
-          {currentStory.media_type === 'image' ? (
-            <Image source={{ uri: mediaUrl }} style={styles.media} resizeMode='contain' />
+          {mediaUrl ? (
+            currentStory.media_type === 'image' ? (
+              <Image source={{ uri: mediaUrl }} style={styles.media} resizeMode='contain' />
+            ) : (
+              <Video
+                source={{ uri: mediaUrl }}
+                style={styles.media}
+                shouldPlay
+                isLooping={false}
+                isMuted={false}
+                resizeMode={ResizeMode.CONTAIN}
+                onPlaybackStatusUpdate={status => {
+                  if ('didJustFinish' in status && status.didJustFinish) {
+                    goToNextStory();
+                  }
+                }}
+              />
+            )
           ) : (
-            <Video
-              source={{ uri: mediaUrl }}
-              style={styles.media}
-              shouldPlay
-              isLooping
-              isMuted
-              resizeMode={ResizeMode.CONTAIN}
-            />
+            <Text style={styles.errorText}>Error loading story media.</Text>
           )}
 
           {/* Navigation Taps */}
-          <View style={styles.tapContainer}>
-            <Pressable style={styles.tapArea} onPress={goToPreviousStory} />
-            <Pressable style={styles.tapArea} onPress={goToNextStory} />
+          <View style={StyleSheet.absoluteFill} pointerEvents='box-none'>
+            <Pressable style={styles.prevArea} onPress={goToPreviousStory} />
+            <Pressable style={styles.nextArea} onPress={goToNextStory} />
           </View>
 
           {/* Footer with actions */}

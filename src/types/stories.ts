@@ -7,6 +7,7 @@ export interface Story {
   storage_path: string;
   media_type: 'image' | 'video';
   created_at: string; // ISO 8601 date string
+  is_viewed: boolean;
 }
 
 /**
@@ -18,4 +19,5 @@ export interface StoryFeedItem {
   author_id: string; // UUID
   username: string;
   stories: Story[];
+  all_stories_viewed: boolean;
 }

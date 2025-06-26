@@ -1,84 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Text, Pressable, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Image, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Video, ResizeMode } from 'expo-av';
-import { UserStackParamList } from '../../types';
-import { styles } from './styles';
-import { getSignedMediaUrl } from '../../services/media';
-import { logger } from '../../utils/logger';
+import { UserStackParamList, Story } from '../../types';
+import { styles as stylesFunction } from './styles';
+import { supabase } from '../../services/supabase';
+import { markStoryViewed } from '../../services/stories';
+import { useTheme } from '../../styles/theme';
+import { logError } from '../../utils/logger';
 
 type StoryViewerRouteProp = RouteProp<UserStackParamList, 'StoryViewer'>;
 
 export const StoryViewerScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute<StoryViewerRouteProp>();
+  const theme = useTheme();
+  const dynamicStyles = stylesFunction(theme);
 
   const { stories, username } = route.params;
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // For V1, we only show the first story.
-  const currentStory = stories?.[0];
+  const currentStory = stories?.[currentStoryIndex];
 
-  useEffect(() => {
-    if (!currentStory) {
-      Alert.alert('Error', 'Story not available.');
-      logger.error('StoryViewerScreen: No currentStory found.');
-      navigation.goBack();
-      return;
-    }
-
-    const fetchMediaUrl = async () => {
+  const fetchMediaUrl = useCallback(
+    async (story: Story | undefined) => {
+      if (!story) return;
+      setIsLoading(true);
+      setMediaUrl(null);
       try {
-        setIsLoading(true);
-        const url = await getSignedMediaUrl(currentStory.storage_path);
-        setMediaUrl(url);
+        const { data } = await supabase.storage
+          .from('media')
+          .createSignedUrl(story.storage_path, 60 * 5);
+
+        if (!data?.signedUrl) {
+          throw new Error('Failed to create signed URL');
+        }
+        setMediaUrl(data.signedUrl);
       } catch (error) {
-        logger.error('Error fetching story media URL:', { story: currentStory, error });
-        Alert.alert('Error', 'Could not load story. Please try again.');
+        logError('StoryViewerScreen', 'Error fetching story media URL', {
+          error,
+          story,
+        });
         navigation.goBack();
       } finally {
         setIsLoading(false);
       }
-    };
+    },
+    [navigation],
+  );
 
-    fetchMediaUrl();
-  }, [currentStory, navigation]);
+  useEffect(() => {
+    if (currentStory) {
+      fetchMediaUrl(currentStory);
+      if (!currentStory.is_viewed) {
+        markStoryViewed(currentStory.id);
+      }
+    }
+  }, [currentStory, fetchMediaUrl]);
+
+  const handleNextStory = () => {
+    if (currentStoryIndex < stories.length - 1) {
+      setCurrentStoryIndex(currentStoryIndex + 1);
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  const handlePreviousStory = () => {
+    if (currentStoryIndex > 0) {
+      setCurrentStoryIndex(currentStoryIndex - 1);
+    }
+  };
 
   if (!currentStory) {
-    // This will be briefly rendered before the useEffect triggers navigation.goBack()
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Story not available.</Text>
+      <View style={dynamicStyles.container}>
+        <Text style={dynamicStyles.errorText}>Story not available.</Text>
+        <Pressable onPress={() => navigation.goBack()} style={dynamicStyles.closeButton}>
+          <Text style={dynamicStyles.closeButtonText}>Close</Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header with username and close button */}
-      <View style={styles.header}>
-        <Text style={styles.username}>{username}</Text>
-        <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
-          <Text style={styles.closeButtonText}>X</Text>
-        </Pressable>
+    <View style={dynamicStyles.container}>
+      <View style={dynamicStyles.header}>
+        <View style={dynamicStyles.progressBarContainer}>
+          {stories.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                dynamicStyles.progressBar,
+                index <= currentStoryIndex
+                  ? dynamicStyles.progressBarActive
+                  : dynamicStyles.progressBarInactive,
+              ]}
+            />
+          ))}
+        </View>
+        <View style={dynamicStyles.userInfo}>
+          <Text style={dynamicStyles.username}>{username}</Text>
+          <Pressable onPress={() => navigation.goBack()} style={dynamicStyles.closeButton}>
+            <Text style={dynamicStyles.closeButtonText}>X</Text>
+          </Pressable>
+        </View>
       </View>
 
-      {/* Media Content */}
-      {isLoading ? (
-        <ActivityIndicator size='large' color='#fff' />
-      ) : currentStory.media_type === 'image' && mediaUrl ? (
-        <Image source={{ uri: mediaUrl }} style={styles.media} resizeMode='contain' />
-      ) : currentStory.media_type === 'video' && mediaUrl ? (
+      {isLoading || !mediaUrl ? (
+        <ActivityIndicator size='large' color={theme.colors.white} />
+      ) : currentStory.media_type === 'image' ? (
+        <Image source={{ uri: mediaUrl }} style={dynamicStyles.media} resizeMode='contain' />
+      ) : (
         <Video
           source={{ uri: mediaUrl }}
-          style={styles.media}
+          style={dynamicStyles.media}
           shouldPlay
-          isLooping
-          isMuted
+          isLooping={false}
+          isMuted={false}
           resizeMode={ResizeMode.CONTAIN}
+          onPlaybackStatusUpdate={status => {
+            if ('didJustFinish' in status && status.didJustFinish) {
+              handleNextStory();
+            }
+          }}
         />
-      ) : null}
+      )}
+      <View style={StyleSheet.absoluteFillObject} pointerEvents='box-none'>
+        <Pressable
+          style={[dynamicStyles.prevNextArea, dynamicStyles.prevArea]}
+          onPress={handlePreviousStory}
+        />
+        <Pressable
+          style={[dynamicStyles.prevNextArea, dynamicStyles.nextArea]}
+          onPress={handleNextStory}
+        />
+      </View>
     </View>
   );
 };

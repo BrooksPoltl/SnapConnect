@@ -85,4 +85,4 @@ export async function getSignedMediaUrl(
     }
     throw new Error('An unknown error occurred while creating a signed URL.');
   }
-} 
+}

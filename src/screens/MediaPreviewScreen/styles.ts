@@ -85,8 +85,9 @@ export const styles = (theme: Theme) =>
     },
     modalContainer: {
       flex: 1,
-      justifyContent: 'flex-end',
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.overlay,
     },
     modalContent: {
       backgroundColor: theme.colors.surface,
@@ -115,5 +116,26 @@ export const styles = (theme: Theme) =>
     },
     cancelButton: {
       backgroundColor: theme.colors.textSecondary,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 20,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    privacyOption: {
+      width: '100%',
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    privacyOptionText: {
+      fontSize: theme.fontSizes.lg,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.overlay,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });

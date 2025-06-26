@@ -17,11 +17,25 @@ export async function getStoriesFeed(): Promise<StoryFeedItem[]> {
   const { data, error } = await supabase.rpc('get_stories_feed');
 
   if (error) {
-    logError('stories.ts', 'Error fetching stories feed:', error);
     throw new Error(error.message);
   }
 
   return (data as StoryFeedItem[] | null) ?? [];
+}
+
+/**
+ * Marks a specific story as viewed by the current user.
+ * @param storyId - The ID of the story to mark as viewed.
+ */
+export async function markStoryViewed(storyId: number): Promise<void> {
+  const { error } = await supabase.rpc('mark_story_viewed', {
+    p_story_id: storyId,
+  });
+
+  if (error) {
+    logError('markStoryViewed', 'Error marking story as viewed:', error);
+    // We don't throw here to avoid interrupting the user experience for a non-critical error.
+  }
 }
 
 /**
@@ -60,7 +74,6 @@ export async function postStory(
   if (rpcError) {
     // Attempt to clean up the uploaded file if the DB insert fails
     await supabase.storage.from('media').remove([filePath]);
-    logError('stories.ts', 'Error creating story record:', rpcError);
     throw new Error(rpcError.message);
   }
 }

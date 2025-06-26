@@ -7,8 +7,6 @@ import { supabase } from './supabase';
 import { logger } from '../utils/logger';
 import type { Conversation, Message } from '../types/chat';
 import type { CapturedMedia } from '../types/media';
-import * as FileSystem from 'expo-file-system';
-import { decode } from 'base64-arraybuffer';
 import { uploadMedia } from './media';
 
 /**
@@ -70,7 +68,6 @@ export async function sendMessage(chatId: number, content: string): Promise<numb
 
     const { data, error } = await supabase.rpc('send_message', {
       p_chat_id: chatId,
-      p_content_type: 'text',
       p_content_text: content,
     });
 

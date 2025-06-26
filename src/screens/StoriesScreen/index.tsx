@@ -8,6 +8,7 @@ import { styles } from './styles';
 import { useTheme } from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { logError } from '../../utils/logger';
+import { Avatar } from '../../components/Avatar';
 
 export const StoriesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
@@ -49,11 +50,10 @@ export const StoriesScreen: React.FC = () => {
         })
       }
     >
-      <View style={dynamicStyles.avatarBorder}>
-        {/* Placeholder for an avatar component */}
-        <View style={dynamicStyles.avatar} />
-      </View>
-      <Text style={dynamicStyles.username}>{item.username}</Text>
+      <Avatar username={item.username} isViewed={item.all_stories_viewed} size={60} />
+      <Text style={dynamicStyles.username} numberOfLines={1}>
+        {item.username}
+      </Text>
     </Pressable>
   );
 

@@ -6,7 +6,6 @@ import { useTheme } from '../../styles/theme';
 import { styles as createStyles } from './styles';
 
 interface CameraOptionsProps {
-  flipCamera: () => void;
   onToggleFlash: () => void;
   onToggleTorch: () => void;
   flashMode: 'off' | 'on';
@@ -21,7 +20,6 @@ interface CameraOptionsProps {
  * - Torch/flashlight toggle
  */
 const CameraOptions: React.FC<CameraOptionsProps> = ({
-  flipCamera,
   onToggleFlash,
   onToggleTorch,
   flashMode,

@@ -306,7 +306,6 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
       </View>
 
       <CameraOptions
-        flipCamera={flipCamera}
         disabled={isRecording}
         flashMode={flashMode}
         isTorchEnabled={isTorchEnabled}

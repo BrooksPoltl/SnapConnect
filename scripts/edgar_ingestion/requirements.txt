@@ -3,4 +3,6 @@ edgartools
 pinecone
 openai
 tqdm
-langchain 
+langchain
+backoff
+psutil 

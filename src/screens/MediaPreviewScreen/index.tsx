@@ -361,6 +361,14 @@ const MediaPreviewScreen: React.FC = () => {
           <Icon name='download' size={24} color='white' />
         </TouchableOpacity>
 
+        <TouchableOpacity
+          onPress={() => setPrivacyModalVisible(true)}
+          style={dynamicStyles.controlButton}
+          disabled={isPosting}
+        >
+          <Icon name='plus-circle' size={24} color='white' />
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={handleSend} style={dynamicStyles.sendButton}>
           <Text style={dynamicStyles.sendButtonText}>Send</Text>
           <Icon name='arrow-right' size={20} color='white' />

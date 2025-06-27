@@ -16,3 +16,4 @@ export { default as HomeScreenAnimatedText } from './HomeScreenAnimatedText';
 export { default as Icon } from './Icon';
 export { default as PhotoPreview } from './PhotoPreview';
 export { default as ReturnButton } from './ReturnButton';
+export { SelectedUserCard } from './SelectedUserCard';

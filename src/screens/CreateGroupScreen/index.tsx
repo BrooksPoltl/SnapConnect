@@ -21,6 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useGroupStore } from '../../stores/groupStore';
 import { searchUsersForGroup } from '../../services/groups';
 import { Avatar } from '../../components/Avatar';
+import { SelectedUserCard } from '../../components/SelectedUserCard';
 
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
@@ -104,11 +105,11 @@ export const CreateGroupScreen = () => {
   };
 
   const renderSelectedMember = ({ item }: { item: GroupMember }) => (
-    <TouchableOpacity style={styles.selectedMemberItem} onPress={() => handleSelectMember(item)}>
-      <Avatar username={item.username} size={40} />
-      <Text style={styles.selectedMemberName}>{item.username}</Text>
-      <Ionicons name='close-circle' size={20} color='#FF3B30' />
-    </TouchableOpacity>
+    <SelectedUserCard
+      username={item.username}
+      onRemove={() => handleSelectMember(item)}
+      size={40}
+    />
   );
 
   const renderSearchResult = ({ item }: { item: GroupMember }) => {

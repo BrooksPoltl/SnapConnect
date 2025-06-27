@@ -129,7 +129,7 @@ serve(async req => {
       .map(match => {
         const text = match.metadata?.text || '';
         const company = match.metadata?.company || 'Unknown Company';
-        
+
         if (text.length > 0) {
           return `[${company} Filing]\n${text}`;
         }
@@ -138,24 +138,23 @@ serve(async req => {
       .filter(text => text.length > 0)
       .join('\\n\\n');
 
-    const sources = relevantDocs
-      .map(match => {
-        // Log metadata to debug what fields are available
-        console.log('Match metadata:', JSON.stringify(match.metadata, null, 2));
-        
-        const cik = match.metadata?.cik || match.metadata?.CIK;
-        const accessionNumber = match.metadata?.accession_number || match.metadata?.accessionNumber;
-        
-        if (cik && accessionNumber) {
-          // Remove dashes from accession number for URL
-          const cleanAccessionNumber = accessionNumber.replace(/-/g, '');
-          const url = `https://www.sec.gov/Archives/edgar/data/${cik}/${cleanAccessionNumber}/`;
-          return url;
-        }
-        return '';
-      });
+    const sources = relevantDocs.map(match => {
+      // Log metadata to debug what fields are available
+      console.log('Match metadata:', JSON.stringify(match.metadata, null, 2));
+
+      const cik = match.metadata?.cik || match.metadata?.CIK;
+      const accessionNumber = match.metadata?.accession_number || match.metadata?.accessionNumber;
+
+      if (cik && accessionNumber) {
+        // Remove dashes from accession number for URL
+        const cleanAccessionNumber = accessionNumber.replace(/-/g, '');
+        const url = `https://www.sec.gov/Archives/edgar/data/${cik}/${cleanAccessionNumber}/`;
+        return url;
+      }
+      return '';
+    });
     const nonEmptySources = sources.filter(url => url.length > 0);
-    
+
     // Remove duplicate URLs
     const filteredSources = [...new Set(nonEmptySources)];
 
@@ -228,32 +227,36 @@ serve(async req => {
       message_sender: 'user',
       message_content: prompt,
     });
-    
+
     if (userMessageError) {
       console.error('Error storing user message:', userMessageError);
     }
 
     // Always include metadata, even if sources is empty
-    const messageMetadata = { 
+    const messageMetadata = {
       sources: filteredSources,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     console.log('Storing AI message with metadata:', JSON.stringify(messageMetadata));
-    
+
     const { error: aiMessageError } = await supabaseClient.rpc('add_ai_message', {
       conversation_uuid: finalConversationId,
       message_sender: 'ai',
       message_content: aiResponse,
       message_metadata: messageMetadata,
     });
-    
+
     if (aiMessageError) {
       console.error('Error storing AI message:', aiMessageError);
     }
 
     return new Response(
-      JSON.stringify({ response: aiResponse, sources: filteredSources, conversationId: finalConversationId }),
+      JSON.stringify({
+        response: aiResponse,
+        sources: filteredSources,
+        conversationId: finalConversationId,
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

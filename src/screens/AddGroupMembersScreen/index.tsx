@@ -17,8 +17,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
-import { Avatar } from '../../components/Avatar';
 import { SelectedUserCard } from '../../components/SelectedUserCard';
+import { FriendListItem } from '../../components/FriendListItem';
 import * as groupsService from '../../services/groups';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
@@ -130,16 +130,12 @@ export const AddGroupMembersScreen = () => {
     const isSelected = selectedUsers.find(selected => selected.user_id === item.user_id);
 
     return (
-      <TouchableOpacity style={styles.userItem} onPress={() => handleSelectUser(item)}>
-        <Avatar username={item.username} size={50} />
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.username}</Text>
-          <Text style={styles.userScore}>Score: {item.score}</Text>
-        </View>
-        <View style={[styles.selectionIndicator, isSelected && styles.selectionIndicatorSelected]}>
-          {isSelected && <Ionicons name='checkmark' size={20} color='#FFFFFF' />}
-        </View>
-      </TouchableOpacity>
+      <FriendListItem
+        username={item.username}
+        score={item.score}
+        onPress={() => handleSelectUser(item)}
+        isSelected={!!isSelected}
+      />
     );
   };
 

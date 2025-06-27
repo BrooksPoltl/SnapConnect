@@ -20,8 +20,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
 import { searchUsersForGroup } from '../../services/groups';
-import { Avatar } from '../../components/Avatar';
 import { SelectedUserCard } from '../../components/SelectedUserCard';
+import { FriendListItem } from '../../components/FriendListItem';
 
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
@@ -116,17 +116,12 @@ export const CreateGroupScreen = () => {
     const isSelected = selectedMembers.some(member => member.user_id === item.user_id);
 
     return (
-      <TouchableOpacity
-        style={[styles.searchResultItem, isSelected && styles.selectedSearchResult]}
+      <FriendListItem
+        username={item.username}
+        score={item.score}
         onPress={() => handleSelectMember(item)}
-      >
-        <Avatar username={item.username} size={50} />
-        <View style={styles.userInfo}>
-          <Text style={styles.username}>{item.username}</Text>
-          <Text style={styles.userScore}>Score: {item.score}</Text>
-        </View>
-        {isSelected && <Ionicons name='checkmark-circle' size={24} color='#007AFF' />}
-      </TouchableOpacity>
+        isSelected={isSelected}
+      />
     );
   };
 

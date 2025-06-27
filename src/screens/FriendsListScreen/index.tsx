@@ -9,6 +9,7 @@ import { FriendsStackParamList } from '../../navigation/FriendsStack';
 import { useTheme } from '../../styles/theme';
 import { getFriendsList, removeFriend, Friend } from '../../services/friends';
 import { logger } from '../../utils/logger';
+import { FriendListItem } from '../../components/FriendListItem';
 
 import { styles as createStyles } from './styles';
 
@@ -102,19 +103,20 @@ const FriendsListScreen: React.FC<FriendsListScreenProps> = ({ navigation }) => 
    * Render a friend item
    */
   const renderFriendItem = (friend: Friend) => (
-    <View key={friend.id} style={styles.friendItem}>
-      <TouchableOpacity style={styles.friendInfo} onPress={() => handleViewProfile(friend.id)}>
-        <Text style={styles.username}>{friend.username}</Text>
-        <Text style={styles.score}>Score: {friend.score}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.removeButton}
-        onPress={() => handleRemoveFriend(friend.id, friend.username)}
-      >
-        <Ionicons name='person-remove' size={20} color={theme.colors.error} />
-      </TouchableOpacity>
-    </View>
+    <FriendListItem
+      key={friend.id}
+      username={friend.username}
+      score={friend.score}
+      onPress={() => handleViewProfile(friend.id)}
+      rightElement={
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={() => handleRemoveFriend(friend.id, friend.username)}
+        >
+          <Ionicons name='person-remove' size={20} color={theme.colors.error} />
+        </TouchableOpacity>
+      }
+    />
   );
 
   return (

@@ -18,7 +18,7 @@ import { UserStackParamList } from '../../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
-import { Avatar } from '../../components/Avatar';
+import { FriendListItem } from '../../components/FriendListItem';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
 
@@ -88,21 +88,18 @@ export const GroupDetailsScreen = () => {
   };
 
   const renderMember = ({ item }: { item: GroupMember }) => (
-    <View style={styles.memberItem}>
-      <Avatar username={item.username} size={50} />
-      <View style={styles.memberInfo}>
-        <Text style={styles.memberName}>{item.username}</Text>
-        <Text style={styles.memberScore}>Score: {item.score}</Text>
-        <Text style={styles.memberJoinDate}>
-          Joined {new Date(item.joined_at).toLocaleDateString()}
-        </Text>
-      </View>
-      {currentGroupDetails?.creator_id === item.user_id && (
-        <View style={styles.creatorBadge}>
-          <Text style={styles.creatorBadgeText}>Creator</Text>
-        </View>
-      )}
-    </View>
+    <FriendListItem
+      username={item.username}
+      score={item.score}
+      subtitle={`Joined ${new Date(item.joined_at).toLocaleDateString()}`}
+      rightElement={
+        currentGroupDetails?.creator_id === item.user_id ? (
+          <View style={styles.creatorBadge}>
+            <Text style={styles.creatorBadgeText}>Creator</Text>
+          </View>
+        ) : null
+      }
+    />
   );
 
   if (isLoading && !currentGroupDetails) {

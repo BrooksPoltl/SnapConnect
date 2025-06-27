@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   keyboardContainer: {
     flex: 1,
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   createButton: {
     backgroundColor: '#007AFF',
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 12,
   },
   groupNameInput: {
@@ -87,7 +87,7 @@ export const styles = StyleSheet.create({
   },
   selectedMemberName: {
     fontSize: 12,
-    color: '#000000',
+    color: '#FFFFFF',
     marginTop: 4,
     marginBottom: 2,
     textAlign: 'center',
@@ -145,7 +145,7 @@ export const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   userScore: {
     fontSize: 14,
@@ -159,7 +159,7 @@ export const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#FFFFFF',
   },
   errorContainer: {
     backgroundColor: '#FFEBEE',

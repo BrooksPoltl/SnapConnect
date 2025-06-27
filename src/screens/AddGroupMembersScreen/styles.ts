@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   header: {
     flexDirection: 'row',
@@ -29,11 +29,11 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 2,
   },
   addButton: {
@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 12,
   },
   selectedUsersList: {
@@ -131,13 +131,13 @@ export const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 16,
     textAlign: 'center',
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 8,
     textAlign: 'center',
   },
@@ -162,11 +162,11 @@ export const styles = StyleSheet.create({
   userName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   userScore: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 2,
   },
   selectionIndicator: {

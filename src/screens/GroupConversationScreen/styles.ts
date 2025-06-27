@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   keyboardContainer: {
     flex: 1,
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5EA',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   backButton: {
     padding: 8,
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   groupName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   memberCount: {
     fontSize: 14,
@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
   },
   messagesList: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#000000',
   },
   messagesContent: {
     paddingVertical: 16,
@@ -124,11 +124,11 @@ export const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#8E8E93',
+    color: '#FFFFFF',
   },
   emptyStateSubtext: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 8,
   },
   errorContainer: {
@@ -159,7 +159,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
     borderTopWidth: 1,
     borderTopColor: '#E5E5EA',
   },

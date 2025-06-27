@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
   },
   header: {
     flexDirection: 'row',
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   placeholder: {
     width: 40,
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
   errorContainer: {
@@ -88,18 +88,18 @@ export const styles = StyleSheet.create({
   groupName: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 8,
     textAlign: 'center',
   },
   groupMemberCount: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   groupCreatedDate: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#FFFFFF',
   },
   actionsSection: {
     paddingHorizontal: 16,
@@ -129,7 +129,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 16,
   },
   membersList: {
@@ -150,16 +150,16 @@ export const styles = StyleSheet.create({
   memberName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   memberScore: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 2,
   },
   memberJoinDate: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: '#FFFFFF',
     marginTop: 2,
   },
   creatorBadge: {

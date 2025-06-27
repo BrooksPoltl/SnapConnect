@@ -6,3 +6,4 @@ export * from './chat';
 export * from './stories';
 export * from './media';
 export * from './ai';
+export * from './groups';

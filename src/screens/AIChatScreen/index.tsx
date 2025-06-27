@@ -66,11 +66,13 @@ const AIChatScreen: React.FC = () => {
     try {
       const data = await getAIConversationMessages(conversationId);
       console.log('AIChatScreen: Loaded messages:', data);
-      
+
       setMessages(prevMessages => {
         // Keep any temporary messages that aren't yet in the server data
-        const tempMessages = prevMessages.filter(msg => 
-          msg.id.startsWith('temp-') && !data.some(serverMsg => serverMsg.content === msg.content)
+        const tempMessages = prevMessages.filter(
+          msg =>
+            msg.id.startsWith('temp-') &&
+            !data.some(serverMsg => serverMsg.content === msg.content),
         );
         return [...(data || []), ...tempMessages];
       });

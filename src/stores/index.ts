@@ -3,3 +3,4 @@
  */
 
 export * from './chatStore';
+export * from './groupStore';

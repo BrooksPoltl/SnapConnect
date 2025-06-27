@@ -222,10 +222,10 @@ serve(async req => {
       finalConversationId = newConversation;
     }
 
-    console.log('Storing user message:', { 
-      conversation_uuid: finalConversationId, 
-      message_sender: 'user', 
-      message_content: prompt 
+    console.log('Storing user message:', {
+      conversation_uuid: finalConversationId,
+      message_sender: 'user',
+      message_content: prompt,
     });
 
     const { error: userMessageError } = await supabaseClient.rpc('add_ai_message', {

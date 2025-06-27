@@ -327,23 +327,55 @@ export const subscribeToGroupMessages = (
         table: 'messages',
         filter: `group_id=eq.${groupId}`,
       },
-      payload => {
+      async payload => {
         logger.info('GroupsService', 'Received real-time group message', payload);
 
-        // Transform the payload to match our GroupMessage interface
-        const message: GroupMessage = {
-          id: payload.new.id,
-          sender_id: payload.new.sender_id,
-          sender_username: '', // Will be populated by the UI
-          content_type: payload.new.content_type,
-          content_text: payload.new.content_text,
-          storage_path: payload.new.storage_path,
-          created_at: payload.new.created_at,
-          viewed_at: payload.new.viewed_at,
-          is_own_message: false, // Will be determined by the UI
-        };
+        try {
+          // Get current user to determine if this is own message
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          const currentUserId = user?.id;
 
-        callback(message);
+          // Get sender profile for username
+          const { data: senderProfile } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', payload.new.sender_id)
+            .single();
+
+          // Transform the payload to match our GroupMessage interface
+          const message: GroupMessage = {
+            id: payload.new.id,
+            sender_id: payload.new.sender_id,
+            sender_username: senderProfile?.username ?? 'Unknown User',
+            content_type: payload.new.content_type,
+            content_text: payload.new.content_text,
+            storage_path: payload.new.storage_path,
+            created_at: payload.new.created_at,
+            viewed_at: payload.new.viewed_at,
+            is_own_message: payload.new.sender_id === currentUserId,
+          };
+
+          callback(message);
+        } catch (error) {
+          logger.error('GroupsService', 'Error processing real-time message', error);
+
+          // Fallback: still send the message but with basic info
+          const message: GroupMessage = {
+            id: payload.new.id,
+            sender_id: payload.new.sender_id,
+            sender_username: 'Unknown User',
+            content_type: payload.new.content_type,
+            content_text: payload.new.content_text,
+            storage_path: payload.new.storage_path,
+            created_at: payload.new.created_at,
+            viewed_at: payload.new.viewed_at,
+            is_own_message: false,
+          };
+
+          callback(message);
+        }
       },
     )
     .subscribe();

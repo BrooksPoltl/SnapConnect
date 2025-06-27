@@ -286,13 +286,47 @@ export const useGroupStore = create<GroupStore>((set, get) => ({
     logger.info('GroupStore', `Subscribing to real-time updates for group ${groupId}`);
 
     const subscription = groupsService.subscribeToGroupMessages(groupId, message => {
-      // Add the new message to the store
-      set(state => ({
-        currentGroupMessages: {
-          ...state.currentGroupMessages,
-          [groupId]: [...(state.currentGroupMessages[groupId] || []), message],
-        },
-      }));
+      set(state => {
+        const existingMessages = state.currentGroupMessages[groupId] || [];
+
+        // Check if this is our own message that we sent optimistically
+        if (message.is_own_message) {
+          // Find and replace the optimistic message (status: 'sending' or 'sent')
+          const optimisticMessageIndex = existingMessages.findIndex(
+            msg => msg.status === 'sending' && msg.content_text === message.content_text,
+          );
+
+          if (optimisticMessageIndex !== -1) {
+            // Replace the optimistic message with the real one
+            const updatedMessages = [...existingMessages];
+            updatedMessages[optimisticMessageIndex] = {
+              ...message,
+              status: 'sent',
+            };
+
+            return {
+              currentGroupMessages: {
+                ...state.currentGroupMessages,
+                [groupId]: updatedMessages,
+              },
+            };
+          }
+        }
+
+        // Check if we already have this message (prevent duplicates)
+        const messageExists = existingMessages.some(msg => msg.id === message.id);
+        if (messageExists) {
+          return state; // Don't add duplicate
+        }
+
+        // Add the new message to the store
+        return {
+          currentGroupMessages: {
+            ...state.currentGroupMessages,
+            [groupId]: [...existingMessages, message],
+          },
+        };
+      });
 
       // Update groups list to show new last message
       get().loadGroups();

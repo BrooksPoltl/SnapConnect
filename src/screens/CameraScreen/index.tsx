@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, CameraType, Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -37,15 +37,34 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [isRecording, setIsRecording] = useState(false);
-  const [isFlashEnabled, setIsFlashEnabled] = useState(false);
+  const [flashMode, setFlashMode] = useState<'off' | 'on'>('off');
+  const [isTorchEnabled, setIsTorchEnabled] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraMode, setCameraMode] = useState<'picture' | 'video'>('picture');
 
   const theme = useTheme();
   const styles = createStyles(theme);
 
+  /**
+   * Toggles flash mode: off ↔ on
+   */
   const onToggleFlash = () => {
-    setIsFlashEnabled(prev => !prev);
+    setFlashMode(current => {
+      const newMode = current === 'off' ? 'on' : 'off';
+      logger.log(`[CameraScreen] Flash mode changed: ${current} → ${newMode}`);
+      return newMode;
+    });
+  };
+
+  /**
+   * Toggles torch/flashlight mode
+   */
+  const onToggleTorch = () => {
+    setIsTorchEnabled(prev => {
+      const newState = !prev;
+      logger.log(`[CameraScreen] Torch toggled: ${prev} → ${newState}`);
+      return newState;
+    });
   };
 
   // Camera ready callback
@@ -183,11 +202,19 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
       try {
         logger.log('[CameraScreen] Starting video recording...');
         setIsRecording(true);
-        const video = await cameraRef.current.recordAsync();
+
+        const video = await cameraRef.current.recordAsync({
+          maxDuration: 300, // 5 minutes max
+        });
 
         if (video?.uri) {
           const media: CapturedMedia = { uri: video.uri, type: 'video' };
           logger.log('Video recorded', video.uri);
+
+          // Log the file extension to verify what format we got
+          const fileExtension = video.uri.split('.').pop()?.toLowerCase();
+          logger.log(`[CameraScreen] Recorded video extension: ${fileExtension}`);
+
           if (mediaPermission?.granted) {
             await MediaLibrary.saveToLibraryAsync(video.uri);
           }
@@ -249,49 +276,58 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
     );
   }
 
+  // Debug current camera state
+  logger.log(`[CameraScreen] Render - Flash: ${flashMode}, Torch: ${isTorchEnabled}`);
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* CameraView with NO children */}
       <CameraView
         ref={cameraRef}
         style={styles.camera}
         facing={facing}
         onCameraReady={onCameraReady}
         mode={cameraMode}
-      >
-        <View style={styles.topControlsContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name='close-outline' size={32} color={theme.colors.white} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Friends')}
-            style={styles.friendsButton}
-          >
-            <Ionicons name='people-outline' size={28} color={theme.colors.white} />
-          </TouchableOpacity>
-        </View>
+        flash={flashMode}
+        enableTorch={isTorchEnabled}
+      />
 
-        <CameraOptions
-          flipCamera={flipCamera}
-          disabled={isRecording}
-          isFlashEnabled={isFlashEnabled}
-          onToggleFlash={onToggleFlash}
-        />
+      {/* All controls as absolutely positioned siblings */}
+      <View style={styles.topControlsContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name='close-outline' size={32} color={theme.colors.white} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Friends')}
+          style={styles.friendsButton}
+        >
+          <Ionicons name='people-outline' size={28} color={theme.colors.white} />
+        </TouchableOpacity>
+      </View>
 
-        <View style={styles.bottomControlsContainer}>
-          <View style={styles.actionsContainer}>
-            <CameraControls
-              isRecording={isRecording}
-              onTakePhoto={takePhoto}
-              onStartRecording={startRecording}
-              onStopRecording={stopRecording}
-              onCheckGallery={checkGallery}
-              onFlipCamera={flipCamera}
-              cameraMode={cameraMode}
-              onModeChange={setCameraMode}
-            />
-          </View>
+      <CameraOptions
+        flipCamera={flipCamera}
+        disabled={isRecording}
+        flashMode={flashMode}
+        isTorchEnabled={isTorchEnabled}
+        onToggleFlash={onToggleFlash}
+        onToggleTorch={onToggleTorch}
+      />
+
+      <View style={styles.bottomControlsContainer}>
+        <View style={styles.actionsContainer}>
+          <CameraControls
+            isRecording={isRecording}
+            onTakePhoto={takePhoto}
+            onStartRecording={startRecording}
+            onStopRecording={stopRecording}
+            onCheckGallery={checkGallery}
+            onFlipCamera={flipCamera}
+            cameraMode={cameraMode}
+            onModeChange={setCameraMode}
+          />
         </View>
-      </CameraView>
+      </View>
     </SafeAreaView>
   );
 };

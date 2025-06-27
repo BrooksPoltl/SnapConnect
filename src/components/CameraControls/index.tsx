@@ -52,7 +52,6 @@ const CameraControls: React.FC<CameraControlsProps> = ({
         <TouchableOpacity
           style={styles.captureButton}
           onPress={cameraMode === 'picture' ? onTakePhoto : onStartRecording}
-          onLongPress={onStartRecording}
           onPressOut={onStopRecording}
           delayLongPress={800}
           activeOpacity={0.8}

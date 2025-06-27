@@ -8,43 +8,60 @@ import { styles as createStyles } from './styles';
 interface CameraOptionsProps {
   flipCamera: () => void;
   onToggleFlash: () => void;
-  isFlashEnabled: boolean;
+  onToggleTorch: () => void;
+  flashMode: 'off' | 'on';
+  isTorchEnabled: boolean;
   disabled?: boolean;
 }
 
+/**
+ * Camera options component providing flash, torch, and camera flip controls
+ * Features:
+ * - Flash mode toggle (off/on)
+ * - Torch/flashlight toggle
+ * - Camera flip functionality
+ */
 const CameraOptions: React.FC<CameraOptionsProps> = ({
   flipCamera,
   onToggleFlash,
-  isFlashEnabled,
+  onToggleTorch,
+  flashMode,
+  isTorchEnabled,
   disabled,
 }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  // Mock handlers for options that are not yet implemented
-  const handleNotImplemented = () => {
-    // TODO: Implement these features
-  };
+  const getFlashIcon = () => (flashMode === 'on' ? 'zap' : 'zap-off');
+
+  const getFlashIconColor = () => (flashMode === 'on' ? theme.colors.primary : theme.colors.white);
 
   return (
     <View style={styles.container}>
+      {/* Flash Mode Button */}
       <TouchableOpacity
         style={[styles.optionButton, disabled && styles.disabledButton]}
         onPress={onToggleFlash}
         disabled={disabled}
         accessibilityRole='button'
-        accessibilityLabel='Toggle flash'
+        accessibilityLabel={`Flash mode: ${flashMode}`}
       >
-        <Icon name={isFlashEnabled ? 'zap' : 'zap-off'} size={24} color={theme.colors.white} />
+        <Icon name={getFlashIcon()} size={24} color={getFlashIconColor()} />
       </TouchableOpacity>
+
+      {/* Torch/Light Button */}
       <TouchableOpacity
         style={[styles.optionButton, disabled && styles.disabledButton]}
-        onPress={handleNotImplemented}
+        onPress={onToggleTorch}
         disabled={disabled}
         accessibilityRole='button'
-        accessibilityLabel='Toggle night mode'
+        accessibilityLabel={isTorchEnabled ? 'Turn off torch' : 'Turn on torch'}
       >
-        <Icon name='moon' size={24} color={theme.colors.white} />
+        <Icon
+          name='sun'
+          size={24}
+          color={isTorchEnabled ? theme.colors.primary : theme.colors.white}
+        />
       </TouchableOpacity>
     </View>
   );

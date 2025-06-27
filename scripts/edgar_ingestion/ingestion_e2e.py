@@ -83,8 +83,8 @@ logger.info(f"Filings data directory: {FILINGS_DATA_DIR}")
 
 # Rate limiting configuration
 SEC_DELAY = 1.0  # Increased from 0.3 to be more conservative with SEC
-OPENAI_DELAY = 0.1  # Small delay between OpenAI requests
-OPENAI_BATCH_DELAY = 2.0  # Longer delay between batches
+OPENAI_DELAY = 0  # Small delay between OpenAI requests
+OPENAI_BATCH_DELAY = 0.5 # Shorter delay between batches
 logger.info(f"Rate limiting configured - SEC: {SEC_DELAY}s, OpenAI: {OPENAI_DELAY}s, Batch: {OPENAI_BATCH_DELAY}s")
 
 # --- Rate-limited OpenAI embedding function ---
@@ -283,7 +283,7 @@ def process_and_upsert_filings():
         file_had_error = False
         file_start_time = time.time()
         
-        logger.info(f"Processing file {file_index}/{total_files_to_process}: {file_name}")
+        logger.info(f"=== Starting NEW FILE {file_index}/{total_files_to_process}: {file_name} ===")
         
         try:
             with open(file_path, "r") as f:
@@ -294,7 +294,7 @@ def process_and_upsert_filings():
             logger.info(f"Processing {company} (Accession: {accession_number})")
 
             vectors_to_upsert = []
-            chunk_id_counter = 0
+            chunk_id_counter = 0  # Reset counter for each file
             sections_processed = 0
 
             for section_name, section_text in filing_data.get("sections", {}).items():
@@ -359,7 +359,7 @@ def process_and_upsert_filings():
                         upsert_time = time.time() - upsert_start
                         upsert_batches += 1
                         logger.debug(f"Upserted batch {upsert_batches} ({len(batch)} vectors) in {upsert_time:.2f}s")
-                        time.sleep(0.1)  # Small delay between Pinecone upserts
+                        time.sleep(0.05)  # Small delay between Pinecone upserts
                     
                     total_vectors_upserted += len(vectors_to_upsert)
                     logger.info(f"Successfully upserted {len(vectors_to_upsert)} vectors in {upsert_batches} batches")

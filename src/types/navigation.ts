@@ -55,6 +55,7 @@ export type UserStackParamList = {
   };
   CreateGroup: undefined;
   GroupConversation: { groupId: string; groupName: string };
+  GroupDetails: { groupId: string; groupName: string };
 };
 
 export type ChatStackParamList = {

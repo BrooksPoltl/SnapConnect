@@ -154,12 +154,23 @@ export const getGroupDetails = async (groupId: number): Promise<GroupDetails> =>
 
     if (membersError) throw membersError;
 
+    // Define the type for the Supabase query response
+    interface MemberWithProfile {
+      group_id: number;
+      user_id: string;
+      joined_at: string;
+      profiles: {
+        username: string;
+        score: number;
+      }[];
+    }
+
     // Transform members data
-    const members: GroupMember[] = membersData.map(member => ({
+    const members: GroupMember[] = (membersData as MemberWithProfile[]).map(member => ({
       group_id: member.group_id,
       user_id: member.user_id,
-      username: member.profiles[0]?.username ?? '',
-      score: member.profiles[0]?.score ?? 0,
+      username: member.profiles?.[0]?.username ?? '',
+      score: member.profiles?.[0]?.score ?? 0,
       joined_at: member.joined_at,
     }));
 

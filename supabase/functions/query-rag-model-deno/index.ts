@@ -223,18 +223,34 @@ serve(async req => {
       finalConversationId = newConversation;
     }
 
-    await supabaseClient.rpc('add_ai_message', {
+    const { error: userMessageError } = await supabaseClient.rpc('add_ai_message', {
       conversation_uuid: finalConversationId,
       message_sender: 'user',
       message_content: prompt,
     });
+    
+    if (userMessageError) {
+      console.error('Error storing user message:', userMessageError);
+    }
 
-    await supabaseClient.rpc('add_ai_message', {
+    // Always include metadata, even if sources is empty
+    const messageMetadata = { 
+      sources: filteredSources,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Storing AI message with metadata:', JSON.stringify(messageMetadata));
+    
+    const { error: aiMessageError } = await supabaseClient.rpc('add_ai_message', {
       conversation_uuid: finalConversationId,
       message_sender: 'ai',
       message_content: aiResponse,
-      message_metadata: { sources: filteredSources },
+      message_metadata: messageMetadata,
     });
+    
+    if (aiMessageError) {
+      console.error('Error storing AI message:', aiMessageError);
+    }
 
     return new Response(
       JSON.stringify({ response: aiResponse, sources: filteredSources, conversationId: finalConversationId }),

@@ -209,6 +209,7 @@ export const CreateGroupScreen = () => {
           renderItem={renderSearchResult}
           keyExtractor={item => item.user_id}
           style={styles.searchResults}
+          contentContainerStyle={styles.searchResultsContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             searchQuery.length >= 2 && !isSearching ? (

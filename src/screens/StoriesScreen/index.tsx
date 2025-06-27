@@ -1,6 +1,14 @@
 import { useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStoriesFeed } from '../../services';
 import { StoryFeedItem, UserStackParamList } from '../../types';
@@ -10,37 +18,48 @@ import { Ionicons } from '@expo/vector-icons';
 import { logError } from '../../utils/logger';
 import { Avatar } from '../../components/Avatar';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { useGroupStore } from '../../stores';
 
 export const StoriesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
   const theme = useTheme();
   const dynamicStyles = styles(theme);
   const { user } = useAuthentication();
+  const { groups, loadGroups, isLoading: groupsLoading } = useGroupStore();
   const [feed, setFeed] = useState<StoryFeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Load both stories and groups
+      const [storiesData] = await Promise.all([getStoriesFeed(), loadGroups()]);
+
+      // Filter out users who have no visible stories
+      const filteredData = storiesData.filter(item => item.stories && item.stories.length > 0);
+      setFeed(filteredData);
+    } catch (e) {
+      setError('Failed to load content. Please try again.');
+      logError('StoriesScreen', 'Failed to fetch stories feed or groups', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [loadGroups]);
 
   useFocusEffect(
     useCallback(() => {
-      const fetchFeed = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-          const data = await getStoriesFeed();
-          // Filter out users who have no visible stories
-          const filteredData = data.filter(item => item.stories && item.stories.length > 0);
-          setFeed(filteredData);
-        } catch (e) {
-          setError('Failed to load stories. Please try again.');
-          logError('StoriesScreen', 'Failed to fetch stories feed', e);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchFeed();
-    }, []),
+      fetchData();
+    }, [fetchData]),
   );
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, [fetchData]);
 
   const renderStoryItem = ({ item }: { item: StoryFeedItem }) => {
     const isOwnStory = item.author_id === user?.id;
@@ -72,6 +91,39 @@ export const StoriesScreen: React.FC = () => {
     );
   };
 
+  const renderGroupItem = ({ item }: { item: (typeof groups)[0] }) => {
+    const handlePress = () => {
+      navigation.navigate('GroupConversation', {
+        groupId: item.group_id.toString(),
+        groupName: item.group_name,
+      });
+    };
+
+    return (
+      <Pressable style={dynamicStyles.groupItem} onPress={handlePress}>
+        <View style={dynamicStyles.groupAvatar}>
+          <Text style={dynamicStyles.groupAvatarText}>
+            {item.group_name.charAt(0).toUpperCase()}
+          </Text>
+        </View>
+        <View style={dynamicStyles.groupInfo}>
+          <Text style={dynamicStyles.groupName} numberOfLines={1}>
+            {item.group_name}
+          </Text>
+          {item.last_message_content && (
+            <Text style={dynamicStyles.groupLastMessage} numberOfLines={1}>
+              {item.last_message_sender_username}: {item.last_message_content}
+            </Text>
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  const handleCreateGroup = () => {
+    navigation.navigate('CreateGroup');
+  };
+
   return (
     <SafeAreaView style={dynamicStyles.container}>
       <View style={dynamicStyles.header}>
@@ -83,26 +135,61 @@ export const StoriesScreen: React.FC = () => {
           <Ionicons name='people-outline' size={24} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
-      <View style={dynamicStyles.content}>
-        {isLoading && <ActivityIndicator />}
-        {error && <Text>{error}</Text>}
-        {!isLoading &&
-          !error &&
-          (feed.length > 0 ? (
-            <FlatList
-              data={feed}
-              renderItem={renderStoryItem}
-              keyExtractor={item => item.author_id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={dynamicStyles.storiesBar}
-            />
-          ) : (
-            <View style={dynamicStyles.placeholderContainer}>
-              <Text style={dynamicStyles.placeholderText}>No stories to show.</Text>
+
+      <FlatList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        ListHeaderComponent={
+          <View>
+            {/* Stories Section */}
+            {isLoading && <ActivityIndicator style={dynamicStyles.loadingIndicator} />}
+            {error && (
+              <View style={dynamicStyles.placeholderContainer}>
+                <Text style={dynamicStyles.placeholderText}>{error}</Text>
+              </View>
+            )}
+            {!isLoading && !error && (
+              <View>
+                {feed.length > 0 ? (
+                  <FlatList
+                    data={feed}
+                    renderItem={renderStoryItem}
+                    keyExtractor={item => item.author_id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={dynamicStyles.storiesBar}
+                  />
+                ) : (
+                  <View style={dynamicStyles.placeholderContainer}>
+                    <Text style={dynamicStyles.placeholderText}>No stories to show.</Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* Groups Section */}
+            <View style={dynamicStyles.groupsSection}>
+              <Text style={dynamicStyles.sectionTitle}>Groups</Text>
+              <TouchableOpacity style={dynamicStyles.createGroupButton} onPress={handleCreateGroup}>
+                <Ionicons name='add' size={20} color={theme.colors.white} />
+                <Text style={dynamicStyles.createGroupButtonText}>Create Group</Text>
+              </TouchableOpacity>
             </View>
-          ))}
-      </View>
+          </View>
+        }
+        data={groups}
+        renderItem={renderGroupItem}
+        keyExtractor={item => item.group_id.toString()}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          !groupsLoading && groups.length === 0 ? (
+            <View style={dynamicStyles.placeholderContainer}>
+              <Text style={dynamicStyles.placeholderText}>
+                No groups yet. Create your first group!
+              </Text>
+            </View>
+          ) : null
+        }
+      />
     </SafeAreaView>
   );
 };

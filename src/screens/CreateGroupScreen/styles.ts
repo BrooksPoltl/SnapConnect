@@ -74,7 +74,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#E5E5EA',
   },
   selectedMembersList: {
-    maxHeight: 80,
+    maxHeight: 100,
   },
   selectedMemberItem: {
     alignItems: 'center',
@@ -83,12 +83,13 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F2F2F7',
     borderRadius: 8,
     minWidth: 80,
+    paddingBottom: 12,
   },
   selectedMemberName: {
     fontSize: 12,
     color: '#000000',
     marginTop: 4,
-    marginBottom: 4,
+    marginBottom: 2,
     textAlign: 'center',
   },
   searchSection: {
@@ -122,6 +123,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
   },
+  searchResultsContent: {
+    paddingBottom: 20,
+    flexGrow: 1,
+  },
   searchResultItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -149,7 +154,8 @@ export const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: 40,
+    paddingBottom: 60,
   },
   emptyStateText: {
     fontSize: 16,

@@ -53,6 +53,8 @@ export type UserStackParamList = {
     aiResponse: string;
     sourceLink?: string;
   };
+  CreateGroup: undefined;
+  GroupConversation: { groupId: string; groupName: string };
 };
 
 export type ChatStackParamList = {

@@ -3,7 +3,7 @@ import { Button, View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { logOut } from '../services/auth';
-import { useChatStore, useUnreadCount } from '../stores';
+import { useChatStore, useUnreadCount, useGroupStore } from '../stores';
 
 import AIHomeScreen from '../screens/AIHomeScreen';
 import AIChatScreen from '../screens/AIChatScreen';
@@ -25,6 +25,8 @@ import { MediaViewerScreen } from '../screens/MediaViewerScreen';
 import { SelectRecipientsScreen } from '../screens/SelectRecipientsScreen';
 import { StoryViewerScreen } from '../screens/StoryViewerScreen';
 import { MyStoryViewerScreen } from '../screens/MyStoryViewerScreen';
+import { CreateGroupScreen } from '../screens/CreateGroupScreen';
+import { GroupConversationScreen } from '../screens/GroupConversationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -55,6 +57,7 @@ const MainTabNavigator: React.FC = () => {
   const { user } = useAuthentication();
   const { unreadCount } = useUnreadCount();
   const { initializeRealtime, refreshUnreadCount, refreshConversations, reset } = useChatStore();
+  const { loadGroups, reset: resetGroups } = useGroupStore();
 
   // Initialize store and real-time subscriptions when user changes
   useEffect(() => {
@@ -65,11 +68,22 @@ const MainTabNavigator: React.FC = () => {
       refreshUnreadCount();
       // Pre-fetch conversations for instant loading
       refreshConversations();
+      // Load user's groups
+      loadGroups();
     } else {
       // Reset store when user logs out
       reset();
+      resetGroups();
     }
-  }, [user, initializeRealtime, refreshUnreadCount, refreshConversations, reset]);
+  }, [
+    user,
+    initializeRealtime,
+    refreshUnreadCount,
+    refreshConversations,
+    reset,
+    loadGroups,
+    resetGroups,
+  ]);
 
   const styles = StyleSheet.create({
     iconContainer: {
@@ -224,6 +238,21 @@ const UserStack: React.FC = () => (
       component={CreateAIPostScreen}
       options={{
         presentation: 'modal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='CreateGroup'
+      component={CreateGroupScreen}
+      options={{
+        presentation: 'modal',
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='GroupConversation'
+      component={GroupConversationScreen}
+      options={{
         headerShown: false,
       }}
     />

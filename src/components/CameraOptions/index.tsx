@@ -15,11 +15,10 @@ interface CameraOptionsProps {
 }
 
 /**
- * Camera options component providing flash, torch, and camera flip controls
+ * Camera options component providing flash, torch, maybe other options in the future
  * Features:
  * - Flash mode toggle (off/on)
  * - Torch/flashlight toggle
- * - Camera flip functionality
  */
 const CameraOptions: React.FC<CameraOptionsProps> = ({
   flipCamera,

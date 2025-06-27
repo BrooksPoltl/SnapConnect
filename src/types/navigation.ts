@@ -5,6 +5,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CapturedMedia } from './media';
 import { Story } from './stories';
+import { GroupMember } from './groups';
 
 export type AuthStackParamList = {
   AuthHome: undefined;
@@ -56,6 +57,7 @@ export type UserStackParamList = {
   CreateGroup: undefined;
   GroupConversation: { groupId: string; groupName: string };
   GroupDetails: { groupId: string; groupName: string };
+  AddGroupMembers: { groupId: string; groupName: string; currentMembers: GroupMember[] };
 };
 
 export type ChatStackParamList = {

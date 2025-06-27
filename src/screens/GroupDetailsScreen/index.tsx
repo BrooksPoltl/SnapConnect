@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UserStackParamList } from '../../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
@@ -25,8 +27,10 @@ interface GroupDetailsParams {
   groupName: string;
 }
 
+type NavigationProp = NativeStackNavigationProp<UserStackParamList>;
+
 export const GroupDetailsScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { groupId, groupName } = route.params as GroupDetailsParams;
 
@@ -74,8 +78,13 @@ export const GroupDetailsScreen = () => {
   };
 
   const handleAddMembers = () => {
-    // TODO: Navigate to AddGroupMembers screen when implemented
-    Alert.alert('Coming Soon', 'Adding members feature will be available soon.');
+    if (currentGroupDetails) {
+      navigation.navigate('AddGroupMembers', {
+        groupId,
+        groupName,
+        currentMembers: currentGroupDetails.members,
+      });
+    }
   };
 
   const renderMember = ({ item }: { item: GroupMember }) => (

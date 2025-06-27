@@ -28,6 +28,7 @@ import { MyStoryViewerScreen } from '../screens/MyStoryViewerScreen';
 import { CreateGroupScreen } from '../screens/CreateGroupScreen';
 import { GroupConversationScreen } from '../screens/GroupConversationScreen';
 import { GroupDetailsScreen } from '../screens/GroupDetailsScreen';
+import { AddGroupMembersScreen } from '../screens/AddGroupMembersScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<UserStackParamList>();
@@ -260,6 +261,13 @@ const UserStack: React.FC = () => (
     <Stack.Screen
       name='GroupDetails'
       component={GroupDetailsScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='AddGroupMembers'
+      component={AddGroupMembersScreen}
       options={{
         headerShown: false,
       }}

@@ -154,14 +154,26 @@ export const getGroupDetails = async (groupId: number): Promise<GroupDetails> =>
 
     if (membersError) throw membersError;
 
-    // Transform members data - profiles should be a single object, not array
-    const members: GroupMember[] = membersData.map((member: any) => ({
-      group_id: member.group_id,
-      user_id: member.user_id,
-      username: member.profiles?.username ?? '',
-      score: member.profiles?.score ?? 0,
-      joined_at: member.joined_at,
-    }));
+    // Transform members data - profiles is returned as an array from the join
+    interface MemberDataFromSupabase {
+      group_id: number;
+      user_id: string;
+      joined_at: string;
+      profiles: {
+        username: string;
+        score: number;
+      };
+    }
+
+    const members: GroupMember[] = (membersData as unknown as MemberDataFromSupabase[]).map(
+      member => ({
+        group_id: member.group_id,
+        user_id: member.user_id,
+        username: member.profiles?.username ?? '',
+        score: member.profiles?.score ?? 0,
+        joined_at: member.joined_at,
+      }),
+    );
 
     const groupDetails: GroupDetails = {
       id: groupData.id,

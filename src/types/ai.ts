@@ -15,6 +15,10 @@ export interface AIMessage {
   id: string;
   sender: 'user' | 'ai';
   content: string;
+  metadata?: {
+    sources?: string[];
+    [key: string]: any;
+  };
   created_at: string;
 }
 

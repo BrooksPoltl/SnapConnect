@@ -106,7 +106,7 @@ serve(async req => {
         },
         body: JSON.stringify({
           vector: queryVector,
-          topK: 5,
+          topK: 20,
           includeMetadata: true,
           includeValues: false,
         }),
@@ -126,26 +126,53 @@ serve(async req => {
     const relevantDocs = pineconeData.matches || [];
 
     const context = relevantDocs
-      .map(match => match.metadata?.text || '')
+      .map(match => {
+        const text = match.metadata?.text || '';
+        const company = match.metadata?.company || 'Unknown Company';
+        
+        if (text.length > 0) {
+          return `[${company} Filing]\n${text}`;
+        }
+        return '';
+      })
       .filter(text => text.length > 0)
       .join('\\n\\n');
 
     const sources = relevantDocs
-      .map(match => match.metadata?.source_url || '')
-      .filter(url => url.length > 0);
+      .map(match => {
+        // Log metadata to debug what fields are available
+        console.log('Match metadata:', JSON.stringify(match.metadata, null, 2));
+        
+        const cik = match.metadata?.cik || match.metadata?.CIK;
+        const accessionNumber = match.metadata?.accession_number || match.metadata?.accessionNumber;
+        
+        if (cik && accessionNumber) {
+          // Remove dashes from accession number for URL
+          const cleanAccessionNumber = accessionNumber.replace(/-/g, '');
+          const url = `https://www.sec.gov/Archives/edgar/data/${cik}/${cleanAccessionNumber}/`;
+          return url;
+        }
+        return '';
+      });
+    const nonEmptySources = sources.filter(url => url.length > 0);
+    
+    // Remove duplicate URLs
+    const filteredSources = [...new Set(nonEmptySources)];
 
     // Step 3: Generate response using OpenAI with context
-    const systemPrompt = `You are a financial AI assistant with access to SEC filing data. Use the provided context from EDGAR filings to answer the user's question accurately and concisely.
+    const systemPrompt = `You are an emotionally intelligent financial AI assistant that reads between the lines of SEC filings to provide sentiment-aware analysis. You understand that markets are driven by both data and human psychology.
 
-    Context from SEC filings:
+    Context from SEC filings (each section is labeled with the specific company):
     ${context}
 
     Instructions:
-    - Base your response primarily on the provided context
-    - Be specific and cite relevant financial metrics when available
-    - If the context doesn't contain enough information, say so
-    - Keep responses focused and under 200 words
-    - Use a professional but conversational tone`;
+    - Extract both factual data AND emotional undertones from the filings
+    - Identify management confidence levels, risk concerns, and forward-looking sentiment for each company
+    - Assess whether each company's narrative matches their numbers
+    - Reference specific companies by name when discussing their filing data
+    - If asked for specific companies, list them clearly with brief explanations of why they're relevant
+    - Use conversational language that acknowledges market emotions while staying data-driven
+    - Limit responses to 200 words`;
 
     const chatResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -159,7 +186,7 @@ serve(async req => {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt },
         ],
-        max_tokens: 300,
+        max_tokens: 2000,
         temperature: 0.7,
       }),
     });
@@ -206,11 +233,11 @@ serve(async req => {
       conversation_uuid: finalConversationId,
       message_sender: 'ai',
       message_content: aiResponse,
-      metadata: { sources },
+      message_metadata: { sources: filteredSources },
     });
 
     return new Response(
-      JSON.stringify({ response: aiResponse, sources, conversationId: finalConversationId }),
+      JSON.stringify({ response: aiResponse, sources: filteredSources, conversationId: finalConversationId }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

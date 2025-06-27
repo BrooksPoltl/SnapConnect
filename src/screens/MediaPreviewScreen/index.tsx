@@ -289,16 +289,6 @@ const MediaPreviewScreen: React.FC = () => {
             isMuted={isMuted}
             useNativeControls={false}
           />
-
-          {/* Mute/Unmute button for videos */}
-          <TouchableOpacity
-            style={dynamicStyles.muteButton}
-            onPress={toggleMute}
-            accessibilityRole='button'
-            accessibilityLabel={isMuted ? 'Unmute video' : 'Mute video'}
-          >
-            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color={theme.colors.white} />
-          </TouchableOpacity>
         </View>
       );
     }
@@ -314,6 +304,17 @@ const MediaPreviewScreen: React.FC = () => {
         <TouchableOpacity onPress={handleDiscard} style={dynamicStyles.controlButton}>
           <Icon name='x' size={32} color='white' />
         </TouchableOpacity>
+
+        {media.type === 'video' && (
+          <TouchableOpacity
+            onPress={toggleMute}
+            style={dynamicStyles.controlButton}
+            accessibilityRole='button'
+            accessibilityLabel={isMuted ? 'Unmute video' : 'Mute video'}
+          >
+            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color='white' />
+          </TouchableOpacity>
+        )}
       </View>
 
       {media.type === 'photo' && (
@@ -373,12 +374,6 @@ const MediaPreviewScreen: React.FC = () => {
           <Text style={dynamicStyles.sendButtonText}>Send</Text>
           <Icon name='arrow-right' size={20} color='white' />
         </TouchableOpacity>
-
-        {media.type === 'video' && (
-          <TouchableOpacity onPress={toggleMute} style={dynamicStyles.controlButton}>
-            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color='white' />
-          </TouchableOpacity>
-        )}
       </View>
 
       <Modal

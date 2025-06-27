@@ -43,17 +43,7 @@ export const styles = (theme: Theme) =>
       borderRadius: theme.borderRadius.md,
       fontSize: theme.fontSizes.lg,
     },
-    muteButton: {
-      position: 'absolute',
-      top: theme.spacing.lg,
-      right: theme.spacing.lg,
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: theme.colors.overlay,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+
     actionsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
@@ -191,6 +181,10 @@ export const styles = (theme: Theme) =>
       position: 'absolute',
       top: 60,
       left: 20,
+      right: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       zIndex: 1,
     },
     bottomControls: {

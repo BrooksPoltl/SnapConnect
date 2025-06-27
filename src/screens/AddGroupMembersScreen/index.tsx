@@ -2,7 +2,7 @@
  * AddGroupMembersScreen - Screen for adding new members to an existing group
  * Allows searching and selecting users to add to the group
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -47,8 +47,11 @@ export const AddGroupMembersScreen = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
-  // Get current member IDs for filtering
-  const currentMemberIds = currentMembers.map(member => member.user_id);
+  // Get current member IDs for filtering (memoized to prevent infinite loops)
+  const currentMemberIds = useMemo(
+    () => currentMembers.map(member => member.user_id),
+    [currentMembers],
+  );
 
   // Debounced search function
   const searchUsers = useCallback(

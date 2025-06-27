@@ -17,7 +17,7 @@ export interface AIMessage {
   content: string;
   metadata?: {
     sources?: string[];
-    [key: string]: any;
+    [key: string]: unknown;
   };
   created_at: string;
 }

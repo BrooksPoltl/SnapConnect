@@ -65,7 +65,15 @@ const AIChatScreen: React.FC = () => {
 
     try {
       const data = await getAIConversationMessages(conversationId);
-      setMessages(data);
+      console.log('AIChatScreen: Loaded messages:', data);
+      
+      setMessages(prevMessages => {
+        // Keep any temporary messages that aren't yet in the server data
+        const tempMessages = prevMessages.filter(msg => 
+          msg.id.startsWith('temp-') && !data.some(serverMsg => serverMsg.content === msg.content)
+        );
+        return [...(data || []), ...tempMessages];
+      });
     } catch (error) {
       console.error('Error loading messages:', error);
       Alert.alert('Error', 'Failed to load conversation history.');
@@ -79,19 +87,20 @@ const AIChatScreen: React.FC = () => {
     if (!inputText.trim() || loading) return;
 
     const userMessage = inputText.trim();
+    const tempMessageId = `temp-${Date.now()}`;
     setInputText('');
     setLoading(true);
 
-    try {
-      // Add user message to UI immediately
-      const tempUserMessage: AIMessage = {
-        id: `temp-${Date.now()}`,
-        sender: 'user',
-        content: userMessage,
-        created_at: new Date().toISOString(),
-      };
-      setMessages(prev => [...prev, tempUserMessage]);
+    // Add user message to UI immediately
+    const tempUserMessage: AIMessage = {
+      id: tempMessageId,
+      sender: 'user',
+      content: userMessage,
+      created_at: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, tempUserMessage]);
 
+    try {
       // Query AI
       const response: QueryAIResponse = await queryAI({
         prompt: userMessage,
@@ -103,13 +112,13 @@ const AIChatScreen: React.FC = () => {
         setConversationId(response.conversationId);
       }
 
-      // Reload messages to get the actual persisted messages
+      // Reload messages to get the updated conversation
       await loadMessages();
     } catch (error) {
       console.error('Error sending message:', error);
       Alert.alert('Error', 'Failed to send message. Please try again.');
       // Remove the temporary user message on error
-      setMessages(prev => prev.filter(msg => msg.id !== `temp-${Date.now()}`));
+      setMessages(prev => prev.filter(msg => msg.id !== tempMessageId));
     } finally {
       setLoading(false);
     }

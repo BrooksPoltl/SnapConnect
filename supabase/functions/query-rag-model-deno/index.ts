@@ -222,6 +222,12 @@ serve(async req => {
       finalConversationId = newConversation;
     }
 
+    console.log('Storing user message:', { 
+      conversation_uuid: finalConversationId, 
+      message_sender: 'user', 
+      message_content: prompt 
+    });
+
     const { error: userMessageError } = await supabaseClient.rpc('add_ai_message', {
       conversation_uuid: finalConversationId,
       message_sender: 'user',
@@ -230,6 +236,8 @@ serve(async req => {
 
     if (userMessageError) {
       console.error('Error storing user message:', userMessageError);
+    } else {
+      console.log('User message stored successfully');
     }
 
     // Always include metadata, even if sources is empty
@@ -249,6 +257,8 @@ serve(async req => {
 
     if (aiMessageError) {
       console.error('Error storing AI message:', aiMessageError);
+    } else {
+      console.log('AI message stored successfully');
     }
 
     return new Response(

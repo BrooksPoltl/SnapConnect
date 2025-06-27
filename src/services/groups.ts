@@ -139,7 +139,7 @@ export const getGroupDetails = async (groupId: number): Promise<GroupDetails> =>
 
     if (groupError) throw groupError;
 
-    // Get group members
+    // Get group members with their profile data
     const { data: membersData, error: membersError } = await supabase
       .from('group_members')
       .select(
@@ -147,30 +147,19 @@ export const getGroupDetails = async (groupId: number): Promise<GroupDetails> =>
         group_id,
         user_id,
         joined_at,
-        profiles!group_members_user_id_fkey(username, score)
+        profiles(username, score)
       `,
       )
       .eq('group_id', groupId);
 
     if (membersError) throw membersError;
 
-    // Define the type for the Supabase query response
-    interface MemberWithProfile {
-      group_id: number;
-      user_id: string;
-      joined_at: string;
-      profiles: {
-        username: string;
-        score: number;
-      }[];
-    }
-
-    // Transform members data
-    const members: GroupMember[] = (membersData as MemberWithProfile[]).map(member => ({
+    // Transform members data - profiles should be a single object, not array
+    const members: GroupMember[] = membersData.map((member: any) => ({
       group_id: member.group_id,
       user_id: member.user_id,
-      username: member.profiles?.[0]?.username ?? '',
-      score: member.profiles?.[0]?.score ?? 0,
+      username: member.profiles?.username ?? '',
+      score: member.profiles?.score ?? 0,
       joined_at: member.joined_at,
     }));
 

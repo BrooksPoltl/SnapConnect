@@ -30,7 +30,7 @@ export const SelectedUserCard: React.FC<SelectedUserCardProps> = ({
     <Avatar username={username} size={size} />
     <Text style={styles.username}>{username}</Text>
     <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
-      <Ionicons name='close' size={16} color='#FF3B30' />
+      <Ionicons name='close' size={16} color='#FFFFFF' />
     </TouchableOpacity>
   </View>
 );

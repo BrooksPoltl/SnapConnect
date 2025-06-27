@@ -58,11 +58,3 @@ export interface GeneratePhotoCaptionRequest {
 export interface GeneratePhotoCaptionResponse {
   caption: string;
 }
-
-export interface TranscribeVideoAudioRequest {
-  file: FormData; // FormData containing the audio file
-}
-
-export interface TranscribeVideoAudioResponse {
-  transcript: string;
-}

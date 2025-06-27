@@ -26,7 +26,7 @@ import { UserStackParamList } from '../../types/navigation';
 import { logError } from '../../utils/logger';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { postStory } from '../../services/stories';
-import { generatePhotoCaption, transcribeVideoAudio } from '../../services/ai';
+import { generatePhotoCaption } from '../../services/ai';
 
 import { styles } from './styles';
 
@@ -95,33 +95,11 @@ const MediaPreviewScreen: React.FC = () => {
   const handleGenerateCaption = async () => {
     setIsGeneratingCaption(true);
     try {
-      let generatedCaption: string | null = null;
-      if (media.type === 'photo') {
-        const base64Data = await FileSystem.readAsStringAsync(media.uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        const fullBase64 = `data:image/jpeg;base64,${base64Data}`;
-        generatedCaption = await generatePhotoCaption(fullBase64);
-      } else if (media.type === 'video') {
-        // For videos, we assume the URI is a local file that can be used.
-        // The `transcribeVideoAudio` service expects a URI that can be fetched.
-        // NOTE: This assumes the video file has an audio track.
-        // We might need a library to extract audio if this is not a direct file path.
-        // For now, we will attempt to send the URI directly.
-
-        // This is a placeholder for audio extraction if needed.
-        // For now, we are assuming the service can handle the video file and extract audio.
-        // This part may require `expo-av` to prepare the audio file.
-        // Let's create a temporary audio file from video
-        const audioFileInfo = await FileSystem.getInfoAsync(media.uri);
-        if (!audioFileInfo.exists) {
-          throw new Error('Video file does not exist.');
-        }
-
-        // This is a simplified approach. A more robust solution would use expo-av to extract
-        // and process the audio into a specific format like m4a.
-        generatedCaption = await transcribeVideoAudio(media.uri);
-      }
+      const base64Data = await FileSystem.readAsStringAsync(media.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const fullBase64 = `data:image/jpeg;base64,${base64Data}`;
+      const generatedCaption = await generatePhotoCaption(fullBase64);
 
       if (generatedCaption) {
         setCaption(generatedCaption);
@@ -338,40 +316,44 @@ const MediaPreviewScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {isCaptioning ? (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={dynamicStyles.captionInputContainer}>
-            <TextInput
-              style={dynamicStyles.captionInput}
-              value={caption}
-              onChangeText={setCaption}
-              placeholder='Type a caption...'
-              placeholderTextColor={theme.colors.text}
-              autoFocus
-              onSubmitEditing={() => setIsCaptioning(false)}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      ) : (
-        <View style={dynamicStyles.captionContainer}>
-          <TouchableOpacity
-            onPress={() => setIsCaptioning(true)}
-            style={dynamicStyles.captionDisplay}
-          >
-            <Text style={dynamicStyles.captionText}>{caption || 'Add a caption...'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleGenerateCaption}
-            style={dynamicStyles.aiButton}
-            disabled={isGeneratingCaption}
-          >
-            {isGeneratingCaption ? (
-              <ActivityIndicator color={theme.colors.primary} />
-            ) : (
-              <Icon name='sparkles' size={24} color={theme.colors.primary} />
-            )}
-          </TouchableOpacity>
-        </View>
+      {media.type === 'photo' && (
+        <>
+          {isCaptioning ? (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={dynamicStyles.captionInputContainer}>
+                <TextInput
+                  style={dynamicStyles.captionInput}
+                  value={caption}
+                  onChangeText={setCaption}
+                  placeholder='Type a caption...'
+                  placeholderTextColor={theme.colors.text}
+                  autoFocus
+                  onSubmitEditing={() => setIsCaptioning(false)}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          ) : (
+            <View style={dynamicStyles.captionContainer}>
+              <TouchableOpacity
+                onPress={() => setIsCaptioning(true)}
+                style={dynamicStyles.captionDisplay}
+              >
+                <Text style={dynamicStyles.captionText}>{caption || 'Add a caption...'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleGenerateCaption}
+                style={dynamicStyles.aiButton}
+                disabled={isGeneratingCaption}
+              >
+                {isGeneratingCaption ? (
+                  <ActivityIndicator color={theme.colors.primary} />
+                ) : (
+                  <Icon name='sparkles' size={24} color={theme.colors.primary} />
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
       )}
 
       <View style={dynamicStyles.bottomControls}>

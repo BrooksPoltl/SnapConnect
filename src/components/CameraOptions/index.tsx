@@ -30,39 +30,12 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.optionButton, disabled && styles.disabledButton]}
-        onPress={flipCamera}
-        disabled={disabled}
-        accessibilityRole='button'
-        accessibilityLabel='Flip camera'
-      >
-        <Icon name='refresh-ccw' size={24} color={theme.colors.white} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, disabled && styles.disabledButton]}
         onPress={onToggleFlash}
         disabled={disabled}
         accessibilityRole='button'
         accessibilityLabel='Toggle flash'
       >
         <Icon name={isFlashEnabled ? 'zap' : 'zap-off'} size={24} color={theme.colors.white} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, disabled && styles.disabledButton]}
-        onPress={handleNotImplemented}
-        disabled={disabled}
-        accessibilityRole='button'
-        accessibilityLabel='Select video mode'
-      >
-        <Icon name='video' size={24} color={theme.colors.white} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, disabled && styles.disabledButton]}
-        onPress={handleNotImplemented}
-        disabled={disabled}
-        accessibilityRole='button'
-        accessibilityLabel='Select music'
-      >
-        <Icon name='music' size={24} color={theme.colors.white} />
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.optionButton, disabled && styles.disabledButton]}

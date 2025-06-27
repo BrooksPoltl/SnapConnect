@@ -97,7 +97,7 @@ serve(async req => {
     }
 
     const pineconeResponse = await fetch(
-      `https://${pineconeIndexName}-${pineconeEnvironment}.svc.pinecone.io/query`,
+      `https://${pineconeIndexName}-${pineconeEnvironment}.pinecone.io/query`,
       {
         method: 'POST',
         headers: {

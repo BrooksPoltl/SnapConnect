@@ -11,34 +11,28 @@ export const styles = (theme: Theme) =>
     content: {
       flex: 1,
       justifyContent: 'center',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.lg,
     },
     title: {
       fontSize: theme.fontSizes.xxl,
       fontWeight: theme.fontWeights.bold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.sm,
       textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: theme.fontSizes.md,
+      fontWeight: theme.fontWeights.regular,
+      color: theme.colors.textSecondary,
       marginBottom: theme.spacing.xl,
-      color: theme.colors.text,
+      textAlign: 'center',
+      paddingHorizontal: theme.spacing.md,
     },
-    input: {
-      backgroundColor: theme.colors.surface,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: theme.borderRadius.md,
-      padding: theme.spacing.md,
-      fontSize: theme.fontSizes.lg,
-      marginBottom: theme.spacing.lg,
-      color: theme.colors.text,
+    formField: {
+      marginBottom: theme.spacing.md,
     },
-    button: {
-      backgroundColor: theme.colors.primary,
-      padding: theme.spacing.lg,
-      borderRadius: theme.borderRadius.md,
-      alignItems: 'center',
-    },
-    buttonText: {
-      color: theme.colors.background,
-      fontSize: theme.fontSizes.lg,
-      fontWeight: theme.fontWeights.semibold,
+    buttonSpacing: {
+      marginTop: theme.spacing.lg,
     },
   });

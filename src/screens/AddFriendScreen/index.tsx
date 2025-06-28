@@ -231,6 +231,7 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
             onChangeText={handleSearch}
             autoCapitalize='none'
             autoCorrect={false}
+            spellCheck={false}
             leftIcon='search'
             containerStyle={{ marginBottom: 16 }}
           />

@@ -195,6 +195,7 @@ export const AddGroupMembersScreen = () => {
           onChangeText={setSearchQuery}
           autoCapitalize='none'
           autoCorrect={false}
+          spellCheck={false}
           leftIcon='search'
           rightIcon={isSearching ? undefined : undefined}
           containerStyle={{ marginBottom: 0 }}

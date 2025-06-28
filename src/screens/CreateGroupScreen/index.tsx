@@ -188,6 +188,9 @@ export const CreateGroupScreen = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder='Search users...'
+            autoCapitalize='none'
+            autoCorrect={false}
+            spellCheck={false}
             leftIcon='search'
             rightIcon={isSearching ? undefined : undefined}
             containerStyle={{ marginBottom: 0 }}

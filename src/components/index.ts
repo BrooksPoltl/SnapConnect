@@ -6,15 +6,20 @@
  */
 
 export { default as AuthButton } from './AuthButton';
+export { Avatar } from './Avatar';
+// export { default as Camera } from './Camera';
+// export { default as CameraActions } from './CameraActions';
 export { default as CameraControls } from './CameraControls';
 export { default as CameraOptions } from './CameraOptions';
 export { default as CameraPermissionStatus } from './CameraPermissionStatus';
 export { default as ConversationListItem } from './ConversationListItem';
 export { default as DisclaimerText } from './DisclaimerText';
 export { default as FormField } from './FormField';
+export { FriendListItem } from './FriendListItem';
 export { default as HomeScreenAnimatedText } from './HomeScreenAnimatedText';
 export { default as Icon } from './Icon';
 export { default as PhotoPreview } from './PhotoPreview';
 export { default as ReturnButton } from './ReturnButton';
 export { SelectedUserCard } from './SelectedUserCard';
-export { FriendListItem } from './FriendListItem';
+export { default as DrawingCanvas } from './DrawingCanvas';
+export { default as DrawingToolbar } from './DrawingToolbar';

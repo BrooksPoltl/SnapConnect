@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { CapturedMedia } from '../types';
-import { logger } from '../utils/logger';
+import { logger, logError } from '../utils/logger';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 
@@ -98,3 +98,34 @@ export async function getSignedMediaUrl(
     throw new Error('An unknown error occurred while creating a signed URL.');
   }
 }
+
+export const uploadMediaFile = async ({
+  uri,
+  type,
+  name,
+}: {
+  uri: string;
+  type: string;
+  name: string;
+}) => {
+  try {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const { data, error } = await supabase.storage.from('media').upload(`public/${name}`, blob, {
+      contentType: type,
+      upsert: false,
+    });
+
+    if (error) {
+      logError('Error uploading media', error.message);
+      throw error;
+    }
+
+    const { data: publicUrlData } = supabase.storage.from('media').getPublicUrl(data.path);
+
+    return publicUrlData.publicUrl;
+  } catch (error) {
+    logError('Error in uploadMedia service', (error as Error).message);
+    throw error;
+  }
+};

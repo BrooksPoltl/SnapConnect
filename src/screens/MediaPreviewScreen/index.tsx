@@ -19,14 +19,16 @@ import { Video, ResizeMode } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
 import { Skia, SkImage, useFonts } from '@shopify/react-native-skia';
 import * as FileSystem from 'expo-file-system';
-
-import { useTheme } from '../../styles/theme';
-import Icon from '../../components/Icon';
+import { DrawingCanvas, DrawingToolbar, Icon } from '../../components';
 import { UserStackParamList } from '../../types/navigation';
 import { logError } from '../../utils/logger';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { useTheme } from '../../styles/theme';
 import { postStory } from '../../services/stories';
 import { generatePhotoCaption } from '../../services/ai';
+import { uploadMediaFile } from '../../services/media';
+import { PathWithColor } from '../../components/DrawingCanvas/types';
+// import { captureRef } from 'react-native-view-shot';
 
 import { styles } from './styles';
 
@@ -57,6 +59,10 @@ const MediaPreviewScreen: React.FC = () => {
   const [isCaptioning, setIsCaptioning] = useState(false);
   const [skiaImage, setSkiaImage] = useState<SkImage | null>(null);
   const [isGeneratingCaption, setIsGeneratingCaption] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [paths, setPaths] = useState<PathWithColor[]>([]);
+  const [color, setColor] = useState('#FFFFFF');
+  const [isLoading, setIsLoading] = useState(false);
 
   const theme = useTheme();
   const dynamicStyles = styles(theme);
@@ -247,10 +253,36 @@ const MediaPreviewScreen: React.FC = () => {
   };
 
   const handleSend = async () => {
-    const finalMediaUri = media.type === 'photo' ? await generateCaptionedImage() : media.uri;
-    const finalMedia = { ...media, uri: finalMediaUri };
+    setIsLoading(true);
+    try {
+      // For now, just send the original media without drawing capture
+      // Drawing functionality will work for display but won't be captured in the final image
+      const finalUri = media.type === 'photo' ? await generateCaptionedImage() : media.uri;
 
-    navigation.navigate('SelectRecipients', { media: finalMedia });
+      const fileInfo = await FileSystem.getInfoAsync(finalUri);
+      if (!fileInfo.exists) {
+        throw new Error('File does not exist');
+      }
+
+      const fileType = media.type === 'video' ? 'video/mp4' : 'image/jpeg';
+      const fileName = finalUri.split('/').pop() ?? `media_${Date.now()}`;
+
+      await uploadMediaFile({
+        uri: finalUri,
+        type: fileType,
+        name: fileName,
+      });
+
+      navigation.goBack();
+    } catch (error) {
+      logError('Error sending media', (error as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUndo = () => {
+    setPaths(currentPaths => currentPaths.slice(0, -1));
   };
 
   const toggleMute = () => {
@@ -298,6 +330,13 @@ const MediaPreviewScreen: React.FC = () => {
     <SafeAreaView style={dynamicStyles.container}>
       <Pressable onPress={Keyboard.dismiss} style={dynamicStyles.mediaContainer}>
         {renderMedia()}
+        <DrawingCanvas
+          paths={paths}
+          setPaths={setPaths}
+          color={color}
+          strokeWidth={4}
+          isEnabled={isDrawing}
+        />
       </Pressable>
 
       <View style={dynamicStyles.topControls}>
@@ -315,6 +354,13 @@ const MediaPreviewScreen: React.FC = () => {
             <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color='white' />
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity
+          onPress={() => setIsDrawing(!isDrawing)}
+          style={dynamicStyles.controlButton}
+        >
+          <Icon name='edit-3' size={30} color={isDrawing ? 'cyan' : 'white'} />
+        </TouchableOpacity>
       </View>
 
       {media.type === 'photo' && (
@@ -349,12 +395,16 @@ const MediaPreviewScreen: React.FC = () => {
                 {isGeneratingCaption ? (
                   <ActivityIndicator color={theme.colors.primary} />
                 ) : (
-                  <Icon name='sparkles' size={24} color={theme.colors.primary} />
+                  <Icon name='zap' size={24} color={theme.colors.primary} />
                 )}
               </TouchableOpacity>
             </View>
           )}
         </>
+      )}
+
+      {isDrawing && (
+        <DrawingToolbar onColorChange={setColor} onUndo={handleUndo} selectedColor={color} />
       )}
 
       <View style={dynamicStyles.bottomControls}>
@@ -371,8 +421,11 @@ const MediaPreviewScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleSend} style={dynamicStyles.sendButton}>
-          <Text style={dynamicStyles.sendButtonText}>Send</Text>
-          <Icon name='arrow-right' size={20} color='white' />
+          {isLoading ? (
+            <ActivityIndicator color='white' />
+          ) : (
+            <Icon name='send' size={30} color='white' />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -406,12 +459,6 @@ const MediaPreviewScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
-
-      {isPosting && (
-        <View style={dynamicStyles.loadingOverlay}>
-          <ActivityIndicator size='large' color={theme.colors.primary} />
-        </View>
-      )}
     </SafeAreaView>
   );
 };

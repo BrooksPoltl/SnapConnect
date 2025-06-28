@@ -8,7 +8,6 @@ import {
   View,
   Text,
   FlatList,
-  TextInput,
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
@@ -27,6 +26,7 @@ import {
 } from '../../services/ai';
 import Icon from '../../components/Icon';
 import type { AIMessage, QueryAIResponse } from '../../types';
+import FormField from '../../components/FormField';
 
 import { styles } from './styles';
 
@@ -269,14 +269,15 @@ const AIChatScreen: React.FC = () => {
           </TouchableOpacity>
 
           {editingTitle ? (
-            <TextInput
-              style={dynamicStyles.titleInput}
+            <FormField
+              variant='inline'
               value={tempTitle}
               onChangeText={setTempTitle}
               onBlur={handleTitleSave}
               onSubmitEditing={handleTitleSave}
               autoFocus
               selectTextOnFocus
+              containerStyle={{ flex: 1 }}
             />
           ) : (
             <TouchableOpacity
@@ -305,14 +306,14 @@ const AIChatScreen: React.FC = () => {
 
         {/* Input */}
         <View style={dynamicStyles.inputContainer}>
-          <TextInput
-            style={dynamicStyles.textInput}
+          <FormField
+            variant='chat'
             value={inputText}
             onChangeText={setInputText}
             placeholder='Ask about financial data...'
-            placeholderTextColor={theme.colors.textSecondary}
             multiline
             maxLength={500}
+            containerStyle={{ flex: 1, marginBottom: 0 }}
           />
           <TouchableOpacity
             style={[

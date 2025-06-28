@@ -6,7 +6,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   SafeAreaView,
@@ -19,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
 import { Avatar } from '../../components/Avatar';
+import FormField from '../../components/FormField';
 import type { GroupMessage, GroupConversationParams } from '../../types/groups';
 import { styles } from './styles';
 
@@ -174,15 +174,15 @@ export const GroupConversationScreen = () => {
 
         {/* Message Input */}
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.textInput}
+          <FormField
+            variant='chat'
             value={messageText}
             onChangeText={setMessageText}
             placeholder='Type a message...'
-            placeholderTextColor='#8E8E93'
             multiline
             maxLength={1000}
-            editable={!isSending}
+            disabled={isSending}
+            containerStyle={[styles.messageInputContainer]}
           />
           <TouchableOpacity
             style={[

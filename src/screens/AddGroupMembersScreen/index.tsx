@@ -6,7 +6,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   Alert,
@@ -22,6 +21,7 @@ import { FriendListItem } from '../../components/FriendListItem';
 import * as groupsService from '../../services/groups';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
+import FormField from '../../components/FormField';
 
 interface AddGroupMembersParams {
   groupId: string;
@@ -188,19 +188,22 @@ export const AddGroupMembersScreen = () => {
 
       {/* Search Input */}
       <View style={styles.searchSection}>
-        <View style={styles.searchInputContainer}>
-          <Ionicons name='search' size={20} color='#8E8E93' />
-          <TextInput
-            style={styles.searchInput}
-            placeholder='Search users...'
-            placeholderTextColor='#8E8E93'
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoCapitalize='none'
-            autoCorrect={false}
-          />
-          {isSearching && <ActivityIndicator size='small' color='#007AFF' />}
-        </View>
+        <FormField
+          variant='search'
+          placeholder='Search users...'
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoCapitalize='none'
+          autoCorrect={false}
+          leftIcon='search'
+          rightIcon={isSearching ? undefined : undefined}
+          containerStyle={{ marginBottom: 0 }}
+        />
+        {isSearching && (
+          <View style={{ alignItems: 'center', paddingVertical: 8 }}>
+            <ActivityIndicator size='small' color='#007AFF' />
+          </View>
+        )}
       </View>
 
       {/* Search Results */}

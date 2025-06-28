@@ -219,5 +219,8 @@ export const styles = (theme: Theme) =>
       paddingHorizontal: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
     },
+    captionFieldContainer: {
+      flex: 1,
+    },
     // Debug styles removed - no longer needed
   });

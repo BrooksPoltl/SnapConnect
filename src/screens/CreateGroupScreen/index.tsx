@@ -6,24 +6,24 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  FlatList,
   Alert,
+  FlatList,
   ActivityIndicator,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
 import { searchUsersForGroup } from '../../services/groups';
-import { SelectedUserCard } from '../../components/SelectedUserCard';
-import { FriendListItem } from '../../components/FriendListItem';
-
 import type { GroupMember } from '../../types/groups';
+import { FriendListItem } from '../../components/FriendListItem';
+import { SelectedUserCard } from '../../components/SelectedUserCard';
+import FormField from '../../components/FormField';
+
 import { styles } from './styles';
 
 export const CreateGroupScreen = () => {
@@ -156,13 +156,12 @@ export const CreateGroupScreen = () => {
         {/* Group Name Input */}
         <View style={styles.groupNameSection}>
           <Text style={styles.sectionTitle}>Group Name</Text>
-          <TextInput
-            style={styles.groupNameInput}
+          <FormField
             value={groupName}
             onChangeText={setGroupName}
             placeholder='Enter group name...'
-            placeholderTextColor='#8E8E93'
             maxLength={50}
+            containerStyle={{ marginBottom: 0 }}
           />
         </View>
 
@@ -184,19 +183,20 @@ export const CreateGroupScreen = () => {
         {/* Search Section */}
         <View style={styles.searchSection}>
           <Text style={styles.sectionTitle}>Add Members</Text>
-          <View style={styles.searchInputContainer}>
-            <Ionicons name='search' size={20} color='#8E8E93' style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder='Search users...'
-              placeholderTextColor='#8E8E93'
-            />
-            {isSearching && (
-              <ActivityIndicator size='small' color='#007AFF' style={styles.searchLoader} />
-            )}
-          </View>
+          <FormField
+            variant='search'
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder='Search users...'
+            leftIcon='search'
+            rightIcon={isSearching ? undefined : undefined}
+            containerStyle={{ marginBottom: 0 }}
+          />
+          {isSearching && (
+            <View style={styles.searchLoader}>
+              <ActivityIndicator size='small' color='#007AFF' />
+            </View>
+          )}
         </View>
 
         {/* Search Results */}

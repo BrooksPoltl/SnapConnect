@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,6 +19,7 @@ import {
 import { searchUsers } from '../../services/user';
 import { UserData } from '../../types/user';
 import { logger } from '../../utils/logger';
+import FormField from '../../components/FormField';
 
 import { styles as createStyles } from './styles';
 
@@ -231,13 +224,15 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
         {/* Search Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Search Users</Text>
-          <TextInput
-            style={styles.searchInput}
+          <FormField
+            variant='search'
             placeholder='Search by username...'
             value={searchQuery}
             onChangeText={handleSearch}
             autoCapitalize='none'
             autoCorrect={false}
+            leftIcon='search'
+            containerStyle={{ marginBottom: 16 }}
           />
 
           {searchResults.length > 0 && (

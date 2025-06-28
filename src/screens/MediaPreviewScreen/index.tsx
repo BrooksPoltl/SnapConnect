@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Modal,
   Pressable,
-  TextInput,
   Keyboard,
   TouchableWithoutFeedback,
   Image as RNImage,
@@ -28,7 +27,8 @@ import { postStory } from '../../services/stories';
 import { generatePhotoCaption } from '../../services/ai';
 import { uploadMediaFile } from '../../services/media';
 import { PathWithColor } from '../../components/DrawingCanvas/types';
-// import { captureRef } from 'react-native-view-shot';
+
+import FormField from '../../components/FormField';
 
 import { styles } from './styles';
 
@@ -368,14 +368,14 @@ const MediaPreviewScreen: React.FC = () => {
           {isCaptioning ? (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={dynamicStyles.captionInputContainer}>
-                <TextInput
-                  style={dynamicStyles.captionInput}
+                <FormField
+                  variant='inline'
                   value={caption}
                   onChangeText={setCaption}
                   placeholder='Type a caption...'
-                  placeholderTextColor={theme.colors.text}
                   autoFocus
                   onSubmitEditing={() => setIsCaptioning(false)}
+                  containerStyle={dynamicStyles.captionFieldContainer}
                 />
               </View>
             </TouchableWithoutFeedback>

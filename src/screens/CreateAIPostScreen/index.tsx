@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Alert,
   ScrollView,
@@ -19,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { createAIPost } from '../../services/ai';
 import { logger } from '../../utils/logger';
+import FormField from '../../components/FormField';
 import { styles } from './styles';
 
 interface RouteParams {
@@ -145,15 +145,13 @@ const CreateAIPostScreen: React.FC = () => {
         {/* Commentary Input */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Your thoughts (optional)</Text>
-          <TextInput
-            style={styles.commentaryInput}
+          <FormField
             placeholder='Add your commentary or insights...'
-            placeholderTextColor='#999'
             value={commentary}
             onChangeText={setCommentary}
             multiline
             maxLength={500}
-            textAlignVertical='top'
+            containerStyle={{ marginBottom: 8 }}
           />
           <Text style={styles.characterCount}>{commentary.length}/500</Text>
         </View>

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -8,6 +8,8 @@ import { signIn } from '../../services/auth';
 import { LoginCredentials, AuthError } from '../../types/auth';
 import { useTheme } from '../../styles/theme';
 import ReturnButton from '../../components/ReturnButton';
+import FormField from '../../components/FormField';
+import AuthButton from '../../components/AuthButton';
 
 import { styles } from './styles';
 
@@ -73,54 +75,41 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
         <Text style={dynamicStyles.title}>Log In</Text>
 
         <View style={dynamicStyles.form}>
-          <Text style={dynamicStyles.inputLabel}>EMAIL</Text>
-          <TextInput
-            style={dynamicStyles.input}
+          <FormField
+            label='EMAIL'
             placeholder='Enter your email'
-            placeholderTextColor={theme.colors.textSecondary}
             value={credentials.email}
             onChangeText={handleEmailChange}
             keyboardType='email-address'
             autoCapitalize='none'
             autoCorrect={false}
-            editable={!loading}
+            disabled={loading}
             accessibilityLabel='Email input field'
             accessibilityHint='Enter your email address'
           />
 
-          <Text style={dynamicStyles.inputLabel}>PASSWORD</Text>
-          <TextInput
-            style={dynamicStyles.input}
+          <FormField
+            label='PASSWORD'
             placeholder='Enter your password'
-            placeholderTextColor={theme.colors.textSecondary}
             value={credentials.password}
             onChangeText={handlePasswordChange}
             secureTextEntry={true}
             autoCapitalize='none'
             autoCorrect={false}
-            editable={!loading}
+            disabled={loading}
             accessibilityLabel='Password input field'
             accessibilityHint='Enter your password'
           />
         </View>
 
-        <TouchableOpacity
-          style={[
-            dynamicStyles.submitButton,
-            (loading || !isFormValid) && dynamicStyles.submitButtonDisabled,
-          ]}
+        <AuthButton
+          title='Log In'
           onPress={handleSubmit}
           disabled={loading || !isFormValid}
-          accessibilityRole='button'
-          accessibilityLabel='Log in button'
-          accessibilityHint='Tap to log in with your credentials'
-        >
-          {loading ? (
-            <ActivityIndicator color={theme.colors.background} />
-          ) : (
-            <Text style={dynamicStyles.submitButtonText}>Log In</Text>
-          )}
-        </TouchableOpacity>
+          loading={loading}
+          variant='primary'
+          size='large'
+        />
       </View>
     </SafeAreaView>
   );

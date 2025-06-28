@@ -189,4 +189,8 @@ export const styles = StyleSheet.create({
   sendButtonDisabled: {
     opacity: 0.5,
   },
+  messageInputContainer: {
+    flex: 1,
+    marginBottom: 0,
+  },
 });

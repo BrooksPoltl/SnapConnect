@@ -10,7 +10,6 @@ import {
   View,
   Text,
   FlatList,
-  TextInput,
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
@@ -37,6 +36,7 @@ import { logger } from '../../utils/logger';
 import { useNavigation, UserStackParamList } from '../../types/navigation';
 import { Message } from '../../types/chat';
 import { CapturedMedia } from '../../types/media';
+import FormField from '../../components/FormField';
 
 import { styles } from './styles';
 
@@ -405,13 +405,13 @@ const ConversationScreen: React.FC = () => {
           <TouchableOpacity style={dynamicStyles.mediaButton} onPress={handlePickMedia}>
             <Icon name='plus' size={24} color={theme.colors.primary} />
           </TouchableOpacity>
-          <TextInput
-            style={dynamicStyles.input}
+          <FormField
+            variant='chat'
             value={messageText}
             onChangeText={setMessageText}
             placeholder='Type a message...'
-            placeholderTextColor={theme.colors.textSecondary}
             multiline
+            containerStyle={{ flex: 1, marginBottom: 0 }}
           />
           <TouchableOpacity
             style={dynamicStyles.sendButton}

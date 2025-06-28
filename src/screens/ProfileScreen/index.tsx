@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { getUserProfile, updateUsername } from '../../services/user';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { logger } from '../../utils/logger';
 import { AnimatedPressable, FadeInAnimation, AnimatedCard, PulseAnimation } from '../../components';
+import FormField from '../../components/FormField';
 
 import { styles as createStyles } from './styles';
 
@@ -178,14 +179,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
                     <Text style={styles.usernameLabel}>Username</Text>
                     {editing ? (
                       <View style={styles.editContainer}>
-                        <TextInput
-                          style={styles.usernameInput}
+                        <FormField
+                          variant='inline'
                           value={newUsername}
                           onChangeText={setNewUsername}
                           placeholder='Enter username'
                           autoCapitalize='none'
                           autoCorrect={false}
                           maxLength={30}
+                          containerStyle={{ flex: 1 }}
                         />
                         <View style={styles.editActions}>
                           <AnimatedPressable

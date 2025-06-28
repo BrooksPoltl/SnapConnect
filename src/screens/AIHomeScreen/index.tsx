@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useTheme } from '../../styles/theme';
 import { getUserAIConversations } from '../../services/ai';
-import { Icon, AIConversationSkeleton } from '../../components';
+import { Icon, AIConversationSkeleton, ConversationCard } from '../../components';
 import type { AIConversation } from '../../types';
 
 import { styles } from './styles';
@@ -94,20 +94,13 @@ const AIHomeScreen: React.FC = () => {
    * Render a single conversation item
    */
   const renderConversationItem = ({ item }: { item: AIConversation }) => (
-    <TouchableOpacity
-      style={dynamicStyles.conversationItem}
+    <ConversationCard
+      title={item.title}
+      subtitle={`${item.message_count} messages • ${formatLastActivity(item.last_message_at)}`}
+      leftIcon='message-circle'
       onPress={() => handleConversationPress(item)}
-    >
-      <View style={dynamicStyles.conversationContent}>
-        <Text style={dynamicStyles.conversationTitle} numberOfLines={1}>
-          {item.title}
-        </Text>
-        <Text style={dynamicStyles.conversationMeta}>
-          {item.message_count} messages • {formatLastActivity(item.last_message_at)}
-        </Text>
-      </View>
-      <Icon name='chevron-right' size={20} color={theme.colors.textSecondary} />
-    </TouchableOpacity>
+      testID={`ai-conversation-${item.id}`}
+    />
   );
 
   /**

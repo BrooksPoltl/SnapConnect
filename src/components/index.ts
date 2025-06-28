@@ -27,6 +27,7 @@ export { Avatar } from './Avatar';
 export { default as CameraControls } from './CameraControls';
 export { default as CameraOptions } from './CameraOptions';
 export { default as CameraPermissionStatus } from './CameraPermissionStatus';
+export { default as ConversationCard } from './ConversationCard';
 export { default as ConversationListItem } from './ConversationListItem';
 export { default as DisclaimerText } from './DisclaimerText';
 export { default as FormField } from './FormField';

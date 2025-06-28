@@ -10,7 +10,7 @@ import { View, Text, FlatList, RefreshControl, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 
-import { ConversationListItem, ConversationListSkeleton } from '../../components';
+import { ConversationCard, ConversationListSkeleton } from '../../components';
 import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { getOrCreateDirectChat } from '../../services/chat';
@@ -25,7 +25,7 @@ const ChatScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
   const theme = useTheme();
   const dynamicStyles = styles(theme);
-  const { user } = useAuthentication();
+  const { user: _user } = useAuthentication();
   const { conversations, refreshConversations, isLoading } = useConversations();
 
   /**
@@ -70,13 +70,38 @@ const ChatScreen: React.FC = () => {
   /**
    * Renders a single conversation item
    */
-  const renderConversationItem = ({ item }: { item: Conversation }) => (
-    <ConversationListItem
-      conversation={item}
-      currentUserId={user?.id ?? ''}
-      onPress={handleConversationPress}
-    />
-  );
+  const renderConversationItem = ({ item }: { item: Conversation }) => {
+    // Format the last message display text
+    const getLastMessageText = () => {
+      if (item.last_message_content?.trim()) {
+        return item.last_message_content;
+      }
+      switch (item.last_message_type) {
+        case 'image':
+          return 'Photo';
+        case 'video':
+          return 'Video';
+        default:
+          return 'Message';
+      }
+    };
+
+    // Format subtitle with message preview and status
+    const subtitle = item.last_message_id ? getLastMessageText() : 'Tap to start chatting';
+
+    return (
+      <ConversationCard
+        title={item.other_username}
+        subtitle={subtitle}
+        leftIcon='user'
+        unreadCount={item.unread_count > 0 ? item.unread_count : undefined}
+        onPress={() =>
+          handleConversationPress(item.chat_id, item.other_user_id, item.other_username)
+        }
+        testID={`conversation-${item.chat_id}`}
+      />
+    );
+  };
 
   /**
    * Renders empty state when no conversations exist

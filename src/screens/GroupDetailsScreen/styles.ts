@@ -112,14 +112,30 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#007AFF',
     borderRadius: 8,
+
+    // Enhanced 3D Button Effects
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
   },
   actionButtonText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#007AFF',
+    color: '#FFFFFF',
     fontWeight: '500',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   membersSection: {
     flex: 1,

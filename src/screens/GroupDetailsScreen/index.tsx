@@ -177,7 +177,7 @@ export const GroupDetailsScreen = () => {
       {/* Actions */}
       <View style={styles.actionsSection}>
         <TouchableOpacity style={styles.actionButton} onPress={handleAddMembers}>
-          <Ionicons name='person-add' size={20} color='#007AFF' />
+          <Ionicons name='person-add' size={20} color='#FFFFFF' />
           <Text style={styles.actionButtonText}>Add Members</Text>
         </TouchableOpacity>
       </View>

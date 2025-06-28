@@ -44,6 +44,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.pill,
+
+    // Enhanced 3D Button Effects
+    shadowColor: colors.dark.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
   },
 
   postButtonDisabled: {
@@ -74,6 +85,11 @@ export const styles = StyleSheet.create({
     fontSize: fontSizes.md,
     fontWeight: '600',
     marginBottom: spacing.sm,
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   privacyContainer: {
@@ -89,14 +105,34 @@ export const styles = StyleSheet.create({
     padding: spacing.md,
     backgroundColor: colors.dark.surface,
     borderRadius: borderRadius.lg,
-    borderWidth: 2,
-    borderColor: colors.dark.border,
     gap: spacing.sm,
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
   },
 
   privacyOptionSelected: {
     borderColor: colors.dark.primary,
+    borderTopColor: 'rgba(30, 136, 229, 0.6)',
+    borderBottomColor: 'rgba(30, 136, 229, 0.8)',
     backgroundColor: colors.dark.surface,
+    shadowColor: colors.dark.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 20,
   },
 
   privacyText: {
@@ -131,8 +167,21 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.dark.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.dark.border,
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
   },
 
   aiResponseHeader: {
@@ -152,6 +201,11 @@ export const styles = StyleSheet.create({
     color: colors.dark.text,
     fontSize: fontSizes.sm,
     lineHeight: 22,
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   sourceContainer: {
@@ -173,8 +227,21 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.dark.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.dark.border,
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
   },
 
   previewHeader: {
@@ -189,6 +256,16 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: colors.dark.primary,
     marginRight: spacing.sm,
+
+    // 3D Avatar Container Effects
+    shadowColor: colors.dark.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
   },
 
   previewUserInfo: {
@@ -199,6 +276,11 @@ export const styles = StyleSheet.create({
     color: colors.dark.text,
     fontSize: fontSizes.sm,
     fontWeight: '600',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   previewTimestamp: {
@@ -243,6 +325,11 @@ export const styles = StyleSheet.create({
     color: colors.dark.text,
     fontSize: fontSizes.sm,
     lineHeight: 20,
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   formFieldContainer: {
     marginBottom: 8,

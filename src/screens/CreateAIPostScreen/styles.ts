@@ -25,12 +25,30 @@ export const styles = StyleSheet.create({
 
   cancelButton: {
     padding: spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: borderRadius.md,
+
+    // 3D Button Effects
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderTopColor: 'rgba(255, 255, 255, 0.3)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
   },
 
   cancelText: {
-    color: colors.dark.textSecondary,
+    color: '#FFFFFF',
     fontSize: fontSizes.md,
-    fontWeight: '400',
+    fontWeight: '500',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   headerTitle: {
@@ -40,17 +58,17 @@ export const styles = StyleSheet.create({
   },
 
   postButton: {
-    backgroundColor: colors.dark.primary,
+    backgroundColor: '#007AFF',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.pill,
 
-    // Enhanced 3D Button Effects
-    shadowColor: colors.dark.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 12,
+    // Enhanced 3D Button Effects - Matching Group Details Button
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 16,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     borderTopColor: 'rgba(255, 255, 255, 0.4)',
@@ -62,9 +80,14 @@ export const styles = StyleSheet.create({
   },
 
   postText: {
-    color: colors.dark.surface,
+    color: '#FFFFFF',
     fontSize: fontSizes.md,
     fontWeight: '600',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   postTextDisabled: {
@@ -124,11 +147,11 @@ export const styles = StyleSheet.create({
   },
 
   privacyOptionSelected: {
-    borderColor: colors.dark.primary,
-    borderTopColor: 'rgba(30, 136, 229, 0.6)',
-    borderBottomColor: 'rgba(30, 136, 229, 0.8)',
-    backgroundColor: colors.dark.surface,
-    shadowColor: colors.dark.primary,
+    backgroundColor: '#007AFF', // Blue background like Group Details button
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+    shadowColor: '#007AFF', // Blue shadow
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.5,
     shadowRadius: 16,
@@ -139,10 +162,21 @@ export const styles = StyleSheet.create({
     color: colors.dark.textSecondary,
     fontSize: fontSizes.md,
     fontWeight: '500',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   privacyTextSelected: {
-    color: colors.dark.primary,
+    color: '#FFFFFF', // White text on blue background
+    fontWeight: '600',
+
+    // Enhanced text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 
   commentaryInput: {

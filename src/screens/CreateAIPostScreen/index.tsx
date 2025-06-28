@@ -115,7 +115,7 @@ const CreateAIPostScreen: React.FC = () => {
               <Ionicons
                 name='globe-outline'
                 size={20}
-                color={privacy === 'public' ? '#007AFF' : '#666'}
+                color={privacy === 'public' ? '#FFFFFF' : '#666'}
               />
               <Text
                 style={[styles.privacyText, privacy === 'public' && styles.privacyTextSelected]}
@@ -131,7 +131,7 @@ const CreateAIPostScreen: React.FC = () => {
               <Ionicons
                 name='people-outline'
                 size={20}
-                color={privacy === 'friends' ? '#007AFF' : '#666'}
+                color={privacy === 'friends' ? '#FFFFFF' : '#666'}
               />
               <Text
                 style={[styles.privacyText, privacy === 'friends' && styles.privacyTextSelected]}

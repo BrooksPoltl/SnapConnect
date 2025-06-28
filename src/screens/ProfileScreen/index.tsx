@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import { useTheme } from '../../styles/theme';
 import { getUserProfile, updateUsername } from '../../services/user';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { logger } from '../../utils/logger';
+import { AnimatedPressable, FadeInAnimation, AnimatedCard, PulseAnimation } from '../../components';
 
 import { styles as createStyles } from './styles';
 
@@ -101,16 +102,22 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading profile...</Text>
-        </View>
+        <FadeInAnimation>
+          <View style={styles.header}>
+            <AnimatedPressable onPress={() => navigation.goBack()} scaleValue={0.9}>
+              <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
+            </AnimatedPressable>
+            <Text style={styles.headerTitle}>Profile</Text>
+            <View style={styles.headerSpacer} />
+          </View>
+        </FadeInAnimation>
+        <FadeInAnimation delay={300}>
+          <View style={styles.loadingContainer}>
+            <PulseAnimation enabled={true} duration={1500}>
+              <Text style={styles.loadingText}>Loading profile...</Text>
+            </PulseAnimation>
+          </View>
+        </FadeInAnimation>
       </SafeAreaView>
     );
   }
@@ -118,93 +125,125 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
   if (!profile) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-        <View style={styles.errorContainer}>
-          <Ionicons name='person-circle-outline' size={64} color={theme.colors.textSecondary} />
-          <Text style={styles.errorText}>Profile not found</Text>
-        </View>
+        <FadeInAnimation>
+          <View style={styles.header}>
+            <AnimatedPressable onPress={() => navigation.goBack()} scaleValue={0.9}>
+              <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
+            </AnimatedPressable>
+            <Text style={styles.headerTitle}>Profile</Text>
+            <View style={styles.headerSpacer} />
+          </View>
+        </FadeInAnimation>
+        <FadeInAnimation delay={300}>
+          <View style={styles.errorContainer}>
+            <Ionicons name='person-circle-outline' size={64} color={theme.colors.textSecondary} />
+            <Text style={styles.errorText}>Profile not found</Text>
+          </View>
+        </FadeInAnimation>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{isOwnProfile ? 'My Profile' : 'Profile'}</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            <Ionicons name='person-circle' size={80} color={theme.colors.primary} />
-          </View>
-
-          <View style={styles.profileInfo}>
-            <View style={styles.usernameSection}>
-              <Text style={styles.usernameLabel}>Username</Text>
-              {editing ? (
-                <View style={styles.editContainer}>
-                  <TextInput
-                    style={styles.usernameInput}
-                    value={newUsername}
-                    onChangeText={setNewUsername}
-                    placeholder='Enter username'
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                    maxLength={30}
-                  />
-                  <View style={styles.editActions}>
-                    <TouchableOpacity
-                      style={[styles.editButton, styles.cancelButton]}
-                      onPress={handleCancelEdit}
-                    >
-                      <Ionicons name='close' size={16} color={theme.colors.text} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.editButton, styles.saveButton]}
-                      onPress={handleSaveUsername}
-                    >
-                      <Ionicons name='checkmark' size={16} color={theme.colors.white} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : (
-                <View style={styles.usernameDisplay}>
-                  <Text style={styles.username}>{profile.username}</Text>
-                  {isOwnProfile && (
-                    <TouchableOpacity style={styles.editIconButton} onPress={handleStartEdit}>
-                      <Ionicons name='pencil' size={16} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              )}
-            </View>
-
-            <View style={styles.scoreSection}>
-              <Text style={styles.scoreLabel}>Score</Text>
-              <Text style={styles.score}>{profile.score.toLocaleString()}</Text>
-            </View>
-          </View>
+      <FadeInAnimation duration={500}>
+        <View style={styles.header}>
+          <AnimatedPressable onPress={() => navigation.goBack()} scaleValue={0.9}>
+            <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
+          </AnimatedPressable>
+          <Text style={styles.headerTitle}>{isOwnProfile ? 'My Profile' : 'Profile'}</Text>
+          <View style={styles.headerSpacer} />
         </View>
+      </FadeInAnimation>
 
-        {isOwnProfile && (
-          <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>How to increase your score:</Text>
-            <Text style={styles.infoText}>• Post stories: +10 points</Text>
-            <Text style={styles.infoText}>• Send messages: +5 points</Text>
-          </View>
-        )}
-      </View>
+      <FadeInAnimation delay={200} duration={600}>
+        <View style={styles.content}>
+          <AnimatedCard
+            elevation='medium'
+            gradient={true}
+            enterFromDirection='bottom'
+            delay={400}
+            duration={800}
+          >
+            <View style={styles.profileCard}>
+              <FadeInAnimation delay={600} duration={500}>
+                <View style={styles.avatarContainer}>
+                  <Ionicons name='person-circle' size={80} color={theme.colors.primary} />
+                </View>
+              </FadeInAnimation>
+
+              <View style={styles.profileInfo}>
+                <FadeInAnimation delay={700} duration={500}>
+                  <View style={styles.usernameSection}>
+                    <Text style={styles.usernameLabel}>Username</Text>
+                    {editing ? (
+                      <View style={styles.editContainer}>
+                        <TextInput
+                          style={styles.usernameInput}
+                          value={newUsername}
+                          onChangeText={setNewUsername}
+                          placeholder='Enter username'
+                          autoCapitalize='none'
+                          autoCorrect={false}
+                          maxLength={30}
+                        />
+                        <View style={styles.editActions}>
+                          <AnimatedPressable
+                            style={[styles.editButton, styles.cancelButton]}
+                            onPress={handleCancelEdit}
+                            scaleValue={0.9}
+                          >
+                            <Ionicons name='close' size={16} color={theme.colors.text} />
+                          </AnimatedPressable>
+                          <AnimatedPressable
+                            style={[styles.editButton, styles.saveButton]}
+                            onPress={handleSaveUsername}
+                            scaleValue={0.9}
+                          >
+                            <Ionicons name='checkmark' size={16} color={theme.colors.white} />
+                          </AnimatedPressable>
+                        </View>
+                      </View>
+                    ) : (
+                      <View style={styles.usernameDisplay}>
+                        <Text style={styles.username}>{profile.username}</Text>
+                        {isOwnProfile && (
+                          <AnimatedPressable
+                            style={styles.editIconButton}
+                            onPress={handleStartEdit}
+                            scaleValue={0.8}
+                          >
+                            <Ionicons name='pencil' size={16} color={theme.colors.primary} />
+                          </AnimatedPressable>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                </FadeInAnimation>
+
+                <FadeInAnimation delay={800} duration={500}>
+                  <View style={styles.scoreSection}>
+                    <Text style={styles.scoreLabel}>Score</Text>
+                    <PulseAnimation enabled={true} duration={3000} minScale={1} maxScale={1.05}>
+                      <Text style={styles.score}>{profile.score.toLocaleString()}</Text>
+                    </PulseAnimation>
+                  </View>
+                </FadeInAnimation>
+              </View>
+            </View>
+          </AnimatedCard>
+
+          {isOwnProfile && (
+            <FadeInAnimation delay={1000} duration={600}>
+              <View style={styles.infoCard}>
+                <Text style={styles.infoTitle}>How to increase your score:</Text>
+                <Text style={styles.infoText}>• Post stories: +10 points</Text>
+                <Text style={styles.infoText}>• Send messages: +5 points</Text>
+              </View>
+            </FadeInAnimation>
+          )}
+        </View>
+      </FadeInAnimation>
     </SafeAreaView>
   );
 };

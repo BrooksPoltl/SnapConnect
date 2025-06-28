@@ -5,6 +5,13 @@
  * This pattern helps to keep imports clean and consistent across the application.
  */
 
+// Enhanced Animated Components
+export { default as AnimatedPressable } from './AnimatedPressable';
+export { default as AnimatedCard } from './AnimatedCard';
+export { default as PulseAnimation } from './PulseAnimation';
+export { default as FadeInAnimation } from './FadeInAnimation';
+
+// Core Components
 export { default as AuthButton } from './AuthButton';
 export { Avatar } from './Avatar';
 // export { default as Camera } from './Camera';

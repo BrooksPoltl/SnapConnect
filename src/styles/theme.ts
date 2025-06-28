@@ -16,8 +16,8 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const colors: Colors = {
   light: {
-    primary: '#007AFF',
-    secondary: '#EC4899',
+    primary: '#1E88E5',
+    secondary: '#42A5F5',
     background: '#FFFFFF',
     surface: '#FFFFFF',
     text: '#000000',
@@ -33,25 +33,35 @@ export const colors: Colors = {
     overlay: 'rgba(0, 0, 0, 0.5)',
     overlayDark: 'rgba(0, 0, 0, 0.6)',
     shadow: '#000000',
+    gradientStart: '#1E88E5',
+    gradientEnd: '#1565C0',
+    cardShadow: 'rgba(30, 136, 229, 0.1)',
+    accent: '#64B5F6',
+    surfaceHighlight: '#F5F5F5',
   },
   dark: {
-    primary: '#007AFF',
-    secondary: '#F472B6',
-    background: '#000000',
-    surface: '#1A1A1A',
+    primary: '#1E88E5',
+    secondary: '#42A5F5',
+    background: '#0A0A0B',
+    surface: '#1A1A1E',
     text: '#FFFFFF',
-    textSecondary: '#B0B0B0',
-    border: '#333333',
-    error: '#F87171',
-    success: '#4ADE80',
-    warning: '#FB923C',
-    disabled: '#4B5563',
+    textSecondary: '#A0A0A8',
+    border: '#2A2A30',
+    error: '#FF6B6B',
+    success: '#4ECDC4',
+    warning: '#FFD93D',
+    disabled: '#4A4A52',
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#0A0A0B',
     transparent: 'transparent',
-    overlay: 'rgba(0, 0, 0, 0.5)',
-    overlayDark: 'rgba(0, 0, 0, 0.6)',
-    shadow: 'rgba(0, 0, 0, 0.75)',
+    overlay: 'rgba(10, 10, 11, 0.8)',
+    overlayDark: 'rgba(10, 10, 11, 0.9)',
+    shadow: 'rgba(30, 136, 229, 0.15)',
+    gradientStart: '#1E88E5',
+    gradientEnd: '#1565C0',
+    cardShadow: 'rgba(30, 136, 229, 0.1)',
+    accent: '#64B5F6',
+    surfaceHighlight: '#242428',
   },
 };
 
@@ -82,11 +92,11 @@ export const fontWeights: FontWeights = {
 };
 
 export const borderRadius: BorderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
-  pill: 25,
+  sm: 6,
+  md: 12,
+  lg: 18,
+  xl: 24,
+  pill: 28,
   circle: 50,
 };
 
@@ -95,6 +105,50 @@ export const dimensions: ThemeDimensions = {
   screenHeight,
   isSmallScreen: screenWidth < 375,
   isLargeScreen: screenWidth >= 414,
+};
+
+export const animations = {
+  timing: {
+    fast: 200,
+    medium: 300,
+    slow: 500,
+    slower: 700,
+  },
+  spring: {
+    damping: 15,
+    stiffness: 150,
+    mass: 1,
+  },
+  easing: {
+    ease: [0.25, 0.1, 0.25, 1],
+    easeIn: [0.42, 0, 1, 1],
+    easeOut: [0, 0, 0.58, 1],
+    easeInOut: [0.42, 0, 0.58, 1],
+  },
+};
+
+export const elevation = {
+  small: {
+    shadowColor: colors.dark.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  medium: {
+    shadowColor: colors.dark.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  large: {
+    shadowColor: colors.dark.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
+  },
 };
 
 /**

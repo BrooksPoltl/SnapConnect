@@ -21,6 +21,12 @@ export interface ColorPalette {
   overlay: string;
   overlayDark: string;
   shadow: string;
+  // Enhanced colors for better UI
+  gradientStart: string;
+  gradientEnd: string;
+  cardShadow: string;
+  accent: string;
+  surfaceHighlight: string;
 }
 
 export interface Colors {
@@ -42,6 +48,11 @@ export interface Colors {
     overlay: string;
     overlayDark: string;
     shadow: string;
+    gradientStart: string;
+    gradientEnd: string;
+    cardShadow: string;
+    accent: string;
+    surfaceHighlight: string;
   };
   dark: {
     primary: string;
@@ -61,6 +72,11 @@ export interface Colors {
     overlay: string;
     overlayDark: string;
     shadow: string;
+    gradientStart: string;
+    gradientEnd: string;
+    cardShadow: string;
+    accent: string;
+    surfaceHighlight: string;
   };
 }
 

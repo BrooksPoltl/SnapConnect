@@ -192,6 +192,19 @@ export const styles = (theme: Theme) =>
       color: theme.colors.primary,
       fontWeight: theme.fontWeights.semibold,
     },
+    linkButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: theme.spacing.md,
+    },
+    linkText: {
+      fontSize: theme.fontSizes.sm,
+      color: theme.colors.primary,
+      fontWeight: theme.fontWeights.semibold,
+      textAlign: 'center',
+    },
     footer: {
       alignItems: 'center',
       paddingTop: theme.spacing.md,

@@ -6,9 +6,9 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 
-import { Icon } from '../';
+import { Icon, AnimatedCard, AnimatedPressable, PulseAnimation } from '../';
 import { useTheme } from '../../styles/theme';
 import { ConversationListItemProps, ConversationStatus } from '../../types/chat';
 import { Theme } from '../../types/theme';
@@ -147,57 +147,68 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
   const avatarLetter = conversation.other_username.charAt(0).toUpperCase();
 
   return (
-    <TouchableOpacity
-      style={dynamicStyles.container}
-      onPress={handlePress}
-      accessibilityRole='button'
-      accessibilityLabel={`Chat with ${conversation.other_username}`}
-      accessibilityHint={iconConfig.text}
-    >
-      {/* Avatar */}
-      <View style={dynamicStyles.avatar}>
-        <Text style={dynamicStyles.avatarText}>{avatarLetter}</Text>
-      </View>
+    <AnimatedCard enterFromDirection='fade' elevation='small' delay={Math.random() * 200}>
+      <AnimatedPressable
+        style={dynamicStyles.container}
+        onPress={handlePress}
+        scaleValue={0.98}
+        accessibilityRole='button'
+        accessibilityLabel={`Chat with ${conversation.other_username}`}
+        accessibilityHint={iconConfig.text}
+      >
+        {/* Avatar */}
+        <View style={dynamicStyles.avatar}>
+          <Text style={dynamicStyles.avatarText}>{avatarLetter}</Text>
+        </View>
 
-      {/* Content */}
-      <View style={dynamicStyles.content}>
-        <Text style={dynamicStyles.username} numberOfLines={1}>
-          {conversation.other_username}
-        </Text>
-
-        {(conversation.last_message_content ?? conversation.last_message_type) && (
-          <Text style={dynamicStyles.lastMessage} numberOfLines={1}>
-            {getLastMessageDisplayText(conversation)}
+        {/* Content */}
+        <View style={dynamicStyles.content}>
+          <Text style={dynamicStyles.username} numberOfLines={1}>
+            {conversation.other_username}
           </Text>
-        )}
-      </View>
 
-      {/* Status */}
-      <View style={dynamicStyles.statusContainer}>
-        <Icon
-          name={iconConfig.name}
-          size={20}
-          color={iconConfig.color}
-          style={
-            iconConfig.filled
-              ? dynamicStyles.statusIcon
-              : { ...dynamicStyles.statusIcon, ...dynamicStyles.statusIconOutline }
-          }
-        />
-        <Text style={[dynamicStyles.statusText, { color: iconConfig.textColor }]}>
-          {iconConfig.text}
-        </Text>
-
-        {/* Unread count badge */}
-        {conversation.unread_count > 0 && (
-          <View style={dynamicStyles.unreadBadge}>
-            <Text style={dynamicStyles.unreadBadgeText}>
-              {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
+          {(conversation.last_message_content ?? conversation.last_message_type) && (
+            <Text style={dynamicStyles.lastMessage} numberOfLines={1}>
+              {getLastMessageDisplayText(conversation)}
             </Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Status */}
+        <View style={dynamicStyles.statusContainer}>
+          <Icon
+            name={iconConfig.name}
+            size={20}
+            color={iconConfig.color}
+            style={
+              iconConfig.filled
+                ? dynamicStyles.statusIcon
+                : { ...dynamicStyles.statusIcon, ...dynamicStyles.statusIconOutline }
+            }
+          />
+          <Text style={[dynamicStyles.statusText, { color: iconConfig.textColor }]}>
+            {iconConfig.text}
+          </Text>
+
+          {/* Unread count badge with pulse animation */}
+          {conversation.unread_count > 0 && (
+            <PulseAnimation
+              enabled={true}
+              duration={1500}
+              minScale={1}
+              maxScale={1.1}
+              pulseColor={theme.colors.primary}
+            >
+              <View style={dynamicStyles.unreadBadge}>
+                <Text style={dynamicStyles.unreadBadgeText}>
+                  {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
+                </Text>
+              </View>
+            </PulseAnimation>
+          )}
+        </View>
+      </AnimatedPressable>
+    </AnimatedCard>
   );
 };
 

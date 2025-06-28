@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import { AuthStackParamList } from '../../types/navigation';
 import { useTheme } from '../../styles/theme';
-import { Icon, HomeScreenAnimatedText } from '../../components';
+import { Icon, HomeScreenAnimatedText, AnimatedPressable, FadeInAnimation } from '../../components';
 import { AUTO_SCROLL_CONTENT, ANIMATION_TIMINGS } from './constants';
 
 import { styles } from './styles';
@@ -46,26 +46,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const onLoginPress = useCallback(() => {
     navigation.navigate('Login');
   }, [navigation]);
-
-  const createButtonPressAnimation = useCallback(
-    (callback: () => void) => () => {
-      const scaleAnim = new Animated.Value(1);
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 0.95,
-          duration: ANIMATION_TIMINGS.BUTTON_PRESS_DURATION,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: ANIMATION_TIMINGS.BUTTON_PRESS_DURATION,
-          useNativeDriver: true,
-        }),
-      ]).start();
-      callback();
-    },
-    [],
-  );
 
   useEffect(() => {
     // Initial entrance animations
@@ -180,51 +160,56 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </View>
 
         {/* Bottom CTA Section */}
-        <View style={dynamicStyles.bottomSection}>
-          <Text style={dynamicStyles.ctaText}>Ready to transform your financial content?</Text>
-          <Text style={dynamicStyles.ctaSubtext}>
-            Join creators sharing market insights through engaging visual stories
-          </Text>
-
-          <TouchableOpacity
-            style={[dynamicStyles.button, dynamicStyles.primaryButton]}
-            onPress={createButtonPressAnimation(onSignUpPress)}
-            accessibilityRole='button'
-            accessibilityLabel='Sign up with email'
-          >
-            <Text style={dynamicStyles.primaryButtonText}>Get Started</Text>
-            <Icon
-              name='arrow-right'
-              size={16}
-              color={theme.colors.background}
-              style={dynamicStyles.buttonIcon}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[dynamicStyles.button, dynamicStyles.secondaryButton]}
-            onPress={createButtonPressAnimation(onPhoneButtonPress)}
-            accessibilityRole='button'
-            accessibilityLabel='Sign in with your phone number'
-          >
-            <Text style={dynamicStyles.secondaryButtonText}>Sign In with Phone</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={onLoginPress}>
-            <Text style={dynamicStyles.logInText}>
-              Already have an account? <Text style={dynamicStyles.logInLink}>Log In</Text>
+        <FadeInAnimation delay={1000} duration={800}>
+          <View style={dynamicStyles.bottomSection}>
+            <Text style={dynamicStyles.ctaText}>Ready to transform your financial content?</Text>
+            <Text style={dynamicStyles.ctaSubtext}>
+              Join creators sharing market insights through engaging visual stories
             </Text>
-          </TouchableOpacity>
 
-          <View style={dynamicStyles.footer}>
-            <Text style={dynamicStyles.footerText}>
-              Join financial creators sharing market insights
-            </Text>
-            <Text style={dynamicStyles.disclaimer}>
-              18+ only • Educational content • Not financial advice
-            </Text>
+            <AnimatedPressable
+              style={[dynamicStyles.button, dynamicStyles.primaryButton]}
+              onPress={onSignUpPress}
+              scaleValue={0.95}
+              accessibilityRole='button'
+              accessibilityLabel='Sign up with email'
+            >
+              <Text style={dynamicStyles.primaryButtonText}>Get Started</Text>
+              <Icon
+                name='arrow-right'
+                size={16}
+                color={theme.colors.background}
+                style={dynamicStyles.buttonIcon}
+              />
+            </AnimatedPressable>
+
+            <AnimatedPressable
+              style={[dynamicStyles.button, dynamicStyles.secondaryButton]}
+              onPress={onPhoneButtonPress}
+              scaleValue={0.96}
+              accessibilityRole='button'
+              accessibilityLabel='Sign up with phone number'
+            >
+              <Icon
+                name='phone'
+                size={16}
+                color={theme.colors.primary}
+                style={dynamicStyles.buttonIcon}
+              />
+              <Text style={dynamicStyles.secondaryButtonText}>Continue with Phone</Text>
+            </AnimatedPressable>
+
+            <AnimatedPressable
+              style={dynamicStyles.linkButton}
+              onPress={onLoginPress}
+              scaleValue={0.98}
+              accessibilityRole='button'
+              accessibilityLabel='Login to existing account'
+            >
+              <Text style={dynamicStyles.linkText}>Already have an account? Log In</Text>
+            </AnimatedPressable>
           </View>
-        </View>
+        </FadeInAnimation>
       </View>
     </SafeAreaView>
   );

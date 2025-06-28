@@ -91,7 +91,7 @@ export const GroupDetailsScreen = () => {
     <ConversationCard
       title={item.username}
       subtitle={`Score: ${item.score} • Joined ${new Date(item.joined_at).toLocaleDateString()}`}
-      leftIcon='person'
+      username={item.username}
       rightContent={
         currentGroupDetails?.creator_id === item.user_id ? (
           <View style={styles.creatorBadge}>

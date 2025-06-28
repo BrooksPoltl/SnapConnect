@@ -107,7 +107,7 @@ const FriendsListScreen: React.FC<FriendsListScreenProps> = ({ navigation }) => 
       key={friend.id}
       title={friend.username}
       subtitle={`Score: ${friend.score}`}
-      leftIcon='person'
+      username={friend.username}
       rightContent={
         <TouchableOpacity
           style={styles.removeButton}

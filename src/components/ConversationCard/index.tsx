@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { Icon } from '../';
+import { Icon, Avatar } from '../';
 import { useTheme } from '../../styles/theme';
 
 import { styles } from './styles';
@@ -20,7 +20,11 @@ export interface ConversationCardProps {
   subtitle: string;
   /** Optional unread count badge */
   unreadCount?: number;
-  /** Optional left icon name */
+  /** Optional username for avatar (takes precedence over leftIcon) */
+  username?: string;
+  /** Optional avatar size (default: 44) */
+  avatarSize?: number;
+  /** Optional left icon name (used if no username provided) */
   leftIcon?: string;
   /** Optional left icon color */
   leftIconColor?: string;
@@ -41,6 +45,8 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
   title,
   subtitle,
   unreadCount,
+  username,
+  avatarSize = 44,
   leftIcon,
   leftIconColor,
   showChevron = true,
@@ -65,12 +71,16 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
 
       {/* Main Content Wrapper */}
       <View style={dynamicStyles.contentWrapper}>
-        {/* Left Icon */}
-        {leftIcon && (
+        {/* Left Avatar or Icon */}
+        {username ? (
+          <View style={dynamicStyles.avatarContainer}>
+            <Avatar username={username} size={avatarSize} />
+          </View>
+        ) : leftIcon ? (
           <View style={dynamicStyles.leftIconContainer}>
             <Icon name={leftIcon} size={24} color={leftIconColor ?? theme.colors.white} />
           </View>
-        )}
+        ) : null}
 
         {/* Content */}
         <View style={dynamicStyles.content}>

@@ -159,7 +159,7 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
       key={request.id}
       title={request.requester?.username ?? 'Unknown User'}
       subtitle={`Score: ${request.requester?.score ?? 0} • Friend Request`}
-      leftIcon='person-add'
+      username={request.requester?.username ?? 'Unknown User'}
       rightContent={
         <View style={styles.actionButtons}>
           <TouchableOpacity
@@ -194,7 +194,7 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
         key={user.id}
         title={user.username ?? 'Unknown User'}
         subtitle={`Score: ${user.score ?? 0}`}
-        leftIcon='person'
+        username={user.username ?? 'Unknown User'}
         rightContent={
           <TouchableOpacity
             style={styles.addButton}

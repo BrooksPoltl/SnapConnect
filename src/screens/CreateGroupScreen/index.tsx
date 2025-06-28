@@ -118,7 +118,7 @@ export const CreateGroupScreen = () => {
       <ConversationCard
         title={item.username}
         subtitle={`Score: ${item.score}`}
-        leftIcon='person'
+        username={item.username}
         rightContent={
           isSelected ? (
             <View style={styles.selectedIndicator}>

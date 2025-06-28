@@ -94,6 +94,18 @@ export const styles = (theme: Theme) =>
       borderTopColor: 'rgba(255, 255, 255, 0.4)',
       borderTopWidth: 1,
     },
+    avatarContainer: {
+      marginRight: 16,
+      // 3D Avatar Container Effects
+      shadowColor: '#000000',
+      shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 6,
+      elevation: 8,
+    },
     content: {
       flex: 1,
       marginRight: 14,

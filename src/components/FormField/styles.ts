@@ -28,11 +28,40 @@ export const styles = (theme: Theme) =>
       textTransform: 'uppercase',
     },
 
-    // Input wrapper and base input
+    // Input wrapper and base input with 3D container effect
     inputWrapper: {
       position: 'relative',
       flexDirection: 'row',
       alignItems: 'center',
+      overflow: 'hidden',
+    },
+
+    // Inner glossy overlay for 3D effect (positioned above input)
+    inputGloss: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '50%',
+      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+      borderTopLeftRadius: theme.borderRadius.md,
+      borderTopRightRadius: theme.borderRadius.md,
+      pointerEvents: 'none',
+      zIndex: 1,
+    },
+
+    // Inner shadow effect at bottom
+    inputShadow: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: '20%',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      borderBottomLeftRadius: theme.borderRadius.md,
+      borderBottomRightRadius: theme.borderRadius.md,
+      pointerEvents: 'none',
+      zIndex: 1,
     },
 
     // Base container styles (legacy support)
@@ -40,21 +69,34 @@ export const styles = (theme: Theme) =>
       marginBottom: 0,
     },
 
-    // Base input styles
+    // Base input styles with 3D glossy effect
     input: {
       flex: 1,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
       borderRadius: theme.borderRadius.md,
       padding: theme.spacing.md,
       fontSize: theme.fontSizes.md,
       color: theme.colors.text,
       backgroundColor: theme.colors.surface,
-      shadowColor: theme.colors.cardShadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-      elevation: 1,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(255, 255, 255, 0.25)',
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+      // Dramatic 3D Shadow
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      elevation: 15,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
 
     // Variant: Chat input
@@ -63,8 +105,6 @@ export const styles = (theme: Theme) =>
     },
     chatInput: {
       flex: 1,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
       borderRadius: theme.borderRadius.xl,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.sm,
@@ -73,6 +113,26 @@ export const styles = (theme: Theme) =>
       backgroundColor: theme.colors.surface,
       maxHeight: 100,
       minHeight: 44,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(255, 255, 255, 0.25)',
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+      // Dramatic 3D Shadow
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      elevation: 15,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
 
     // Variant: Inline editing
@@ -97,14 +157,32 @@ export const styles = (theme: Theme) =>
     },
     searchInput: {
       flex: 1,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
       borderRadius: theme.borderRadius.xl,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       fontSize: theme.fontSizes.md,
       color: theme.colors.text,
       backgroundColor: theme.colors.surfaceHighlight,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(255, 255, 255, 0.25)',
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+      // Dramatic 3D Shadow
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      elevation: 15,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
 
     // Size variants
@@ -150,11 +228,20 @@ export const styles = (theme: Theme) =>
     // State variants
     inputError: {
       borderColor: theme.colors.error,
+      borderTopColor: 'rgba(244, 67, 54, 0.4)',
+      borderBottomColor: 'rgba(244, 67, 54, 0.8)',
       backgroundColor: theme.colors.surface,
+      shadowColor: theme.colors.error,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.3,
+      shadowRadius: 10,
+      elevation: 12,
     },
     inputDisabled: {
       opacity: 0.6,
       backgroundColor: theme.colors.disabled,
+      shadowOpacity: 0.1,
+      elevation: 5,
     },
 
     // Error text

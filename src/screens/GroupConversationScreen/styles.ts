@@ -165,8 +165,6 @@ export const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#D1D1D6',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -175,6 +173,26 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F2F2F7',
     maxHeight: 100,
     marginRight: 8,
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   sendButton: {
     width: 40,

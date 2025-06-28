@@ -94,6 +94,14 @@ const FormField: React.FC<FormFieldProps> = ({
 
   const renderInput = () => (
     <View style={[dynamicStyles.inputWrapper, variantStyles.container]}>
+      {/* 3D Glossy Overlay Effects - skip for inline variant */}
+      {variant !== 'inline' && (
+        <>
+          <View style={dynamicStyles.inputGloss} />
+          <View style={dynamicStyles.inputShadow} />
+        </>
+      )}
+
       {leftIcon && (
         <View style={dynamicStyles.leftIconContainer}>
           <Icon

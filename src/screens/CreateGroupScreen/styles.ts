@@ -58,14 +58,32 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   groupNameInput: {
-    borderWidth: 1,
-    borderColor: '#D1D1D6',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 16,
     color: '#000000',
     backgroundColor: '#F2F2F7',
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   selectedMembersSection: {
     paddingHorizontal: 16,
@@ -101,11 +119,24 @@ export const styles = StyleSheet.create({
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#D1D1D6',
     borderRadius: 8,
     backgroundColor: '#F2F2F7',
     paddingHorizontal: 12,
+
+    // Enhanced 3D Border System
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: 2,
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+    // Dramatic 3D Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 15,
   },
   searchIcon: {
     marginRight: 8,

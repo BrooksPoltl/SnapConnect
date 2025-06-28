@@ -45,8 +45,24 @@ export const styles = (theme: Theme) =>
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderRadius: 8,
-      borderWidth: 1,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
       borderColor: theme.colors.primary,
+      borderTopColor: 'rgba(30, 136, 229, 0.6)',
+      borderBottomColor: 'rgba(30, 136, 229, 0.8)',
+
+      // Dramatic 3D Shadow
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 12,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
     messagesList: {
       flexGrow: 1,
@@ -109,8 +125,26 @@ export const styles = (theme: Theme) =>
       marginRight: 12,
       fontSize: 16,
       color: theme.colors.text,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(255, 255, 255, 0.25)',
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+      // Dramatic 3D Shadow
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      elevation: 15,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
     sendButton: {
       width: 44,

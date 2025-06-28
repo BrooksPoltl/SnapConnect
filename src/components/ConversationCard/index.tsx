@@ -59,39 +59,46 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
       accessibilityRole='button'
       accessibilityLabel={`${title}, ${subtitle}`}
     >
-      {/* Left Icon */}
-      {leftIcon && (
-        <View style={dynamicStyles.leftIconContainer}>
-          <Icon name={leftIcon} size={24} color={leftIconColor ?? theme.colors.primary} />
-        </View>
-      )}
+      {/* Inner Glossy Overlays for 3D Effect */}
+      <View style={dynamicStyles.innerGloss} />
+      <View style={dynamicStyles.innerShadow} />
 
-      {/* Content */}
-      <View style={dynamicStyles.content}>
-        <Text style={dynamicStyles.title} numberOfLines={1}>
-          {title}
-        </Text>
-        <Text style={dynamicStyles.subtitle} numberOfLines={1}>
-          {subtitle}
-        </Text>
-      </View>
-
-      {/* Right Content */}
-      <View style={dynamicStyles.rightContainer}>
-        {/* Unread Count Badge */}
-        {unreadCount && unreadCount > 0 && (
-          <View style={dynamicStyles.unreadBadge}>
-            <Text style={dynamicStyles.unreadText}>
-              {unreadCount > 99 ? '99+' : unreadCount.toString()}
-            </Text>
+      {/* Main Content Wrapper */}
+      <View style={dynamicStyles.contentWrapper}>
+        {/* Left Icon */}
+        {leftIcon && (
+          <View style={dynamicStyles.leftIconContainer}>
+            <Icon name={leftIcon} size={24} color={leftIconColor ?? theme.colors.white} />
           </View>
         )}
 
-        {/* Custom Right Content or Chevron */}
-        {rightContent ??
-          (showChevron && (
-            <Icon name='chevron-right' size={20} color={theme.colors.textSecondary} />
-          ))}
+        {/* Content */}
+        <View style={dynamicStyles.content}>
+          <Text style={dynamicStyles.title} numberOfLines={1}>
+            {title}
+          </Text>
+          <Text style={dynamicStyles.subtitle} numberOfLines={1}>
+            {subtitle}
+          </Text>
+        </View>
+
+        {/* Right Content */}
+        <View style={dynamicStyles.rightContainer}>
+          {/* Unread Count Badge */}
+          {unreadCount && unreadCount > 0 && (
+            <View style={dynamicStyles.unreadBadge}>
+              <Text style={dynamicStyles.unreadText}>
+                {unreadCount > 99 ? '99+' : unreadCount.toString()}
+              </Text>
+            </View>
+          )}
+
+          {/* Custom Right Content or Chevron */}
+          {rightContent ??
+            (showChevron && (
+              <Icon name='chevron-right' size={20} color={theme.colors.textSecondary} />
+            ))}
+        </View>
       </View>
     </TouchableOpacity>
   );

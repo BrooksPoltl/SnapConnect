@@ -9,7 +9,7 @@ import { FriendsStackParamList } from '../../navigation/FriendsStack';
 import { useTheme } from '../../styles/theme';
 import { getFriendsList, removeFriend, Friend } from '../../services/friends';
 import { logger } from '../../utils/logger';
-import { FriendListItem } from '../../components/FriendListItem';
+import { ConversationCard } from '../../components';
 
 import { styles as createStyles } from './styles';
 
@@ -103,12 +103,12 @@ const FriendsListScreen: React.FC<FriendsListScreenProps> = ({ navigation }) => 
    * Render a friend item
    */
   const renderFriendItem = (friend: Friend) => (
-    <FriendListItem
+    <ConversationCard
       key={friend.id}
-      username={friend.username}
-      score={friend.score}
-      onPress={() => handleViewProfile(friend.id)}
-      rightElement={
+      title={friend.username}
+      subtitle={`Score: ${friend.score}`}
+      leftIcon='person'
+      rightContent={
         <TouchableOpacity
           style={styles.removeButton}
           onPress={() => handleRemoveFriend(friend.id, friend.username)}
@@ -116,6 +116,9 @@ const FriendsListScreen: React.FC<FriendsListScreenProps> = ({ navigation }) => 
           <Ionicons name='person-remove' size={20} color={theme.colors.error} />
         </TouchableOpacity>
       }
+      showChevron={false}
+      onPress={() => handleViewProfile(friend.id)}
+      testID={`friend-${friend.id}`}
     />
   );
 

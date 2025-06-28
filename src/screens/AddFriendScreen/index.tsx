@@ -20,6 +20,7 @@ import { searchUsers } from '../../services/user';
 import { UserData } from '../../types/user';
 import { logger } from '../../utils/logger';
 import FormField from '../../components/FormField';
+import { ConversationCard } from '../../components';
 
 import { styles as createStyles } from './styles';
 
@@ -154,31 +155,32 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
    * Render a friend request item
    */
   const renderFriendRequest = (request: FriendRequest) => (
-    <View key={request.id} style={styles.requestItem}>
-      <TouchableOpacity
-        style={styles.userInfo}
-        onPress={() => handleViewProfile(request.user_id_1)}
-      >
-        <Text style={styles.username}>{request.requester?.username ?? 'Unknown User'}</Text>
-        <Text style={styles.score}>Score: {request.requester?.score ?? 0}</Text>
-      </TouchableOpacity>
+    <ConversationCard
+      key={request.id}
+      title={request.requester?.username ?? 'Unknown User'}
+      subtitle={`Score: ${request.requester?.score ?? 0} • Friend Request`}
+      leftIcon='person-add'
+      rightContent={
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.acceptButton]}
+            onPress={() => handleAcceptRequest(request.id)}
+          >
+            <Ionicons name='checkmark' size={20} color={theme.colors.white} />
+          </TouchableOpacity>
 
-      <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.acceptButton]}
-          onPress={() => handleAcceptRequest(request.id)}
-        >
-          <Ionicons name='checkmark' size={20} color={theme.colors.white} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.actionButton, styles.declineButton]}
-          onPress={() => handleDeclineRequest(request.id)}
-        >
-          <Ionicons name='close' size={20} color={theme.colors.white} />
-        </TouchableOpacity>
-      </View>
-    </View>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.declineButton]}
+            onPress={() => handleDeclineRequest(request.id)}
+          >
+            <Ionicons name='close' size={20} color={theme.colors.white} />
+          </TouchableOpacity>
+        </View>
+      }
+      showChevron={false}
+      onPress={() => handleViewProfile(request.user_id_1)}
+      testID={`request-${request.id}`}
+    />
   );
 
   /**
@@ -188,22 +190,23 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
     if (!user.id) return null;
 
     return (
-      <View key={user.id} style={styles.userItem}>
-        <TouchableOpacity
-          style={styles.userInfo}
-          onPress={() => user.id && handleViewProfile(user.id)}
-        >
-          <Text style={styles.username}>{user.username ?? 'Unknown User'}</Text>
-          <Text style={styles.score}>Score: {user.score ?? 0}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => user.id && handleSendRequest(user.id, user.username ?? 'Unknown User')}
-        >
-          <Ionicons name='person-add' size={20} color={theme.colors.primary} />
-        </TouchableOpacity>
-      </View>
+      <ConversationCard
+        key={user.id}
+        title={user.username ?? 'Unknown User'}
+        subtitle={`Score: ${user.score ?? 0}`}
+        leftIcon='person'
+        rightContent={
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => user.id && handleSendRequest(user.id, user.username ?? 'Unknown User')}
+          >
+            <Ionicons name='person-add' size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+        }
+        showChevron={false}
+        onPress={() => user.id && handleViewProfile(user.id)}
+        testID={`user-${user.id}`}
+      />
     );
   };
 

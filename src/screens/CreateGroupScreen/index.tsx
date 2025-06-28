@@ -20,8 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useGroupStore } from '../../stores/groupStore';
 import { searchUsersForGroup } from '../../services/groups';
 import type { GroupMember } from '../../types/groups';
-import { FriendListItem } from '../../components/FriendListItem';
-import { SelectedUserCard } from '../../components/SelectedUserCard';
+import { ConversationCard, SelectedUserCard } from '../../components';
 import FormField from '../../components/FormField';
 
 import { styles } from './styles';
@@ -116,11 +115,20 @@ export const CreateGroupScreen = () => {
     const isSelected = selectedMembers.some(member => member.user_id === item.user_id);
 
     return (
-      <FriendListItem
-        username={item.username}
-        score={item.score}
+      <ConversationCard
+        title={item.username}
+        subtitle={`Score: ${item.score}`}
+        leftIcon='person'
+        rightContent={
+          isSelected ? (
+            <View style={styles.selectedIndicator}>
+              <Text style={styles.selectedText}>✓</Text>
+            </View>
+          ) : undefined
+        }
+        showChevron={false}
         onPress={() => handleSelectMember(item)}
-        isSelected={isSelected}
+        testID={`user-${item.user_id}`}
       />
     );
   };

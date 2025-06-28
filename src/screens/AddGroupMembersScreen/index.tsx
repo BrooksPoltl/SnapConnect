@@ -16,8 +16,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
-import { SelectedUserCard } from '../../components/SelectedUserCard';
-import { FriendListItem } from '../../components/FriendListItem';
+import { SelectedUserCard, ConversationCard } from '../../components';
 import * as groupsService from '../../services/groups';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
@@ -130,11 +129,20 @@ export const AddGroupMembersScreen = () => {
     const isSelected = selectedUsers.find(selected => selected.user_id === item.user_id);
 
     return (
-      <FriendListItem
-        username={item.username}
-        score={item.score}
+      <ConversationCard
+        title={item.username}
+        subtitle={`Score: ${item.score}`}
+        leftIcon='person'
+        rightContent={
+          isSelected ? (
+            <View style={styles.selectedIndicator}>
+              <Text style={styles.selectedText}>✓</Text>
+            </View>
+          ) : undefined
+        }
+        showChevron={false}
         onPress={() => handleSelectUser(item)}
-        isSelected={!!isSelected}
+        testID={`user-${item.user_id}`}
       />
     );
   };

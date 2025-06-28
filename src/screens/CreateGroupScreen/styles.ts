@@ -187,4 +187,17 @@ export const styles = StyleSheet.create({
   formFieldNoMargin: {
     marginBottom: 0,
   },
+  selectedIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });

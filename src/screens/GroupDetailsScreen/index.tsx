@@ -18,7 +18,7 @@ import { UserStackParamList } from '../../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
-import { FriendListItem } from '../../components/FriendListItem';
+import { ConversationCard } from '../../components';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
 
@@ -88,17 +88,20 @@ export const GroupDetailsScreen = () => {
   };
 
   const renderMember = ({ item }: { item: GroupMember }) => (
-    <FriendListItem
-      username={item.username}
-      score={item.score}
-      subtitle={`Joined ${new Date(item.joined_at).toLocaleDateString()}`}
-      rightElement={
+    <ConversationCard
+      title={item.username}
+      subtitle={`Score: ${item.score} • Joined ${new Date(item.joined_at).toLocaleDateString()}`}
+      leftIcon='person'
+      rightContent={
         currentGroupDetails?.creator_id === item.user_id ? (
           <View style={styles.creatorBadge}>
             <Text style={styles.creatorBadgeText}>Creator</Text>
           </View>
-        ) : null
+        ) : undefined
       }
+      showChevron={false}
+      onPress={() => {}}
+      testID={`member-${item.user_id}`}
     />
   );
 

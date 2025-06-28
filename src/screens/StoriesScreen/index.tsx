@@ -8,7 +8,13 @@ import { styles } from './styles';
 import { useTheme } from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { logError } from '../../utils/logger';
-import { Avatar, FadeInAnimation, AnimatedPressable, StoryListSkeleton } from '../../components';
+import {
+  Avatar,
+  FadeInAnimation,
+  AnimatedPressable,
+  StoryListSkeleton,
+  ConversationCard,
+} from '../../components';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { useGroupStore } from '../../stores';
 
@@ -91,25 +97,24 @@ export const StoriesScreen: React.FC = () => {
       });
     };
 
+    // Format subtitle with last message info
+    const formatGroupSubtitle = () => {
+      if (item.last_message_content && item.last_message_sender_username) {
+        return `${item.last_message_sender_username}: ${item.last_message_content}`;
+      }
+      return `${item.member_count} members`;
+    };
+
     return (
       <FadeInAnimation delay={200 + index * 80} duration={400}>
-        <AnimatedPressable style={dynamicStyles.groupItem} onPress={handlePress} scaleValue={0.98}>
-          <View style={dynamicStyles.groupAvatar}>
-            <Text style={dynamicStyles.groupAvatarText}>
-              {item.group_name.charAt(0).toUpperCase()}
-            </Text>
-          </View>
-          <View style={dynamicStyles.groupInfo}>
-            <Text style={dynamicStyles.groupName} numberOfLines={1}>
-              {item.group_name}
-            </Text>
-            {item.last_message_content && (
-              <Text style={dynamicStyles.groupLastMessage} numberOfLines={1}>
-                {item.last_message_sender_username}: {item.last_message_content}
-              </Text>
-            )}
-          </View>
-        </AnimatedPressable>
+        <ConversationCard
+          title={item.group_name}
+          subtitle={formatGroupSubtitle()}
+          leftIcon='users'
+          unreadCount={item.unread_count > 0 ? item.unread_count : undefined}
+          onPress={handlePress}
+          testID={`group-${item.group_id}`}
+        />
       </FadeInAnimation>
     );
   };

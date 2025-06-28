@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
+  // Button, // Temporarily commented out
   View,
   Text,
   StyleSheet,
@@ -13,7 +13,7 @@ import {
   StackNavigationOptions,
   TransitionPresets,
 } from '@react-navigation/stack';
-import { logOut } from '../services/auth';
+// import { logOut } from '../services/auth'; // Temporarily commented out
 import { useChatStore, useUnreadCount, useGroupStore } from '../stores';
 
 import AIHomeScreen from '../screens/AIHomeScreen';
@@ -24,7 +24,7 @@ import { StoriesScreen } from '../screens/StoriesScreen';
 import FeedScreen from '../screens/FeedScreen';
 import MediaPreviewScreen from '../screens/MediaPreviewScreen';
 import ConversationScreen from '../screens/ConversationScreen';
-import { logError } from '../utils/logger';
+// import { logError } from '../utils/logger'; // Temporarily commented out
 import { Icon } from '../components';
 import { useTheme } from '../styles/theme';
 import { UserStackParamList } from '../types/navigation';
@@ -148,12 +148,13 @@ const CustomTabNavigator: React.FC = () => {
       fontWeight: '600',
       color: theme.colors.white,
     },
-    logoutButton: {
-      position: 'absolute',
-      top: 50,
-      left: 20,
-      zIndex: 1000,
-    },
+    // Temporarily commented out logout button style
+    // logoutButton: {
+    //   position: 'absolute',
+    //   top: 50,
+    //   left: 20,
+    //   zIndex: 1000,
+    // },
   });
 
   const handleTabPress = (index: number) => {
@@ -170,13 +171,14 @@ const CustomTabNavigator: React.FC = () => {
     }).start();
   };
 
-  const handleLogOut = async () => {
-    try {
-      await logOut();
-    } catch (error: unknown) {
-      logError('UserStack', 'Sign out error', error);
-    }
-  };
+  // Logout function temporarily commented out
+  // const handleLogOut = async () => {
+  //   try {
+  //     await logOut();
+  //   } catch (error: unknown) {
+  //     // logError('UserStack', 'Sign out error', error);
+  //   }
+  // };
 
   const renderTabIcon = (tabKey: string, index: number) => {
     const iconName = getIconName(tabKey);
@@ -214,9 +216,10 @@ const CustomTabNavigator: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoutButton}>
+      {/* Logout button temporarily commented out for cleaner design */}
+      {/* <View style={styles.logoutButton}>
         <Button onPress={handleLogOut} title='Log Out' />
-      </View>
+      </View> */}
 
       <Animated.View
         style={[

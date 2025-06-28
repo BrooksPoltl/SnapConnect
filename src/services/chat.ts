@@ -122,7 +122,7 @@ export async function getOrCreateDirectChat(otherUserId: string): Promise<number
     logger.info(`Getting or creating direct chat with user ${otherUserId}`);
 
     const { data, error } = await supabase.rpc('create_direct_chat', {
-      other_user_id: otherUserId,
+      p_recipient_id: otherUserId,
     });
 
     if (error) {

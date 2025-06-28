@@ -198,10 +198,10 @@ export const AddGroupMembersScreen = () => {
           spellCheck={false}
           leftIcon='search'
           rightIcon={isSearching ? undefined : undefined}
-          containerStyle={{ marginBottom: 0 }}
+          containerStyle={styles.formFieldNoMargin}
         />
         {isSearching && (
-          <View style={{ alignItems: 'center', paddingVertical: 8 }}>
+          <View style={styles.centeredContainer}>
             <ActivityIndicator size='small' color='#007AFF' />
           </View>
         )}

@@ -205,4 +205,11 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 12,
   },
+  formFieldNoMargin: {
+    marginBottom: 0,
+  },
+  centeredContainer: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
 });

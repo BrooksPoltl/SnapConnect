@@ -277,7 +277,7 @@ const AIChatScreen: React.FC = () => {
               onSubmitEditing={handleTitleSave}
               autoFocus
               selectTextOnFocus
-              containerStyle={{ flex: 1 }}
+              containerStyle={dynamicStyles.formFieldContainer}
             />
           ) : (
             <TouchableOpacity
@@ -313,7 +313,7 @@ const AIChatScreen: React.FC = () => {
             placeholder='Ask about financial data...'
             multiline
             maxLength={500}
-            containerStyle={{ flex: 1, marginBottom: 0 }}
+            containerStyle={dynamicStyles.formFieldNoMargin}
           />
           <TouchableOpacity
             style={[

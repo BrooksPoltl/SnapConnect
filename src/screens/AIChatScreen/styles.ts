@@ -171,4 +171,11 @@ export const styles = (theme: Theme) =>
       color: theme.colors.textSecondary,
       textAlign: 'center',
     },
+    formFieldContainer: {
+      flex: 1,
+    },
+    formFieldNoMargin: {
+      flex: 1,
+      marginBottom: 0,
+    },
   });

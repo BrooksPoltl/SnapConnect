@@ -233,7 +233,7 @@ const AddFriendScreen: React.FC<AddFriendScreenProps> = ({ navigation }) => {
             autoCorrect={false}
             spellCheck={false}
             leftIcon='search'
-            containerStyle={{ marginBottom: 16 }}
+            containerStyle={styles.formFieldContainer}
           />
 
           {searchResults.length > 0 && (

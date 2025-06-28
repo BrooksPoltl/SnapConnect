@@ -137,4 +137,7 @@ export const styles = (theme: Theme) =>
       marginTop: 8,
       textAlign: 'center',
     },
+    formFieldContainer: {
+      marginBottom: 16,
+    },
   });

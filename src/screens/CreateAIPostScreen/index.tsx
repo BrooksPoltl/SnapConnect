@@ -151,7 +151,7 @@ const CreateAIPostScreen: React.FC = () => {
             onChangeText={setCommentary}
             multiline
             maxLength={500}
-            containerStyle={{ marginBottom: 8 }}
+            containerStyle={styles.formFieldContainer}
           />
           <Text style={styles.characterCount}>{commentary.length}/500</Text>
         </View>

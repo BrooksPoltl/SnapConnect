@@ -244,4 +244,7 @@ export const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     lineHeight: 20,
   },
+  formFieldContainer: {
+    marginBottom: 8,
+  },
 });

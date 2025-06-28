@@ -187,7 +187,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
                           autoCapitalize='none'
                           autoCorrect={false}
                           maxLength={30}
-                          containerStyle={{ flex: 1 }}
+                          containerStyle={styles.flexContainer}
                         />
                         <View style={styles.editActions}>
                           <AnimatedPressable

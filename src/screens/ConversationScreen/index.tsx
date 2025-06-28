@@ -411,7 +411,7 @@ const ConversationScreen: React.FC = () => {
             onChangeText={setMessageText}
             placeholder='Type a message...'
             multiline
-            containerStyle={{ flex: 1, marginBottom: 0 }}
+            containerStyle={dynamicStyles.formFieldContainer}
           />
           <TouchableOpacity
             style={dynamicStyles.sendButton}

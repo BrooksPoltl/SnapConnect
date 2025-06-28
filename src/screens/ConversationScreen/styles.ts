@@ -166,4 +166,8 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       borderRadius: 10,
     },
+    formFieldContainer: {
+      flex: 1,
+      marginBottom: 0,
+    },
   });

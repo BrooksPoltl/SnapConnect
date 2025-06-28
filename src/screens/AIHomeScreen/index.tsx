@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -23,6 +23,7 @@ const AIHomeScreen: React.FC = () => {
   const [conversations, setConversations] = useState<AIConversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   /**
    * Load AI conversations from the server
@@ -37,6 +38,7 @@ const AIHomeScreen: React.FC = () => {
 
       const data = await getUserAIConversations();
       setConversations(data);
+      setHasLoadedOnce(true);
     } catch (error) {
       console.error('Error loading conversations:', error);
       Alert.alert('Error', 'Failed to load conversations. Please try again.');
@@ -44,6 +46,13 @@ const AIHomeScreen: React.FC = () => {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  /**
+   * Handle pull-to-refresh
+   */
+  const handleRefresh = () => {
+    loadConversations(true);
   };
 
   /**
@@ -127,7 +136,7 @@ const AIHomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {loading ? (
+      {loading && !hasLoadedOnce ? (
         <AIConversationSkeleton count={6} />
       ) : (
         <FlatList
@@ -135,9 +144,16 @@ const AIHomeScreen: React.FC = () => {
           renderItem={renderConversationItem}
           keyExtractor={item => item.id}
           contentContainerStyle={dynamicStyles.listContainer}
-          refreshing={refreshing}
-          onRefresh={() => loadConversations(true)}
-          ListEmptyComponent={renderEmptyState}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+              colors={[theme.colors.primary]}
+              progressBackgroundColor={theme.colors.surface}
+            />
+          }
+          ListEmptyComponent={!loading && !refreshing ? renderEmptyState : null}
           showsVerticalScrollIndicator={false}
         />
       )}

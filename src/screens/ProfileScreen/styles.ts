@@ -164,4 +164,7 @@ export const styles = (theme: Theme) =>
       color: theme.colors.textSecondary,
       marginBottom: 4,
     },
+    flexContainer: {
+      flex: 1,
+    },
   });

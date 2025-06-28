@@ -161,7 +161,7 @@ export const CreateGroupScreen = () => {
             onChangeText={setGroupName}
             placeholder='Enter group name...'
             maxLength={50}
-            containerStyle={{ marginBottom: 0 }}
+            containerStyle={styles.formFieldNoMargin}
           />
         </View>
 
@@ -193,7 +193,7 @@ export const CreateGroupScreen = () => {
             spellCheck={false}
             leftIcon='search'
             rightIcon={isSearching ? undefined : undefined}
-            containerStyle={{ marginBottom: 0 }}
+            containerStyle={styles.formFieldNoMargin}
           />
           {isSearching && (
             <View style={styles.searchLoader}>

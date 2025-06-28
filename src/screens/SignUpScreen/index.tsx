@@ -137,7 +137,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <ReturnButton navigation={navigation} returnName='AuthHome' />
+      <ReturnButton navigation={navigation} fallbackRoute='AuthHome' />
 
       <ScrollView
         contentContainerStyle={dynamicStyles.scrollContent}

@@ -1,36 +1,45 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import { useTheme } from '../../styles/theme';
-import Icon from '../Icon';
+import { Icon, AnimatedPressable } from '../';
 
 import { styles } from './styles';
 
 interface ReturnButtonProps {
   navigation: StackNavigationProp<Record<string, object | undefined>>;
-  returnName: string;
+  fallbackRoute?: string; // Optional fallback route if goBack() doesn't work
 }
 
-const ReturnButton: React.FC<ReturnButtonProps> = ({ navigation, returnName }) => {
+/**
+ * Return button component for navigating back in the navigation stack
+ * Uses goBack() by default, with optional fallback route
+ */
+const ReturnButton: React.FC<ReturnButtonProps> = ({ navigation, fallbackRoute }) => {
   const theme = useTheme();
   const dynamicStyles = styles(theme);
 
   const handlePress = () => {
-    navigation.navigate(returnName);
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else if (fallbackRoute) {
+      navigation.navigate(fallbackRoute);
+    }
   };
 
   return (
     <View style={dynamicStyles.container}>
-      <TouchableOpacity
+      <AnimatedPressable
         onPress={handlePress}
         style={dynamicStyles.button}
+        scaleValue={0.9}
         accessibilityRole='button'
         accessibilityLabel='Go back'
-        accessibilityHint={`Return to ${returnName} screen`}
+        accessibilityHint='Navigate to previous screen'
       >
         <Icon name='arrow-left' size={24} color='text' />
-      </TouchableOpacity>
+      </AnimatedPressable>
     </View>
   );
 };

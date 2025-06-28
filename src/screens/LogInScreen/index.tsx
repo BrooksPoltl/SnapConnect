@@ -67,7 +67,7 @@ const LogInScreen: React.FC<LogInScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <ReturnButton navigation={navigation} returnName='AuthHome' />
+      <ReturnButton navigation={navigation} fallbackRoute='AuthHome' />
 
       <View style={dynamicStyles.content}>
         <Text style={dynamicStyles.title}>Log In</Text>

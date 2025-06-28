@@ -82,7 +82,7 @@ const PhoneAuthScreen: React.FC<PhoneAuthScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <ReturnButton navigation={navigation} returnName='Back' />
+      <ReturnButton navigation={navigation} fallbackRoute='AuthHome' />
 
       <View style={dynamicStyles.content}>
         {currentStep === 'phone' ? (

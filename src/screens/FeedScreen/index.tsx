@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '../../styles/theme';
 import { getPublicFeed, getFriendFeed } from '../../services/ai';
-import Icon from '../../components/Icon';
+import { Icon, CardSkeleton } from '../../components';
 import type { AIPost } from '../../types';
 
 import { styles } from './styles';
@@ -166,21 +166,25 @@ const FeedScreen: React.FC = () => {
         {renderTabButton('friends', 'Friends')}
       </View>
 
-      <FlatList
-        data={currentPosts}
-        renderItem={renderPostItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={dynamicStyles.listContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
-          />
-        }
-        ListEmptyComponent={!loading ? renderEmptyState : null}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <CardSkeleton count={4} variant='post' />
+      ) : (
+        <FlatList
+          data={currentPosts}
+          renderItem={renderPostItem}
+          keyExtractor={item => item.id}
+          contentContainerStyle={dynamicStyles.listContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </SafeAreaView>
   );
 };

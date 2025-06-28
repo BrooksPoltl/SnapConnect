@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, View, RefreshControl } from 'react-native';
+import { FlatList, Text, View, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStoriesFeed } from '../../services';
 import { StoryFeedItem, UserStackParamList } from '../../types';
@@ -8,7 +8,7 @@ import { styles } from './styles';
 import { useTheme } from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { logError } from '../../utils/logger';
-import { Avatar, FadeInAnimation, AnimatedPressable } from '../../components';
+import { Avatar, FadeInAnimation, AnimatedPressable, StoryListSkeleton } from '../../components';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { useGroupStore } from '../../stores';
 
@@ -53,7 +53,7 @@ export const StoriesScreen: React.FC = () => {
     setRefreshing(false);
   }, [fetchData]);
 
-  const renderStoryItem = ({ item, index }: { item: StoryFeedItem; index: number }) => {
+  const renderStoryItem = ({ item }: { item: StoryFeedItem }) => {
     const isOwnStory = item.author_id === user?.id;
 
     const handlePress = () => {
@@ -70,18 +70,16 @@ export const StoriesScreen: React.FC = () => {
     };
 
     return (
-      <FadeInAnimation delay={index * 100} duration={400}>
-        <AnimatedPressable style={dynamicStyles.storyItem} onPress={handlePress} scaleValue={0.95}>
-          <Avatar
-            username={isOwnStory ? 'Your Story' : item.username}
-            isViewed={item.all_stories_viewed}
-            size={60}
-          />
-          <Text style={dynamicStyles.username} numberOfLines={1}>
-            {isOwnStory ? 'Your Story' : item.username}
-          </Text>
-        </AnimatedPressable>
-      </FadeInAnimation>
+      <AnimatedPressable style={dynamicStyles.storyItem} onPress={handlePress} scaleValue={0.95}>
+        <Avatar
+          username={isOwnStory ? 'Your Story' : item.username}
+          isViewed={item.all_stories_viewed}
+          size={60}
+        />
+        <Text style={dynamicStyles.username} numberOfLines={1}>
+          {isOwnStory ? 'Your Story' : item.username}
+        </Text>
+      </AnimatedPressable>
     );
   };
 
@@ -140,37 +138,27 @@ export const StoriesScreen: React.FC = () => {
         ListHeaderComponent={
           <View>
             {/* Stories Section */}
-            {isLoading && (
-              <FadeInAnimation>
-                <ActivityIndicator style={dynamicStyles.loadingIndicator} />
-              </FadeInAnimation>
-            )}
+            {isLoading && <StoryListSkeleton count={6} />}
             {error && (
-              <FadeInAnimation>
-                <View style={dynamicStyles.placeholderContainer}>
-                  <Text style={dynamicStyles.placeholderText}>{error}</Text>
-                </View>
-              </FadeInAnimation>
+              <View style={dynamicStyles.placeholderContainer}>
+                <Text style={dynamicStyles.placeholderText}>{error}</Text>
+              </View>
             )}
             {!isLoading && !error && (
               <View>
                 {feed.length > 0 ? (
-                  <FadeInAnimation delay={300}>
-                    <FlatList
-                      data={feed}
-                      renderItem={renderStoryItem}
-                      keyExtractor={item => item.author_id}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      style={dynamicStyles.storiesBar}
-                    />
-                  </FadeInAnimation>
+                  <FlatList
+                    data={feed}
+                    renderItem={renderStoryItem}
+                    keyExtractor={item => item.author_id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={dynamicStyles.storiesBar}
+                  />
                 ) : (
-                  <FadeInAnimation>
-                    <View style={dynamicStyles.placeholderContainer}>
-                      <Text style={dynamicStyles.placeholderText}>No stories to show.</Text>
-                    </View>
-                  </FadeInAnimation>
+                  <View style={dynamicStyles.placeholderContainer}>
+                    <Text style={dynamicStyles.placeholderText}>No stories to show.</Text>
+                  </View>
                 )}
               </View>
             )}

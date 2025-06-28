@@ -10,7 +10,7 @@ import { View, Text, FlatList, RefreshControl, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 
-import { ConversationListItem } from '../../components';
+import { ConversationListItem, ConversationListSkeleton } from '../../components';
 import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { getOrCreateDirectChat } from '../../services/chat';
@@ -96,9 +96,7 @@ const ChatScreen: React.FC = () => {
         <View style={dynamicStyles.header}>
           <Text style={dynamicStyles.headerTitle}>Chat</Text>
         </View>
-        <View style={dynamicStyles.loadingContainer}>
-          <Text style={dynamicStyles.loadingText}>Loading conversations...</Text>
-        </View>
+        <ConversationListSkeleton count={6} />
       </SafeAreaView>
     );
   }

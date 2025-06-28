@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useTheme } from '../../styles/theme';
 import { getUserAIConversations } from '../../services/ai';
-import Icon from '../../components/Icon';
+import { Icon, AIConversationSkeleton } from '../../components';
 import type { AIConversation } from '../../types';
 
 import { styles } from './styles';
@@ -127,16 +127,20 @@ const AIHomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={conversations}
-        renderItem={renderConversationItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={dynamicStyles.listContainer}
-        refreshing={refreshing}
-        onRefresh={() => loadConversations(true)}
-        ListEmptyComponent={!loading ? renderEmptyState : null}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <AIConversationSkeleton count={6} />
+      ) : (
+        <FlatList
+          data={conversations}
+          renderItem={renderConversationItem}
+          keyExtractor={item => item.id}
+          contentContainerStyle={dynamicStyles.listContainer}
+          refreshing={refreshing}
+          onRefresh={() => loadConversations(true)}
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </SafeAreaView>
   );
 };

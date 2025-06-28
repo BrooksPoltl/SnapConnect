@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 
 import { useTheme } from '../../styles/theme';
-import { AnimatedPressable, PulseAnimation } from '../';
+import { AnimatedPressable, PulseAnimation, ShimmerView } from '../';
 
 import { styles } from './styles';
 
@@ -136,27 +136,29 @@ const AuthButton: React.FC<AuthButtonProps> = ({
   };
 
   const ButtonContent = (
-    <AnimatedPressable
-      style={[...getButtonStyle(), ...(Array.isArray(style) ? style : style ? [style] : [])]}
-      onPress={onPress}
-      disabled={isDisabled}
-      scaleValue={0.96}
-      animationDuration={120}
-      accessibilityRole='button'
-      accessibilityLabel={title}
-    >
-      {loading ? (
-        <ActivityIndicator
-          color={getActivityIndicatorColor()}
-          size={size === 'large' ? 'large' : 'small'}
-        />
-      ) : (
-        <>
-          {icon && <>{icon}</>}
-          <Text style={getTextStyle()}>{title}</Text>
-        </>
-      )}
-    </AnimatedPressable>
+    <ShimmerView isShimmering={loading} intensity='subtle' direction='horizontal'>
+      <AnimatedPressable
+        style={[...getButtonStyle(), ...(Array.isArray(style) ? style : style ? [style] : [])]}
+        onPress={onPress}
+        disabled={isDisabled}
+        scaleValue={0.96}
+        animationDuration={120}
+        accessibilityRole='button'
+        accessibilityLabel={title}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color={getActivityIndicatorColor()}
+            size={size === 'large' ? 'large' : 'small'}
+          />
+        ) : (
+          <>
+            {icon && <>{icon}</>}
+            <Text style={getTextStyle()}>{title}</Text>
+          </>
+        )}
+      </AnimatedPressable>
+    </ShimmerView>
   );
 
   if (pulse && !isDisabled && !loading) {

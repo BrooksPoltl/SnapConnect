@@ -78,7 +78,14 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
           </View>
         ) : leftIcon ? (
           <View style={dynamicStyles.leftIconContainer}>
-            <Icon name={leftIcon} size={24} color={leftIconColor ?? theme.colors.white} />
+            <Icon
+              name={leftIcon}
+              size={24}
+              color={leftIconColor ?? theme.colors.white}
+              backgroundContainer={true}
+              containerColor={leftIconColor === 'white' ? theme.colors.primary : undefined}
+              enable3D={true}
+            />
           </View>
         ) : null}
 
@@ -106,7 +113,13 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
           {/* Custom Right Content or Chevron */}
           {rightContent ??
             (showChevron && (
-              <Icon name='chevron-right' size={20} color={theme.colors.textSecondary} />
+              <Icon
+                name='chevron-right'
+                size={20}
+                color={theme.colors.textSecondary}
+                enable3D={true}
+                shadowColor='rgba(0, 0, 0, 0.4)'
+              />
             ))}
         </View>
       </View>

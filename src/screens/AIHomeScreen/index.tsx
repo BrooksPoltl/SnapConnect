@@ -108,10 +108,20 @@ const AIHomeScreen: React.FC = () => {
    */
   const renderEmptyState = () => (
     <View style={dynamicStyles.emptyState}>
-      <Icon name='message-circle' size={64} color={theme.colors.textSecondary} />
+      <Icon
+        name='message-circle'
+        size={64}
+        color={theme.colors.textSecondary}
+        backgroundContainer={true}
+        containerColor={theme.colors.primary}
+        containerSize={100}
+        enable3D={true}
+        shadowColor={theme.colors.primary}
+        shadowOpacity={0.6}
+      />
       <Text style={dynamicStyles.emptyStateTitle}>No AI Conversations</Text>
       <Text style={dynamicStyles.emptyStateSubtitle}>
-        Start your first conversation with our AI assistant
+        Start a conversation with AI to get personalized financial insights
       </Text>
     </View>
   );
@@ -125,7 +135,15 @@ const AIHomeScreen: React.FC = () => {
       <View style={dynamicStyles.header}>
         <Text style={dynamicStyles.title}>AI Assistant</Text>
         <TouchableOpacity style={dynamicStyles.newChatButton} onPress={handleNewChat}>
-          <Icon name='plus' size={24} color={theme.colors.primary} />
+          <Icon
+            name='plus'
+            size={24}
+            color={theme.colors.primary}
+            backgroundContainer={true}
+            containerColor={theme.colors.primary}
+            enable3D={true}
+            shadowColor={theme.colors.primary}
+          />
         </TouchableOpacity>
       </View>
 

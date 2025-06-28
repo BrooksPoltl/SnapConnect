@@ -264,8 +264,14 @@ const AIChatScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={dynamicStyles.header}>
-          <TouchableOpacity style={dynamicStyles.backButton} onPress={() => navigation.goBack()}>
-            <Icon name='arrow-left' size={24} color={theme.colors.text} />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
+            <Icon
+              name='arrow-left'
+              size={24}
+              color={theme.colors.text}
+              enable3D={true}
+              shadowColor='rgba(0, 0, 0, 0.5)'
+            />
           </TouchableOpacity>
 
           {editingTitle ? (

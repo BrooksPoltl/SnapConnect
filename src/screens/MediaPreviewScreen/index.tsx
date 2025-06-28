@@ -341,7 +341,7 @@ const MediaPreviewScreen: React.FC = () => {
 
       <View style={dynamicStyles.topControls}>
         <TouchableOpacity onPress={handleDiscard} style={dynamicStyles.controlButton}>
-          <Icon name='x' size={32} color='white' />
+          <Icon name='x' size={32} color='white' enable3D={true} shadowColor='rgba(0, 0, 0, 0.8)' />
         </TouchableOpacity>
 
         {media.type === 'video' && (
@@ -351,7 +351,13 @@ const MediaPreviewScreen: React.FC = () => {
             accessibilityRole='button'
             accessibilityLabel={isMuted ? 'Unmute video' : 'Mute video'}
           >
-            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={24} color='white' />
+            <Icon
+              name={isMuted ? 'volume-x' : 'volume-2'}
+              size={24}
+              color='white'
+              enable3D={true}
+              shadowColor='rgba(0, 0, 0, 0.8)'
+            />
           </TouchableOpacity>
         )}
 
@@ -359,7 +365,15 @@ const MediaPreviewScreen: React.FC = () => {
           onPress={() => setIsDrawing(!isDrawing)}
           style={dynamicStyles.controlButton}
         >
-          <Icon name='edit-3' size={30} color={isDrawing ? 'cyan' : 'white'} />
+          <Icon
+            name='edit-3'
+            size={30}
+            color={isDrawing ? 'cyan' : 'white'}
+            backgroundContainer={isDrawing}
+            containerColor={isDrawing ? '#00FFFF' : undefined}
+            enable3D={true}
+            shadowColor={isDrawing ? '#00FFFF' : 'rgba(0, 0, 0, 0.8)'}
+          />
         </TouchableOpacity>
       </View>
 
@@ -395,7 +409,15 @@ const MediaPreviewScreen: React.FC = () => {
                 {isGeneratingCaption ? (
                   <ActivityIndicator color={theme.colors.primary} />
                 ) : (
-                  <Icon name='zap' size={24} color={theme.colors.primary} />
+                  <Icon
+                    name='zap'
+                    size={24}
+                    color={theme.colors.primary}
+                    backgroundContainer={true}
+                    containerColor={theme.colors.primary}
+                    enable3D={true}
+                    shadowColor={theme.colors.primary}
+                  />
                 )}
               </TouchableOpacity>
             </View>
@@ -409,7 +431,13 @@ const MediaPreviewScreen: React.FC = () => {
 
       <View style={dynamicStyles.bottomControls}>
         <TouchableOpacity onPress={handleSave} style={dynamicStyles.controlButton}>
-          <Icon name='download' size={24} color='white' />
+          <Icon
+            name='download'
+            size={24}
+            color='white'
+            enable3D={true}
+            shadowColor='rgba(0, 0, 0, 0.8)'
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -417,14 +445,30 @@ const MediaPreviewScreen: React.FC = () => {
           style={dynamicStyles.controlButton}
           disabled={isPosting}
         >
-          <Icon name='plus-circle' size={24} color='white' />
+          <Icon
+            name='plus-circle'
+            size={24}
+            color='white'
+            enable3D={true}
+            shadowColor='rgba(0, 0, 0, 0.8)'
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleSend} style={dynamicStyles.sendButton}>
+        <TouchableOpacity
+          onPress={handleSend}
+          style={dynamicStyles.sendButton}
+          disabled={isLoading}
+        >
           {isLoading ? (
             <ActivityIndicator color='white' />
           ) : (
-            <Icon name='send' size={30} color='white' />
+            <Icon
+              name='send'
+              size={30}
+              color='white'
+              enable3D={true}
+              shadowColor='rgba(0, 0, 0, 0.8)'
+            />
           )}
         </TouchableOpacity>
       </View>

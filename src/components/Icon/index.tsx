@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextStyle } from 'react-native';
+import { TextStyle, View, ViewStyle } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
 import { useTheme } from '../../styles/theme';
@@ -10,16 +10,40 @@ interface IconProps {
   size?: number;
   color?: ThemeColor | string;
   style?: TextStyle;
+  // 3D Effect Props
+  enable3D?: boolean;
+  backgroundContainer?: boolean;
+  containerColor?: string;
+  containerSize?: number;
+  shadowColor?: string;
+  shadowOpacity?: number;
 }
 
 /**
- * A theme-aware icon component using Feather Icons
+ * A theme-aware icon component using Feather Icons with optional 3D effects
  * @param name - The name of the Feather icon
  * @param size - The size of the icon (default: 24)
  * @param color - Theme color key or custom color string (default: 'text')
  * @param style - Additional styles to apply
+ * @param enable3D - Enable 3D shadow effects
+ * @param backgroundContainer - Wrap icon in a background container
+ * @param containerColor - Background color for container (default: primary)
+ * @param containerSize - Size of background container (default: size * 1.8)
+ * @param shadowColor - Custom shadow color
+ * @param shadowOpacity - Custom shadow opacity
  */
-const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) => {
+const Icon: React.FC<IconProps> = ({
+  name,
+  size = 24,
+  color = 'text',
+  style,
+  enable3D = false,
+  backgroundContainer = false,
+  containerColor,
+  containerSize,
+  shadowColor,
+  shadowOpacity = 0.4,
+}) => {
   const { colors } = useTheme();
 
   // Use theme color if it exists, otherwise use the provided color string
@@ -47,7 +71,54 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, color = 'text', style }) =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const FeatherIcon = Feather as any;
 
-  return <FeatherIcon name={name} size={size} color={iconColor} style={style} />;
+  // Container styles for background containers
+  const containerStyles: ViewStyle = {
+    width: containerSize ?? size * 1.8,
+    height: containerSize ?? size * 1.8,
+    borderRadius: (containerSize ?? size * 1.8) / 2,
+    backgroundColor: containerColor ?? colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    // 3D Container Effects
+    shadowColor: shadowColor ?? colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity,
+    shadowRadius: 8,
+    elevation: 12,
+
+    // Multi-layer borders for 3D effect
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+  };
+
+  // Base icon styles with optional 3D effects
+  const iconStyles: TextStyle = {
+    ...style,
+    ...(enable3D && {
+      // Enhanced icon shadow effects
+      textShadowColor: shadowColor ?? 'rgba(0, 0, 0, 0.6)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 4,
+    }),
+  };
+
+  const iconElement = (
+    <FeatherIcon
+      name={name}
+      size={size}
+      color={backgroundContainer ? '#FFFFFF' : iconColor}
+      style={iconStyles}
+    />
+  );
+
+  if (backgroundContainer) {
+    return <View style={containerStyles}>{iconElement}</View>;
+  }
+
+  return iconElement;
 };
 
 export default Icon;

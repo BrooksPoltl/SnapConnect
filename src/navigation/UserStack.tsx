@@ -188,7 +188,17 @@ const CustomTabNavigator: React.FC = () => {
     if (tabKey === 'ChatStack' && unreadCount > 0) {
       return (
         <View style={styles.iconContainer}>
-          <Icon name={iconName} size={24} color={iconColor} />
+          <Icon
+            name={iconName}
+            size={24}
+            color={iconColor}
+            backgroundContainer={isActive}
+            containerColor={isActive ? '#007AFF' : undefined}
+            containerSize={isActive ? 40 : undefined}
+            enable3D={isActive}
+            shadowColor={isActive ? '#007AFF' : undefined}
+            shadowOpacity={isActive ? 0.5 : undefined}
+          />
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
           </View>
@@ -198,7 +208,17 @@ const CustomTabNavigator: React.FC = () => {
 
     return (
       <View style={styles.iconContainer}>
-        <Icon name={iconName} size={24} color={iconColor} />
+        <Icon
+          name={iconName}
+          size={24}
+          color={iconColor}
+          backgroundContainer={isActive}
+          containerColor={isActive ? '#007AFF' : undefined}
+          containerSize={isActive ? 40 : undefined}
+          enable3D={isActive}
+          shadowColor={isActive ? '#007AFF' : undefined}
+          shadowOpacity={isActive ? 0.5 : undefined}
+        />
       </View>
     );
   };

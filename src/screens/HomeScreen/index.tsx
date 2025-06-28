@@ -127,7 +127,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <Animated.View
               style={[dynamicStyles.logoContainer, { transform: [{ scale: logoScale }] }]}
             >
-              <Icon name='trending-up' size={48} color={theme.colors.primary} />
+              <Icon
+                name='trending-up'
+                size={48}
+                color={theme.colors.primary}
+                backgroundContainer={true}
+                containerColor={theme.colors.primary}
+                containerSize={80}
+                enable3D={true}
+                shadowColor={theme.colors.primary}
+                shadowOpacity={0.6}
+              />
             </Animated.View>
 
             <HomeScreenAnimatedText animatedValue={titleAnim} style={dynamicStyles.title}>

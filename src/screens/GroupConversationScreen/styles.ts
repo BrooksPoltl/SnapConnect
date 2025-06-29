@@ -74,13 +74,13 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
   },
   messageBubble: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1A1A1E',
     borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 10,
     maxWidth: '80%',
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: '#1A1A1E',
   },
   ownMessageBubble: {
     backgroundColor: '#007AFF',
@@ -88,7 +88,7 @@ export const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    color: '#000000',
+    color: '#FFFFFF',
     lineHeight: 20,
   },
   ownMessageText: {
@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
   },
   messageTime: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: '#A0A0A8',
     marginTop: 4,
     textAlign: 'right',
   },
@@ -207,7 +207,8 @@ export const styles = StyleSheet.create({
     marginBottom: 2,
   },
   sendButtonDisabled: {
-    backgroundColor: '#8E8E93',
+    backgroundColor: '#1A1A1E',
+    borderColor: '#1A1A1E',
   },
   messageInputContainer: {
     flex: 1,

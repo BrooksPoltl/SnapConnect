@@ -18,7 +18,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
 import { Avatar } from '../../components/Avatar';
+import { Icon } from '../../components';
 import FormField from '../../components/FormField';
+import { useTheme } from '../../styles/theme';
 import type { GroupMessage, GroupConversationParams } from '../../types/groups';
 import { styles } from './styles';
 
@@ -26,6 +28,7 @@ export const GroupConversationScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { groupId, groupName } = route.params as GroupConversationParams;
+  const { colors } = useTheme();
 
   const {
     currentGroupMessages,
@@ -192,10 +195,10 @@ export const GroupConversationScreen = () => {
             onPress={handleSendMessage}
             disabled={!messageText.trim() || isSending}
           >
-            <Ionicons
+            <Icon
               name='send'
               size={20}
-              color={messageText.trim() && !isSending ? '#FFFFFF' : '#8E8E93'}
+              color={messageText.trim() && !isSending ? colors.white : '#A0A0A8'}
             />
           </TouchableOpacity>
         </View>

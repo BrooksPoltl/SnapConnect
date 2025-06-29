@@ -15,6 +15,8 @@ import {
   ConversationCard,
   ScreenHeader,
   FadeInAnimation,
+  CollapsibleText,
+  SourceList,
 } from '../../components';
 import Icon from '../../components/Icon';
 import type { AIConversation } from '../../types';
@@ -97,15 +99,39 @@ const AIHomeScreen: React.FC = () => {
   /**
    * Render a single conversation item
    */
-  const renderConversationItem = ({ item }: { item: AIConversation }) => (
-    <ConversationCard
-      title={item.title}
-      subtitle={`${item.message_count} messages • ${formatLastActivity(item.last_message_at)}`}
-      leftIcon='message-circle'
-      onPress={() => handleConversationPress(item)}
-      testID={`ai-conversation-${item.id}`}
-    />
-  );
+  const renderConversationItem = ({ item }: { item: AIConversation }) => {
+    const sources = item.last_message_metadata?.sources ?? [];
+    const hasPreview = !!item.last_message_content;
+
+    return (
+      <View style={dynamicStyles.conversationItem}>
+        <ConversationCard
+          title={item.title}
+          subtitle={`${item.message_count} messages • ${formatLastActivity(item.last_message_at)}`}
+          leftIcon='message-circle'
+          onPress={() => handleConversationPress(item)}
+          testID={`ai-conversation-${item.id}`}
+        />
+
+        {/* AI Response Preview */}
+        {hasPreview && (
+          <View style={dynamicStyles.previewContainer}>
+            <Text style={dynamicStyles.previewLabel}>Latest AI Response:</Text>
+            <CollapsibleText maxLength={150} textStyle={dynamicStyles.previewText}>
+              {item.last_message_content ?? ''}
+            </CollapsibleText>
+
+            {/* Sources */}
+            {sources.length > 0 && (
+              <View style={dynamicStyles.sourcesContainer}>
+                <SourceList sources={sources} />
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+    );
+  };
 
   /**
    * Render empty state when no conversations exist

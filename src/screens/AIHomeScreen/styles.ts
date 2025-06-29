@@ -41,10 +41,6 @@ export const styles = (theme: Theme) =>
       paddingHorizontal: 20,
     },
     conversationItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 16,
-      paddingHorizontal: 16,
       marginVertical: 4,
       backgroundColor: theme.colors.surface,
       borderRadius: 12,
@@ -64,6 +60,28 @@ export const styles = (theme: Theme) =>
     conversationMeta: {
       fontSize: 14,
       color: theme.colors.textSecondary,
+    },
+    previewContainer: {
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    previewLabel: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.textSecondary,
+      marginBottom: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    previewText: {
+      fontSize: 14,
+      color: theme.colors.text,
+      lineHeight: 20,
+    },
+    sourcesContainer: {
+      marginTop: 12,
     },
     emptyState: {
       flex: 1,

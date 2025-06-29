@@ -50,8 +50,8 @@ BEGIN
         cs.created_at,
         cs.last_message_at,
         cs.message_count,
-        cs.last_ai_message_content,
-        cs.last_ai_message_metadata
+        cs.last_ai_message_content as last_message_content,
+        cs.last_ai_message_metadata as last_message_metadata
     FROM conversation_stats cs
     ORDER BY cs.last_message_at DESC;
 END;

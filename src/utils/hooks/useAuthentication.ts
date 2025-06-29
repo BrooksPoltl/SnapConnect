@@ -25,6 +25,9 @@ export function useAuthentication(): AuthenticationResult {
       logError('useAuthentication', 'Error fetching user data', databaseError);
       setError('Failed to load user profile');
       // Still set user even if userData fails to load
+    } finally {
+      // Always set loading to false after userData fetch attempt
+      setLoading(false);
     }
   };
 
@@ -34,8 +37,10 @@ export function useAuthentication(): AuthenticationResult {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchUserData(session.user.id);
+      } else {
+        // No user, safe to stop loading
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen for auth changes
@@ -47,18 +52,18 @@ export function useAuthentication(): AuthenticationResult {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // User is signed in
+          // User is signed in - fetchUserData will handle setLoading(false)
           await fetchUserData(session.user.id);
         } else {
           // User is signed out
           setUserData(null);
+          setLoading(false);
         }
       } catch (authError) {
         logError('useAuthentication', 'Authentication error', authError);
         setError('Authentication failed');
         setUser(null);
         setUserData(null);
-      } finally {
         setLoading(false);
       }
     });

@@ -181,6 +181,27 @@ export const updateUsername = async (newUsername: string): Promise<void> => {
 };
 
 /**
+ * Marks the current user as having completed the onboarding flow
+ * This will call a secure Postgres function to update the flag
+ */
+export const markOnboardingComplete = async (): Promise<void> => {
+  try {
+    logger.info('UserService', 'Marking onboarding as complete');
+
+    const { error } = await supabase.rpc('mark_onboarding_complete');
+
+    if (error) throw error;
+
+    logger.info('UserService', 'Onboarding marked as complete successfully');
+  } catch (error: unknown) {
+    logger.error('UserService', 'Error marking onboarding complete', error);
+    throw new Error(
+      `Failed to mark onboarding complete: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
+};
+
+/**
  * Deletes user data from Supabase
  * @param userId - User's unique identifier
  */

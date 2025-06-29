@@ -46,5 +46,8 @@ export { default as DrawingToolbar } from './DrawingToolbar';
 // Text Components
 export { default as HomeScreenAnimatedText } from './HomeScreenAnimatedText';
 
+// Onboarding Components
+export { OnboardingSlide } from './OnboardingSlide';
+
 // Other Components
 export { default as ShimmerView } from './ShimmerView';

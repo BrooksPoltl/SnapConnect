@@ -167,4 +167,22 @@ export const styles = (theme: Theme) =>
     flexContainer: {
       flex: 1,
     },
+    tutorialButton: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginTop: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    tutorialButtonText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.text,
+      flex: 1,
+      marginLeft: 12,
+    },
   });

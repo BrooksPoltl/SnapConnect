@@ -25,6 +25,26 @@ export const styles = (theme: Theme) =>
       marginBottom: theme.spacing.xl,
       letterSpacing: 1,
     },
+    missionContainer: {
+      width: '100%',
+      maxWidth: 300,
+      marginBottom: theme.spacing.xl,
+      alignItems: 'center',
+    },
+    missionTitle: {
+      fontSize: theme.fontSizes.xl,
+      fontWeight: theme.fontWeights.bold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.md,
+      textAlign: 'center',
+    },
+    missionText: {
+      fontSize: theme.fontSizes.sm,
+      fontWeight: theme.fontWeights.medium,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 20,
+    },
     form: {
       width: '100%',
       maxWidth: 300,

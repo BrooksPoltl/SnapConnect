@@ -68,6 +68,7 @@ export type ChatStackParamList = {
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   User: NavigatorScreenParams<UserStackParamList>;
+  Onboarding: undefined;
   // Add other root-level stacks here if any (e.g. Modals)
 };
 

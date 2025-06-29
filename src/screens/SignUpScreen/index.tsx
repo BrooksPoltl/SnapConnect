@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Alert, ScrollView } from 'react-native';
+import { View, Alert, ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -144,6 +144,14 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
         keyboardShouldPersistTaps='handled'
       >
         <View style={dynamicStyles.content}>
+          <View style={dynamicStyles.missionContainer}>
+            <Text style={dynamicStyles.missionTitle}>Welcome to Fathom Research</Text>
+            <Text style={dynamicStyles.missionText}>
+              Democratizing investment research for everyone. Break down the walls that keep
+              professional-grade research locked away and make smarter, more informed decisions.
+            </Text>
+          </View>
+
           <View style={dynamicStyles.form}>
             <FormField
               label='NAME'

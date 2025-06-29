@@ -96,6 +96,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
     }
   }, [newUsername, profile?.username]);
 
+  /**
+   * Navigate to the onboarding tutorial
+   */
+  const handleViewTutorial = useCallback(() => {
+    // Navigate to the onboarding screen
+    navigation.navigate('Onboarding' as never);
+  }, [navigation]);
+
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
@@ -242,6 +250,20 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation, route }) => {
                 <Text style={styles.infoText}>• Post stories: +10 points</Text>
                 <Text style={styles.infoText}>• Send messages: +5 points</Text>
               </View>
+            </FadeInAnimation>
+          )}
+
+          {isOwnProfile && (
+            <FadeInAnimation delay={1200} duration={600}>
+              <AnimatedPressable
+                style={styles.tutorialButton}
+                onPress={handleViewTutorial}
+                scaleValue={0.95}
+              >
+                <Ionicons name='help-circle-outline' size={20} color={theme.colors.primary} />
+                <Text style={styles.tutorialButtonText}>View Tutorial</Text>
+                <Ionicons name='chevron-forward' size={16} color={theme.colors.textSecondary} />
+              </AnimatedPressable>
             </FadeInAnimation>
           )}
         </View>

@@ -1,15 +1,15 @@
-# PRD: SnapConnect Financial Messenger
+# PRD: Fathom Research Financial Messenger
 
 ## 1. Product overview
 
 ### 1.1 Document title and version
 
-- PRD: SnapConnect Financial Messenger
+- PRD: Fathom Research Financial Messenger
 - Version: 1.0
 
 ### 1.2 Product summary
 
-SnapConnect is a mobile-first social messaging application designed for the
+Fathom Research is a mobile-first social messaging application designed for the
 financial community. It combines the engaging, ephemeral nature of platforms
 like Snapchat with powerful, finance-specific tools. The application allows
 users—from professional analysts to retail investors and students—to share

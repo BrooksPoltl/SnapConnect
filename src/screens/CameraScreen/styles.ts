@@ -14,9 +14,6 @@ export const styles = (theme: Theme) =>
       left: 20,
       zIndex: 1,
     },
-    closeButton: {
-      padding: 10,
-    },
     cameraContainer: {
       flex: 1,
       backgroundColor: theme.colors.background,
@@ -115,14 +112,11 @@ export const styles = (theme: Theme) =>
       left: 0,
       right: 0,
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-end',
       paddingHorizontal: 20,
       alignItems: 'center',
     },
 
-    backButton: {
-      padding: 10,
-    },
     friendsButton: {
       padding: 10,
     },

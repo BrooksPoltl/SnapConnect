@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextStyle, View, ViewStyle } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { useTheme } from '../../styles/theme';
 import { ThemeColor } from '../../types/theme';
@@ -70,6 +71,14 @@ const Icon: React.FC<IconProps> = ({
   // Cast to any to bypass TypeScript compatibility issues with react-native-vector-icons
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const FeatherIcon = Feather as any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MaterialIcon = MaterialIcons as any;
+
+  // Map specific icons to their appropriate icon sets
+  const getMaterialIcon = (iconName: string): boolean => {
+    const materialIcons = ['lightbulb', 'lightbulb-outline', 'sparkles', 'auto-awesome'];
+    return materialIcons.includes(iconName);
+  };
 
   // Container styles for background containers
   const containerStyles: ViewStyle = {
@@ -105,7 +114,17 @@ const Icon: React.FC<IconProps> = ({
     }),
   };
 
-  const iconElement = (
+  // Render the appropriate icon based on icon set
+  const isMaterialIcon = getMaterialIcon(name);
+
+  const iconElement = isMaterialIcon ? (
+    <MaterialIcon
+      name={name}
+      size={size}
+      color={backgroundContainer ? '#FFFFFF' : iconColor}
+      style={iconStyles}
+    />
+  ) : (
     <FeatherIcon
       name={name}
       size={size}

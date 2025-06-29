@@ -46,7 +46,7 @@ const Stack = createStackNavigator<UserStackParamList>();
 // Tab configuration with order for transitions
 const TABS = [
   { key: 'Home', name: 'Home', component: FeedScreen, icon: 'home' },
-  { key: 'Insights', name: 'Insights', component: AIHomeScreen, icon: 'trending-up' },
+  { key: 'Insights', name: 'Insights', component: AIHomeScreen, icon: 'auto-awesome' },
   { key: 'ChatStack', name: 'ChatStack', component: ChatStack, icon: 'message-square' },
   { key: 'Camera', name: 'Camera', component: CameraScreen, icon: 'camera' },
   { key: 'Stories', name: 'Stories', component: StoriesScreen, icon: 'users' },

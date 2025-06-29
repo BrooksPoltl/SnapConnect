@@ -295,9 +295,6 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
 
       {/* All controls as absolutely positioned siblings */}
       <View style={[styles.topControlsContainer, { top: insets.top + 20 }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name='close-outline' size={32} color={theme.colors.white} />
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('Friends')}
           style={styles.friendsButton}

@@ -36,20 +36,52 @@ export const styles = (theme: Theme) =>
       marginRight: 12,
       borderRadius: 20,
       backgroundColor: theme.colors.surface,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+      gap: 8,
+
+      // Enhanced 3D Border System
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(255, 255, 255, 0.25)',
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+
+      // Dramatic 3D Shadow
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      elevation: 15,
     },
     activeTabButton: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
+      backgroundColor: '#007AFF', // Blue background like other active buttons
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderTopColor: 'rgba(255, 255, 255, 0.4)',
+      borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+      shadowColor: '#007AFF', // Blue shadow
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.5,
+      shadowRadius: 16,
+      elevation: 20,
     },
     tabButtonText: {
       fontSize: 14,
       fontWeight: '600',
-      color: theme.colors.text,
+      color: theme.colors.textSecondary,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
     activeTabButtonText: {
-      color: theme.colors.white,
+      color: '#FFFFFF', // White text on blue background
+      fontWeight: '600',
+
+      // Enhanced text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.3)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
     listContainer: {
       flexGrow: 1,

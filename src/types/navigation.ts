@@ -18,11 +18,11 @@ export type AuthStackParamList = {
 };
 
 export type MainTabParamList = {
+  Home: undefined;
   Insights: undefined;
   ChatStack: undefined;
   Camera: undefined;
   Stories: undefined;
-  Spotlight: undefined;
 };
 
 export type UserStackParamList = {
@@ -32,7 +32,6 @@ export type UserStackParamList = {
   Chat: undefined;
   Map: undefined;
   Stories: undefined;
-  Spotlight: undefined;
   Profile: { userId?: string };
   MediaPreview: { media: CapturedMedia };
   Friends: undefined;

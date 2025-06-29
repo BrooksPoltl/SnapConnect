@@ -45,11 +45,11 @@ const Stack = createStackNavigator<UserStackParamList>();
 
 // Tab configuration with order for transitions
 const TABS = [
+  { key: 'Home', name: 'Home', component: FeedScreen, icon: 'home' },
   { key: 'Insights', name: 'Insights', component: AIHomeScreen, icon: 'trending-up' },
   { key: 'ChatStack', name: 'ChatStack', component: ChatStack, icon: 'message-square' },
   { key: 'Camera', name: 'Camera', component: CameraScreen, icon: 'camera' },
   { key: 'Stories', name: 'Stories', component: StoriesScreen, icon: 'users' },
-  { key: 'Spotlight', name: 'Spotlight', component: FeedScreen, icon: 'play-circle' },
 ];
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -69,8 +69,8 @@ const CustomTabNavigator: React.FC = () => {
   const { initializeRealtime, refreshUnreadCount, refreshConversations, reset } = useChatStore();
   const { loadGroups, reset: resetGroups } = useGroupStore();
 
-  const [activeTabIndex, setActiveTabIndex] = useState(2); // Start with Camera
-  const [slideAnim] = useState(new Animated.Value(-screenWidth * 2)); // Start at Camera position
+  const [activeTabIndex, setActiveTabIndex] = useState(0); // Start with Home
+  const [slideAnim] = useState(new Animated.Value(0)); // Start at Home position
 
   // Initialize store and real-time subscriptions when user changes
   useEffect(() => {

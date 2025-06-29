@@ -20,8 +20,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "snapconnect needs access to your Camera.",
-        "NSMicrophoneUsageDescription": "snapconnect needs access to your Microphone.",
+        "NSCameraUsageDescription": "Fathom Research needs access to your Camera.",
+        "NSMicrophoneUsageDescription": "Fathom Research needs access to your Microphone.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.gauntletai.snapconnect"

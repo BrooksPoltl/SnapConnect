@@ -24,7 +24,8 @@ export const styles = StyleSheet.create({
   },
 
   cancelButton: {
-    padding: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: borderRadius.md,
 
@@ -42,7 +43,7 @@ export const styles = StyleSheet.create({
 
   cancelText: {
     color: '#FFFFFF',
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     fontWeight: '500',
 
     // Text shadow for depth
@@ -59,8 +60,8 @@ export const styles = StyleSheet.create({
 
   postButton: {
     backgroundColor: '#007AFF',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: borderRadius.pill,
 
     // Enhanced 3D Button Effects - Matching Group Details Button
@@ -81,7 +82,7 @@ export const styles = StyleSheet.create({
 
   postText: {
     color: '#FFFFFF',
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     fontWeight: '600',
 
     // Text shadow for depth
@@ -105,9 +106,9 @@ export const styles = StyleSheet.create({
 
   sectionTitle: {
     color: colors.dark.text,
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     fontWeight: '600',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
 
     // Text shadow for depth
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -125,7 +126,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     backgroundColor: colors.dark.surface,
     borderRadius: borderRadius.lg,
     gap: spacing.sm,
@@ -160,7 +162,7 @@ export const styles = StyleSheet.create({
 
   privacyText: {
     color: colors.dark.textSecondary,
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     fontWeight: '500',
 
     // Text shadow for depth

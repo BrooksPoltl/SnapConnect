@@ -14,6 +14,7 @@ import {
   AnimatedPressable,
   StoryListSkeleton,
   ConversationCard,
+  ConversationListSkeleton,
 } from '../../components';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { useGroupStore } from '../../stores';
@@ -184,12 +185,16 @@ export const StoriesScreen: React.FC = () => {
             </FadeInAnimation>
           </View>
         }
-        data={groups}
+        data={groupsLoading ? [] : groups}
         renderItem={renderGroupItem}
         keyExtractor={item => item.group_id.toString()}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          !groupsLoading && groups.length === 0 ? (
+        ListFooterComponent={
+          groupsLoading ? (
+            <FadeInAnimation>
+              <ConversationListSkeleton count={4} />
+            </FadeInAnimation>
+          ) : !groupsLoading && groups.length === 0 ? (
             <FadeInAnimation>
               <View style={dynamicStyles.placeholderContainer}>
                 <Text style={dynamicStyles.placeholderText}>

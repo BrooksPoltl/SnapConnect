@@ -100,12 +100,28 @@ export const styles = (theme: Theme) =>
       paddingVertical: theme.spacing.sm,
       borderRadius: 8,
       marginBottom: theme.spacing.md,
+
+      // Enhanced 3D Button Effects - Matching unified styling
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.5,
+      shadowRadius: 12,
+      elevation: 16,
+      borderWidth: 1.5,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderTopColor: 'rgba(255, 255, 255, 0.4)',
+      borderBottomColor: 'rgba(0, 0, 0, 0.2)',
     },
     createGroupButtonText: {
       color: theme.colors.white,
       fontSize: theme.fontSizes.md,
       fontWeight: theme.fontWeights.medium,
       marginLeft: theme.spacing.xs,
+
+      // Text shadow for depth
+      textShadowColor: 'rgba(0, 0, 0, 0.3)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 1,
     },
     groupItem: {
       flexDirection: 'row',

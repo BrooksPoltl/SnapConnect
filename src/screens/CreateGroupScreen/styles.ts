@@ -36,14 +36,34 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     minWidth: 70,
     alignItems: 'center',
+
+    // Enhanced 3D Button Effects - Matching unified styling
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: 'rgba(255, 255, 255, 0.4)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
   },
   createButtonDisabled: {
     backgroundColor: '#8E8E93',
+    shadowColor: '#8E8E93',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   createButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+
+    // Text shadow for depth
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   groupNameSection: {
     paddingHorizontal: 16,

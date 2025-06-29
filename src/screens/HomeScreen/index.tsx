@@ -141,15 +141,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             </Animated.View>
 
             <HomeScreenAnimatedText animatedValue={titleAnim} style={dynamicStyles.title}>
-              SnapConnect
+              Fathom Research
             </HomeScreenAnimatedText>
 
             <HomeScreenAnimatedText animatedValue={taglineAnim} style={dynamicStyles.tagline}>
-              Financial insights that disappear in 24 hours
+              Democratizing investment research for retail investors
             </HomeScreenAnimatedText>
 
             <HomeScreenAnimatedText animatedValue={subtitleAnim} style={dynamicStyles.subtitle}>
-              Connect with financial creators and share market insights through ephemeral content
+              Break down institutional walls. Get professional-grade research tools and connect with
+              fellow investors fighting for market transparency.
             </HomeScreenAnimatedText>
           </Animated.View>
         </View>
@@ -172,9 +173,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         {/* Bottom CTA Section */}
         <FadeInAnimation delay={1000} duration={800}>
           <View style={dynamicStyles.bottomSection}>
-            <Text style={dynamicStyles.ctaText}>Ready to transform your financial content?</Text>
+            <Text style={dynamicStyles.ctaText}>Ready to level the playing field?</Text>
             <Text style={dynamicStyles.ctaSubtext}>
-              Join creators sharing market insights through engaging visual stories
+              Join retail investors using professional-grade tools to analyze complex financial data
+              and make informed decisions
             </Text>
 
             <AnimatedPressable

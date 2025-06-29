@@ -17,43 +17,43 @@ export interface AutoScrollItem {
 export const AUTO_SCROLL_CONTENT: AutoScrollItem[] = [
   {
     iconName: 'cpu',
-    text: 'AI-Powered Analysis - Get intelligent insights from corporate filings and market data',
+    text: 'AI Research Assistant - Transform 100-page SEC filings into 3-sentence insights instantly',
+  },
+  {
+    iconName: 'shield',
+    text: 'Verifiable Sources - Every AI insight includes direct links to original SEC documents',
   },
   {
     iconName: 'users',
-    text: 'Creator Network - Connect with top financial analysts and content creators',
+    text: 'Research Network - Build focused groups to discuss strategies and share verified insights',
   },
   {
-    iconName: 'camera',
-    text: 'Visual Storytelling - Share market insights through engaging photo and video content',
-  },
-  {
-    iconName: 'message-square',
-    text: 'Real-Time Messaging - Chat instantly with your network about breaking market news',
+    iconName: 'file-text',
+    text: 'SEC Filing Analysis - Deep dive into 10-Ks, 10-Qs, and earnings reports with AI assistance',
   },
   {
     iconName: 'clock',
-    text: 'Ephemeral Content - Financial insights that disappear in 24 hours for timely relevance',
-  },
-  {
-    iconName: 'star',
-    text: 'Engagement Scoring - Build your reputation with our gamified user scoring system',
+    text: 'Ephemeral Stories - Share timely market insights that disappear after 24 hours',
   },
   {
     iconName: 'trending-up',
-    text: 'Market Insights - Access curated analysis from SEC filings and earnings reports',
+    text: 'Professional Tools - Access institutional-grade research capabilities as a retail investor',
   },
   {
-    iconName: 'activity',
-    text: 'Trending Analysis - Discover what financial topics are gaining momentum right now',
+    iconName: 'message-square',
+    text: 'Real-Time Discussions - Chat with fellow investors about breaking market developments',
+  },
+  {
+    iconName: 'search',
+    text: 'Deep Research - Ask complex questions about any public company and get data-backed answers',
   },
   {
     iconName: 'award',
-    text: 'Premium Features - Advanced tools for serious investors and content creators',
+    text: 'Fight Institutional Power - Level the playing field with tools previously reserved for Wall Street',
   },
   {
     iconName: 'zap',
-    text: 'Lightning Fast - Real-time updates and instant content sharing for time-sensitive markets',
+    text: 'Instant Analysis - Get immediate insights on earnings, filings, and market-moving events',
   },
 ];
 
@@ -61,8 +61,8 @@ export const AUTO_SCROLL_CONTENT: AutoScrollItem[] = [
  * Animation timing constants for consistent behavior
  */
 export const ANIMATION_TIMINGS = {
-  AUTO_SCROLL_INTERVAL: 4000, // 4 seconds
-  FADE_DURATION: 500, // 500ms fade transitions
+  AUTO_SCROLL_INTERVAL: 6000, // 6 seconds - increased for longer content
+  FADE_DURATION: 600, // 600ms fade transitions - slightly slower for readability
   ENTRANCE_DURATION: 800, // Initial fade in
   TITLE_DURATION: 600,
   TAGLINE_DURATION: 700,

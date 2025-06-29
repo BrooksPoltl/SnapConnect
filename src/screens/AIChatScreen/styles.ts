@@ -153,6 +153,8 @@ export const styles = (theme: Theme) =>
       backgroundColor: theme.colors.primary,
       justifyContent: 'center',
       alignItems: 'center',
+      marginLeft: 8,
+      marginBottom: 2,
     },
     sendButtonDisabled: {
       backgroundColor: theme.colors.surface,

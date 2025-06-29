@@ -91,6 +91,8 @@ export const styles = (theme: Theme) =>
       height: 40,
       justifyContent: 'center',
       alignItems: 'center',
+      marginLeft: 8,
+      marginBottom: 2,
     },
     mediaButton: {
       padding: 5,

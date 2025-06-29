@@ -203,6 +203,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#007AFF',
+    marginLeft: 8,
+    marginBottom: 2,
   },
   sendButtonDisabled: {
     opacity: 0.5,

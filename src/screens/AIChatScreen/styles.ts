@@ -214,4 +214,34 @@ export const styles = (theme: Theme) =>
       flex: 1,
       marginBottom: 0,
     },
+    titleEditContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    titleEditField: {
+      flex: 1,
+      marginRight: 8,
+    },
+    titleEditButtons: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    titleEditButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+    },
+    saveButton: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    titleCancelButton: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.border,
+    },
   });

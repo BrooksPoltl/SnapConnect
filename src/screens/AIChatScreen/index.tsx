@@ -149,6 +149,14 @@ const AIChatScreen: React.FC = () => {
   };
 
   /**
+   * Handle canceling title edit
+   */
+  const handleTitleCancel = () => {
+    setTempTitle(title); // Reset to original title
+    setEditingTitle(false);
+  };
+
+  /**
    * Handle share button press
    */
   const handleShare = (message: AIMessage) => {
@@ -258,16 +266,31 @@ const AIChatScreen: React.FC = () => {
           onBackPress={() => navigation.goBack()}
           centerElement={
             editingTitle ? (
-              <FormField
-                variant='inline'
-                value={tempTitle}
-                onChangeText={setTempTitle}
-                onBlur={handleTitleSave}
-                onSubmitEditing={handleTitleSave}
-                autoFocus
-                selectTextOnFocus
-                containerStyle={dynamicStyles.formFieldContainer}
-              />
+              <View style={dynamicStyles.titleEditContainer}>
+                <FormField
+                  variant='inline'
+                  value={tempTitle}
+                  onChangeText={setTempTitle}
+                  onSubmitEditing={handleTitleSave}
+                  autoFocus
+                  selectTextOnFocus
+                  containerStyle={dynamicStyles.titleEditField}
+                />
+                <View style={dynamicStyles.titleEditButtons}>
+                  <TouchableOpacity
+                    style={[dynamicStyles.titleEditButton, dynamicStyles.titleCancelButton]}
+                    onPress={handleTitleCancel}
+                  >
+                    <Icon name='x' size={16} color={theme.colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[dynamicStyles.titleEditButton, dynamicStyles.saveButton]}
+                    onPress={handleTitleSave}
+                  >
+                    <Icon name='check' size={16} color={theme.colors.white} />
+                  </TouchableOpacity>
+                </View>
+              </View>
             ) : (
               <TouchableOpacity
                 style={dynamicStyles.titleButton}

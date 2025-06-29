@@ -11,7 +11,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { OnboardingSlide } from '../../components/OnboardingSlide';
+import { OnboardingSlide, OnboardingSnapshot } from '../../components';
 import { markOnboardingComplete } from '../../services/user';
 import { logger } from '../../utils/logger';
 import { styles } from './styles';
@@ -27,26 +27,31 @@ const SLIDES = [
     title: 'Welcome to Fathom Research',
     description:
       "For too long, professional-grade research has been locked away. Fathom gives you the power to break down those walls. We're democratizing investment research, giving you the tools to go deeper than headlines and make smarter, more informed decisions.",
+    snapshotType: 'welcome' as const,
   },
   {
     title: 'From 100 Pages to 3 Sentences',
     description:
       'Our AI reads dense SEC filings like 10-Ks and 10-Qs for you. Ask a complex question and get the core insights in seconds, not hours.',
+    snapshotType: 'ai-insights' as const,
   },
   {
     title: 'Share Verifiable Insights',
     description:
       'When you share an AI-generated insight, it automatically includes a link to the source document. Elevate your conversations with data that anyone can verify.',
+    snapshotType: 'sharing' as const,
   },
   {
     title: 'Build Your Research Network',
     description:
       'Create focused groups to discuss strategies or follow public conversations to see what others are uncovering. This is where the best minds connect.',
+    snapshotType: 'networking' as const,
   },
   {
     title: 'The Story Behind the Stock',
     description:
       "Share your analysis and discoveries through ephemeral photo and video stories. It's not just about what you trade; it's about what you know.",
+    snapshotType: 'stories' as const,
   },
 ];
 
@@ -151,10 +156,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         {SLIDES.map((slide, index) => (
           <View key={index} style={[styles.slideContainer, { width: screenWidth }]}>
             <OnboardingSlide title={slide.title} description={slide.description}>
-              {/* TODO: Add component snapshots for each slide */}
-              <View style={styles.placeholderSnapshot}>
-                <Text style={styles.placeholderText}>Feature Preview</Text>
-              </View>
+              <OnboardingSnapshot type={slide.snapshotType} />
             </OnboardingSlide>
           </View>
         ))}

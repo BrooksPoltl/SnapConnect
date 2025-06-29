@@ -48,6 +48,7 @@ export { default as HomeScreenAnimatedText } from './HomeScreenAnimatedText';
 
 // Onboarding Components
 export { OnboardingSlide } from './OnboardingSlide';
+export { OnboardingSnapshot } from './OnboardingSnapshots';
 
 // Other Components
 export { default as ShimmerView } from './ShimmerView';

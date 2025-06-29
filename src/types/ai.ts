@@ -3,12 +3,25 @@
  * Contains types for conversations, messages, and posts
  */
 
+export interface Source {
+  url: string;
+  companyName: string;
+  filingDate: string;
+  accessionNumber: string;
+  filingType: string; // e.g., "10-K", "10-Q", etc.
+}
+
 export interface AIConversation {
   id: string;
   title: string;
   created_at: string;
   last_message_at: string;
   message_count: number;
+  last_message_content?: string;
+  last_message_metadata?: {
+    sources?: Source[];
+    [key: string]: unknown;
+  };
 }
 
 export interface AIMessage {
@@ -16,7 +29,7 @@ export interface AIMessage {
   sender: 'user' | 'ai';
   content: string;
   metadata?: {
-    sources?: string[];
+    sources?: Source[];
     [key: string]: unknown;
   };
   created_at: string;
@@ -39,8 +52,14 @@ export interface QueryAIRequest {
 }
 
 export interface QueryAIResponse {
-  response: string;
-  sources?: string[];
+  id: string;
+  sender: 'ai';
+  content: string;
+  created_at: string;
+  metadata: {
+    sources: Source[];
+    timestamp: string;
+  };
   conversationId: string;
 }
 

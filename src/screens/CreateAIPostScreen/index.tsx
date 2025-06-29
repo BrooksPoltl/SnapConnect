@@ -20,18 +20,20 @@ import { createAIPost } from '../../services/ai';
 import { logger } from '../../utils/logger';
 import FormField from '../../components/FormField';
 import ScreenHeader from '../../components/ScreenHeader';
+import { CollapsibleText } from '../../components';
+import type { Source } from '../../types';
 import { styles } from './styles';
 
 interface RouteParams {
   aiResponse: string;
-  sourceLink?: string;
+  sources?: Source[];
 }
 
 const CreateAIPostScreen: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
-  const { aiResponse, sourceLink } = (route.params as RouteParams) ?? {};
+  const { aiResponse, sources = [] } = (route.params as RouteParams) ?? {};
 
   const [commentary, setCommentary] = useState('');
   const [privacy, setPrivacy] = useState<'public' | 'friends'>('public');
@@ -51,13 +53,16 @@ const CreateAIPostScreen: React.FC = () => {
       logger.log('CreateAIPostScreen: Creating AI post', {
         privacy,
         hasCommentary: !!commentary,
-        hasSourceLink: !!sourceLink,
+        sourceCount: sources.length,
       });
+
+      // Use the first source's URL if available
+      const sourceUrl = sources.length > 0 ? sources[0].url : undefined;
 
       await createAIPost({
         commentary: commentary.trim() || '',
         ai_content: aiResponse,
-        source_url: sourceLink,
+        source_url: sourceUrl,
         post_privacy: privacy,
       });
 
@@ -167,11 +172,13 @@ const CreateAIPostScreen: React.FC = () => {
               <Ionicons name='sparkles' size={16} color='#007AFF' />
               <Text style={styles.aiResponseLabel}>AI Insight</Text>
             </View>
-            <Text style={styles.aiResponseText}>{aiResponse}</Text>
-            {sourceLink && (
+            <CollapsibleText textStyle={styles.aiResponseText}>{aiResponse}</CollapsibleText>
+            {sources.length > 0 && (
               <View style={styles.sourceContainer}>
                 <Ionicons name='link-outline' size={14} color='#666' />
-                <Text style={styles.sourceText}>Source: SEC Filing</Text>
+                <Text style={styles.sourceText}>
+                  {sources.length} source{sources.length !== 1 ? 's' : ''} available
+                </Text>
               </View>
             )}
           </View>
@@ -203,7 +210,7 @@ const CreateAIPostScreen: React.FC = () => {
                 <Ionicons name='sparkles' size={14} color='#007AFF' />
                 <Text style={styles.previewAiLabel}>AI Insight</Text>
               </View>
-              <Text style={styles.previewAiText}>{aiResponse}</Text>
+              <CollapsibleText textStyle={styles.previewAiText}>{aiResponse}</CollapsibleText>
             </View>
           </View>
         </View>

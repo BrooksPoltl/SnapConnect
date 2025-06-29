@@ -32,7 +32,12 @@ export async function queryAI(request: QueryAIRequest): Promise<QueryAIResponse>
       throw error;
     }
 
-    logger.log('AI Service: Successfully received AI response');
+    // The response now matches QueryAIResponse structure directly
+    logger.log('AI Service: Successfully received AI response', {
+      hasContent: !!data.content,
+      sourceCount: data.metadata?.sources?.length ?? 0,
+    });
+
     return data;
   } catch (error) {
     logger.error('AI Service: Error in queryAI', error);

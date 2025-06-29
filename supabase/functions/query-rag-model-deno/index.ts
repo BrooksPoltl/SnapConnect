@@ -11,6 +11,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface PineconeMetadata {
+  text: string; // This is what's actually stored in Pinecone
+  company: string;
+  cik: string;
+  form: string; // This is what's actually stored (not filing_type)
+  filing_date: string;
+  accession_number: string;
+  section: string;
+}
+
+interface Source {
+  url: string;
+  companyName: string;
+  filingDate: string;
+  accessionNumber: string;
+  filingType: string;
+}
+
 serve(async req => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -123,12 +141,13 @@ serve(async req => {
     }
 
     const pineconeData = await pineconeResponse.json();
-    const relevantDocs = pineconeData.matches || [];
+    const relevantDocs: { metadata: PineconeMetadata }[] = pineconeData.matches || [];
 
     const context = relevantDocs
       .map(match => {
-        const text = match.metadata?.text || '';
-        const company = match.metadata?.company || 'Unknown Company';
+        const metadata = match.metadata;
+        const text = metadata?.text || '';
+        const company = metadata?.company || 'Unknown Company';
 
         if (text.length > 0) {
           return `[${company} Filing]\n${text}`;
@@ -136,27 +155,33 @@ serve(async req => {
         return '';
       })
       .filter(text => text.length > 0)
-      .join('\\n\\n');
+      .join('\n\n');
 
-    const sources = relevantDocs.map(match => {
-      // Log metadata to debug what fields are available
-      console.log('Match metadata:', JSON.stringify(match.metadata, null, 2));
+    // Extract and deduplicate sources
+    const sources: Source[] = relevantDocs
+      .map(match => {
+        const metadata = match.metadata;
+        if (!metadata?.company || !metadata?.accession_number) {
+          return null;
+        }
 
-      const cik = match.metadata?.cik || match.metadata?.CIK;
-      const accessionNumber = match.metadata?.accession_number || match.metadata?.accessionNumber;
+        // Construct SEC URL from accession number
+        // Format: https://www.sec.gov/Archives/edgar/data/{CIK}/{accession_number_no_dashes}/{accession_number}-index.html
+        const accessionNoDashes = metadata.accession_number.replace(/-/g, '');
+        const secUrl = `https://www.sec.gov/Archives/edgar/data/${metadata.cik}/${accessionNoDashes}/${metadata.accession_number}-index.html`;
 
-      if (cik && accessionNumber) {
-        // Remove dashes from accession number for URL
-        const cleanAccessionNumber = accessionNumber.replace(/-/g, '');
-        const url = `https://www.sec.gov/Archives/edgar/data/${cik}/${cleanAccessionNumber}/`;
-        return url;
-      }
-      return '';
-    });
-    const nonEmptySources = sources.filter(url => url.length > 0);
+        return {
+          url: secUrl,
+          companyName: metadata.company,
+          filingDate: metadata.filing_date || '',
+          accessionNumber: metadata.accession_number,
+          filingType: metadata.form || '',
+        };
+      })
+      .filter((source): source is Source => source !== null);
 
-    // Remove duplicate URLs
-    const filteredSources = [...new Set(nonEmptySources)];
+    // Remove duplicate sources based on accession number
+    const uniqueSources = Array.from(new Map(sources.map(s => [s.accessionNumber, s])).values());
 
     // Step 3: Generate response using OpenAI with context
     const systemPrompt = `You are an emotionally intelligent financial AI assistant that reads between the lines of SEC filings to provide sentiment-aware analysis. You understand that markets are driven by both data and human psychology.
@@ -240,9 +265,9 @@ serve(async req => {
       console.log('User message stored successfully');
     }
 
-    // Always include metadata, even if sources is empty
+    // Always include metadata with sources
     const messageMetadata = {
-      sources: filteredSources,
+      sources: uniqueSources,
       timestamp: new Date().toISOString(),
     };
 
@@ -261,17 +286,20 @@ serve(async req => {
       console.log('AI message stored successfully');
     }
 
-    return new Response(
-      JSON.stringify({
-        response: aiResponse,
-        sources: filteredSources,
-        conversationId: finalConversationId,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      },
-    );
+    // Return structured response
+    const responsePayload = {
+      id: '', // Will be populated by the client
+      sender: 'ai' as const,
+      content: aiResponse,
+      created_at: new Date().toISOString(),
+      metadata: messageMetadata,
+      conversationId: finalConversationId,
+    };
+
+    return new Response(JSON.stringify(responsePayload), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
     console.error('Main error handler:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {

@@ -26,6 +26,7 @@ import {
 } from '../../services/ai';
 import Icon from '../../components/Icon';
 import ScreenHeader from '../../components/ScreenHeader';
+import { CollapsibleText, SourceList } from '../../components';
 import type { AIMessage, QueryAIResponse } from '../../types';
 import FormField from '../../components/FormField';
 
@@ -162,11 +163,10 @@ const AIChatScreen: React.FC = () => {
   const handlePostToFeed = () => {
     if (!selectedMessage) return;
     setShowShareModal(false);
-    // TODO: Navigate to CreateAIPostScreen
     // @ts-ignore - Navigation type needs to be updated to include CreateAIPostScreen
     navigation.navigate('CreateAIPostScreen', {
       aiResponse: selectedMessage.content,
-      sourceLink: undefined, // TODO: Add source link if available
+      sources: selectedMessage.metadata?.sources ?? [],
     });
   };
 
@@ -180,18 +180,22 @@ const AIChatScreen: React.FC = () => {
         item.sender === 'user' ? dynamicStyles.userMessage : dynamicStyles.aiMessage,
       ]}
     >
-      <Text
-        style={[
-          dynamicStyles.messageText,
-          item.sender === 'user' ? dynamicStyles.userMessageText : dynamicStyles.aiMessageText,
-        ]}
-      >
-        {item.content}
-      </Text>
-      {item.sender === 'ai' && (
-        <TouchableOpacity style={dynamicStyles.shareButton} onPress={() => handleShare(item)}>
-          <Icon name='share' size={16} color={theme.colors.textSecondary} />
-        </TouchableOpacity>
+      {item.sender === 'user' ? (
+        <Text style={[dynamicStyles.messageText, dynamicStyles.userMessageText]}>
+          {item.content}
+        </Text>
+      ) : (
+        <View>
+          <CollapsibleText>{item.content}</CollapsibleText>
+
+          {item.metadata?.sources && item.metadata.sources.length > 0 && (
+            <SourceList sources={item.metadata.sources} />
+          )}
+
+          <TouchableOpacity style={dynamicStyles.shareButton} onPress={() => handleShare(item)}>
+            <Icon name='share' size={16} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );

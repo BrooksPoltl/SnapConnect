@@ -52,3 +52,6 @@ export { OnboardingSnapshot } from './OnboardingSnapshots';
 
 // Other Components
 export { default as ShimmerView } from './ShimmerView';
+export { default as CollapsibleText } from './CollapsibleText';
+export { default as SourceList } from './SourceList';
+export { default as SourceCitation } from './SourceCitation';

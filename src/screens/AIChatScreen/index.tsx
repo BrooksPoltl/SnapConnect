@@ -157,7 +157,7 @@ const AIChatScreen: React.FC = () => {
   };
 
   /**
-   * Handle post to feed
+   * Handle share AI insight
    */
   const handlePostToFeed = () => {
     if (!selectedMessage) return;
@@ -168,17 +168,6 @@ const AIChatScreen: React.FC = () => {
       aiResponse: selectedMessage.content,
       sourceLink: undefined, // TODO: Add source link if available
     });
-  };
-
-  /**
-   * Handle send to friend
-   */
-  const handleSendToFriend = () => {
-    if (!selectedMessage) return;
-    setShowShareModal(false);
-    // TODO: Navigate to SelectRecipientsScreen
-    // TODO: Implement SelectRecipientsScreen navigation
-    Alert.alert('Coming Soon', 'Send to Friend feature will be available soon!');
   };
 
   /**
@@ -219,16 +208,11 @@ const AIChatScreen: React.FC = () => {
     >
       <View style={dynamicStyles.modalOverlay}>
         <View style={dynamicStyles.modalContent}>
-          <Text style={dynamicStyles.modalTitle}>Share AI Response</Text>
+          <Text style={dynamicStyles.modalTitle}>Share AI Insight</Text>
 
           <TouchableOpacity style={dynamicStyles.modalButton} onPress={handlePostToFeed}>
             <Icon name='globe' size={20} color={theme.colors.primary} />
-            <Text style={dynamicStyles.modalButtonText}>Post to Feed</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={dynamicStyles.modalButton} onPress={handleSendToFriend}>
-            <Icon name='message-circle' size={20} color={theme.colors.primary} />
-            <Text style={dynamicStyles.modalButtonText}>Send to Friend</Text>
+            <Text style={dynamicStyles.modalButtonText}>Share AI Insight</Text>
           </TouchableOpacity>
 
           <TouchableOpacity

@@ -380,7 +380,7 @@ const ConversationScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container}>
+    <SafeAreaView style={dynamicStyles.container} edges={['top']}>
       <ScreenHeader
         title={otherUsername}
         showBackButton={true}

@@ -41,7 +41,7 @@ export const styles = (theme: Theme) =>
     messagesContainer: {
       flexGrow: 1,
       padding: theme.spacing.md,
-      paddingBottom: 10,
+      paddingBottom: 0,
     },
     inputContainer: {
       flexDirection: 'row',
@@ -49,7 +49,7 @@ export const styles = (theme: Theme) =>
       padding: 10,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
     },
     input: {
       flex: 1,

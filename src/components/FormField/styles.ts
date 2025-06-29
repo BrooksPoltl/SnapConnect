@@ -76,7 +76,7 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing.md,
       fontSize: theme.fontSizes.md,
       color: theme.colors.text,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
 
       // Enhanced 3D Border System
       borderWidth: 1.5,
@@ -110,7 +110,7 @@ export const styles = (theme: Theme) =>
       paddingVertical: theme.spacing.sm,
       fontSize: theme.fontSizes.md,
       color: theme.colors.text,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
       maxHeight: 100,
       minHeight: 44,
 
@@ -162,7 +162,7 @@ export const styles = (theme: Theme) =>
       paddingVertical: theme.spacing.md,
       fontSize: theme.fontSizes.md,
       color: theme.colors.text,
-      backgroundColor: theme.colors.surfaceHighlight,
+      backgroundColor: theme.colors.background,
 
       // Enhanced 3D Border System
       borderWidth: 1.5,
@@ -230,7 +230,7 @@ export const styles = (theme: Theme) =>
       borderColor: theme.colors.error,
       borderTopColor: 'rgba(244, 67, 54, 0.4)',
       borderBottomColor: 'rgba(244, 67, 54, 0.8)',
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
       shadowColor: theme.colors.error,
       shadowOffset: { width: 0, height: 6 },
       shadowOpacity: 0.3,

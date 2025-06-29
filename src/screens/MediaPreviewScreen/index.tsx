@@ -18,7 +18,7 @@ import { Video, ResizeMode } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
 import { Skia, SkImage, useFonts } from '@shopify/react-native-skia';
 import * as FileSystem from 'expo-file-system';
-import { DrawingCanvas, DrawingToolbar, Icon } from '../../components';
+import { Icon } from '../../components';
 import { UserStackParamList } from '../../types/navigation';
 import { logError } from '../../utils/logger';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
@@ -26,7 +26,6 @@ import { useTheme } from '../../styles/theme';
 import { postStory } from '../../services/stories';
 import { generatePhotoCaption } from '../../services/ai';
 import { uploadMediaFile } from '../../services/media';
-import { PathWithColor } from '../../components/DrawingCanvas/types';
 
 import FormField from '../../components/FormField';
 
@@ -59,9 +58,6 @@ const MediaPreviewScreen: React.FC = () => {
   const [isCaptioning, setIsCaptioning] = useState(false);
   const [skiaImage, setSkiaImage] = useState<SkImage | null>(null);
   const [isGeneratingCaption, setIsGeneratingCaption] = useState(false);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [paths, setPaths] = useState<PathWithColor[]>([]);
-  const [color, setColor] = useState('#FFFFFF');
   const [isLoading, setIsLoading] = useState(false);
 
   const theme = useTheme();
@@ -281,10 +277,6 @@ const MediaPreviewScreen: React.FC = () => {
     }
   };
 
-  const handleUndo = () => {
-    setPaths(currentPaths => currentPaths.slice(0, -1));
-  };
-
   const toggleMute = () => {
     const newMuteState = !isMuted;
     setIsMuted(newMuteState);
@@ -330,13 +322,6 @@ const MediaPreviewScreen: React.FC = () => {
     <SafeAreaView style={dynamicStyles.container}>
       <Pressable onPress={Keyboard.dismiss} style={dynamicStyles.mediaContainer}>
         {renderMedia()}
-        <DrawingCanvas
-          paths={paths}
-          setPaths={setPaths}
-          color={color}
-          strokeWidth={4}
-          isEnabled={isDrawing}
-        />
       </Pressable>
 
       <View style={dynamicStyles.topControls}>
@@ -360,21 +345,6 @@ const MediaPreviewScreen: React.FC = () => {
             />
           </TouchableOpacity>
         )}
-
-        <TouchableOpacity
-          onPress={() => setIsDrawing(!isDrawing)}
-          style={dynamicStyles.controlButton}
-        >
-          <Icon
-            name='edit-3'
-            size={30}
-            color={isDrawing ? 'cyan' : 'white'}
-            backgroundContainer={isDrawing}
-            containerColor={isDrawing ? '#00FFFF' : undefined}
-            enable3D={true}
-            shadowColor={isDrawing ? '#00FFFF' : 'rgba(0, 0, 0, 0.8)'}
-          />
-        </TouchableOpacity>
       </View>
 
       {media.type === 'photo' && (
@@ -423,10 +393,6 @@ const MediaPreviewScreen: React.FC = () => {
             </View>
           )}
         </>
-      )}
-
-      {isDrawing && (
-        <DrawingToolbar onColorChange={setColor} onUndo={handleUndo} selectedColor={color} />
       )}
 
       <View style={dynamicStyles.bottomControls}>

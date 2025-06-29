@@ -12,7 +12,8 @@ export const styles = (theme: Theme) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
+      width: '100%',
     },
     title: {
       fontSize: theme.fontSizes.xxl,
@@ -31,8 +32,12 @@ export const styles = (theme: Theme) =>
     },
     formField: {
       marginBottom: theme.spacing.md,
+      width: '100%',
+      maxWidth: 400,
     },
     buttonSpacing: {
       marginTop: theme.spacing.lg,
+      width: '100%',
+      maxWidth: 400,
     },
   });

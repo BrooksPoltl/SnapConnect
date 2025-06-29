@@ -155,7 +155,7 @@ const ChatScreen: React.FC = () => {
       <FlatList
         data={conversations}
         renderItem={renderConversationItem}
-        keyExtractor={item => item.chat_id.toString()}
+        keyExtractor={item => `${item.chat_id}-${item.other_user_id}`}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}

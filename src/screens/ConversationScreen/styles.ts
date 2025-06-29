@@ -94,6 +94,9 @@ export const styles = (theme: Theme) =>
       marginLeft: 8,
       marginBottom: 2,
     },
+    sendButtonDisabled: {
+      backgroundColor: theme.colors.surface,
+    },
     mediaButton: {
       padding: 5,
     },

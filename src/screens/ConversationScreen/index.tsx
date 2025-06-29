@@ -412,14 +412,21 @@ const ConversationScreen: React.FC = () => {
             containerStyle={dynamicStyles.formFieldContainer}
           />
           <TouchableOpacity
-            style={dynamicStyles.sendButton}
+            style={[
+              dynamicStyles.sendButton,
+              (sending || !messageText.trim()) && dynamicStyles.sendButtonDisabled,
+            ]}
             onPress={handleSendMessage}
             disabled={sending || !messageText.trim()}
           >
             {sending ? (
               <ActivityIndicator size='small' color={theme.colors.white} />
             ) : (
-              <Icon name='send' size={24} color={theme.colors.white} />
+              <Icon
+                name='send'
+                size={24}
+                color={!messageText.trim() ? theme.colors.textSecondary : theme.colors.white}
+              />
             )}
           </TouchableOpacity>
         </View>

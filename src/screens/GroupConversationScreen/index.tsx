@@ -195,7 +195,7 @@ export const GroupConversationScreen = () => {
             <Ionicons
               name='send'
               size={20}
-              color={messageText.trim() && !isSending ? '#007AFF' : '#8E8E93'}
+              color={messageText.trim() && !isSending ? '#FFFFFF' : '#8E8E93'}
             />
           </TouchableOpacity>
         </View>

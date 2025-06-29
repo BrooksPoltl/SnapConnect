@@ -11,6 +11,7 @@ interface CameraOptionsProps {
   flashMode: 'off' | 'on';
   isTorchEnabled: boolean;
   disabled?: boolean;
+  topOffset?: number;
 }
 
 /**
@@ -25,6 +26,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({
   flashMode,
   isTorchEnabled,
   disabled,
+  topOffset = 0,
 }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -34,7 +36,7 @@ const CameraOptions: React.FC<CameraOptionsProps> = ({
   const getFlashIconColor = () => (flashMode === 'on' ? theme.colors.primary : theme.colors.white);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { top: 80 + topOffset }]}>
       {/* Flash Mode Button */}
       <TouchableOpacity
         style={[styles.optionButton, disabled && styles.disabledButton]}

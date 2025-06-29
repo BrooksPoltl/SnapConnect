@@ -5,7 +5,6 @@ export const styles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       position: 'absolute',
-      top: 80,
       right: theme.spacing.md,
       zIndex: 1,
       alignItems: 'center',

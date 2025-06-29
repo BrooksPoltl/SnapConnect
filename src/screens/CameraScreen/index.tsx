@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CameraView, CameraType, Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
@@ -33,6 +33,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
 }) => {
   const navigation = useNavigation<NavigationProp<UserStackParamList>>();
   const cameraRef = useRef<CameraView>(null);
+  const insets = useSafeAreaInsets();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [facing, setFacing] = useState<CameraType>('back');
@@ -293,7 +294,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
       />
 
       {/* All controls as absolutely positioned siblings */}
-      <View style={styles.topControlsContainer}>
+      <View style={[styles.topControlsContainer, { top: insets.top + 20 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name='close-outline' size={32} color={theme.colors.white} />
         </TouchableOpacity>
@@ -311,6 +312,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({
         isTorchEnabled={isTorchEnabled}
         onToggleFlash={onToggleFlash}
         onToggleTorch={onToggleTorch}
+        topOffset={insets.top}
       />
 
       <View style={styles.bottomControlsContainer}>

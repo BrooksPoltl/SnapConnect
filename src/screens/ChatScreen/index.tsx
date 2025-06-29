@@ -131,12 +131,11 @@ const ChatScreen: React.FC = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={dynamicStyles.container} edges={['bottom']}>
+      <SafeAreaView style={dynamicStyles.container}>
         <ScreenHeader
           title='Chat'
           showRightAction={true}
-          rightActionText='Log Out'
-          rightActionColor={theme.colors.primary}
+          rightActionIcon='log-out'
           onRightActionPress={handleLogOut}
         />
         <ConversationListSkeleton count={6} />
@@ -145,12 +144,11 @@ const ChatScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container} edges={['bottom']}>
+    <SafeAreaView style={dynamicStyles.container}>
       <ScreenHeader
         title='Chat'
         showRightAction={true}
-        rightActionText='Log Out'
-        rightActionColor={theme.colors.primary}
+        rightActionIcon='log-out'
         onRightActionPress={handleLogOut}
       />
 

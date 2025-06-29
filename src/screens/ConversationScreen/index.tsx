@@ -21,7 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
-import { Icon } from '../../components';
+import { Icon, ScreenHeader } from '../../components';
 import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import {
@@ -380,14 +380,12 @@ const ConversationScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container} edges={['bottom', 'left', 'right']}>
-      <View style={dynamicStyles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name='arrow-left' size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Text style={dynamicStyles.headerTitle}>{otherUsername}</Text>
-        <View style={dynamicStyles.headerSpacer} />
-      </View>
+    <SafeAreaView style={dynamicStyles.container}>
+      <ScreenHeader
+        title={otherUsername}
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
       <FlatList
         ref={flatListRef}
         data={messages}

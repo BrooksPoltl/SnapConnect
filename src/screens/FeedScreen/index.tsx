@@ -4,12 +4,20 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  RefreshControl,
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '../../styles/theme';
 import { getPublicFeed, getFriendFeed } from '../../services/ai';
-import { Icon, CardSkeleton } from '../../components';
+import { Icon, CardSkeleton, CollapsibleText, SourceList } from '../../components';
 import type { AIPost } from '../../types';
 
 import { styles } from './styles';
@@ -89,29 +97,45 @@ const FeedScreen: React.FC = () => {
   /**
    * Render a single post item
    */
-  const renderPostItem = ({ item }: { item: AIPost }) => (
-    <View style={dynamicStyles.postItem}>
-      <View style={dynamicStyles.postHeader}>
-        <Text style={dynamicStyles.username}>@{item.username}</Text>
-        <Text style={dynamicStyles.postTime}>{formatPostTime(item.created_at)}</Text>
+  const renderPostItem = ({ item }: { item: AIPost }) => {
+    const sources = item.metadata?.sources ?? [];
+    const hasLegacySource = !!item.source_link && sources.length === 0;
+
+    return (
+      <View style={dynamicStyles.postItem}>
+        <View style={dynamicStyles.postHeader}>
+          <Text style={dynamicStyles.username}>@{item.username}</Text>
+          <Text style={dynamicStyles.postTime}>{formatPostTime(item.created_at)}</Text>
+        </View>
+
+        {item.user_commentary && (
+          <Text style={dynamicStyles.userCommentary}>{item.user_commentary}</Text>
+        )}
+
+        <View style={dynamicStyles.aiResponseContainer}>
+          <CollapsibleText textStyle={dynamicStyles.aiResponse}>{item.ai_response}</CollapsibleText>
+        </View>
+
+        {/* New structured sources */}
+        {sources.length > 0 && (
+          <View style={dynamicStyles.sourcesContainer}>
+            <SourceList sources={sources} />
+          </View>
+        )}
+
+        {/* Legacy single source link for backward compatibility */}
+        {hasLegacySource && (
+          <TouchableOpacity
+            style={dynamicStyles.sourceLink}
+            onPress={() => item.source_link && Linking.openURL(item.source_link)}
+          >
+            <Icon name='external-link' size={16} color={theme.colors.primary} />
+            <Text style={dynamicStyles.sourceLinkText}>View Source</Text>
+          </TouchableOpacity>
+        )}
       </View>
-
-      {item.user_commentary && (
-        <Text style={dynamicStyles.userCommentary}>{item.user_commentary}</Text>
-      )}
-
-      <View style={dynamicStyles.aiResponseContainer}>
-        <Text style={dynamicStyles.aiResponse}>{item.ai_response}</Text>
-      </View>
-
-      {item.source_link && (
-        <TouchableOpacity style={dynamicStyles.sourceLink}>
-          <Icon name='external-link' size={16} color={theme.colors.primary} />
-          <Text style={dynamicStyles.sourceLinkText}>View Source</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+    );
+  };
 
   /**
    * Render empty state

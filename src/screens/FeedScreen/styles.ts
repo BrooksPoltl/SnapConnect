@@ -131,6 +131,9 @@ export const styles = (theme: Theme) =>
       lineHeight: 20,
       fontStyle: 'italic',
     },
+    sourcesContainer: {
+      marginTop: 12,
+    },
     sourceLink: {
       flexDirection: 'row',
       alignItems: 'center',

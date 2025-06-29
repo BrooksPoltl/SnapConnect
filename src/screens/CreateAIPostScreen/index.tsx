@@ -64,6 +64,7 @@ const CreateAIPostScreen: React.FC = () => {
         ai_content: aiResponse,
         source_url: sourceUrl,
         post_privacy: privacy,
+        metadata: sources.length > 0 ? { sources } : undefined,
       });
 
       logger.log('CreateAIPostScreen: Successfully created AI post');

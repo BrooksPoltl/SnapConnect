@@ -206,6 +206,7 @@ export async function createAIPost(request: CreateAIPostRequest): Promise<string
       ai_content: request.ai_content,
       source_url: request.source_url ?? null,
       post_privacy: request.post_privacy,
+      post_metadata: request.metadata ?? null,
     });
 
     if (error) {

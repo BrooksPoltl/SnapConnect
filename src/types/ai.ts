@@ -42,6 +42,10 @@ export interface AIPost {
   user_commentary: string | null;
   ai_response: string;
   source_link: string | null;
+  metadata?: {
+    sources?: Source[];
+    [key: string]: unknown;
+  };
   privacy: 'public' | 'friends';
   created_at: string;
 }
@@ -68,6 +72,10 @@ export interface CreateAIPostRequest {
   ai_content: string;
   source_url?: string;
   post_privacy: 'public' | 'friends';
+  metadata?: {
+    sources?: Source[];
+    [key: string]: unknown;
+  };
 }
 
 export interface GeneratePhotoCaptionRequest {

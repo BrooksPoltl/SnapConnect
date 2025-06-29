@@ -25,7 +25,6 @@ import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { useTheme } from '../../styles/theme';
 import { postStory } from '../../services/stories';
 import { generatePhotoCaption } from '../../services/ai';
-import { uploadMediaFile } from '../../services/media';
 
 import FormField from '../../components/FormField';
 
@@ -161,36 +160,44 @@ const MediaPreviewScreen: React.FC = () => {
 
       // Draw the caption using Paragraph API
       if (caption && fontMgr) {
+        // Calculate font size proportional to image dimensions (minimum 32, maximum 120)
+        const baseFontSize = Math.min(imageWidth, imageHeight) * 0.05;
+        const fontSize = Math.max(32, Math.min(120, baseFontSize));
+
         // Create paragraph with system font
         const paragraph = Skia.ParagraphBuilder.Make({}, fontMgr)
           .pushStyle({
             color: Skia.Color('white'),
-            fontSize: 48,
+            fontSize,
             fontFamilies: ['System'], // Use system font
+            fontStyle: {
+              weight: 600, // Semi-bold for better readability
+            },
           })
           .addText(caption)
           .build();
 
-        // Layout the paragraph
-        const maxWidth = imageWidth - 100;
+        // Layout the paragraph with generous padding
+        const maxWidth = imageWidth - 80;
         paragraph.layout(maxWidth);
 
         // Get paragraph dimensions
         const paragraphHeight = paragraph.getHeight();
         const paragraphWidth = paragraph.getLongestLine();
 
-        // Calculate position (bottom center)
+        // Calculate position (lower third of image, centered horizontally)
         const textX = (imageWidth - paragraphWidth) / 2;
-        const textY = imageHeight - paragraphHeight - 100;
+        const textY = imageHeight * 0.7 - paragraphHeight / 2;
 
-        // Draw background rectangle
+        // Draw background rectangle with rounded corners effect
         const backgroundPaint = Skia.Paint();
-        backgroundPaint.setColor(Skia.Color('rgba(0, 0, 0, 0.7)'));
+        backgroundPaint.setColor(Skia.Color('rgba(0, 0, 0, 0.75)'));
+        const padding = 24;
         const backgroundRect = Skia.XYWHRect(
-          textX - 20,
-          textY - 20,
-          paragraphWidth + 40,
-          paragraphHeight + 40,
+          textX - padding,
+          textY - padding,
+          paragraphWidth + padding * 2,
+          paragraphHeight + padding * 2,
         );
         canvas.drawRect(backgroundRect, backgroundPaint);
 
@@ -251,27 +258,20 @@ const MediaPreviewScreen: React.FC = () => {
   const handleSend = async () => {
     setIsLoading(true);
     try {
-      // For now, just send the original media without drawing capture
-      // Drawing functionality will work for display but won't be captured in the final image
+      // Generate captioned image if needed
       const finalUri = media.type === 'photo' ? await generateCaptionedImage() : media.uri;
 
-      const fileInfo = await FileSystem.getInfoAsync(finalUri);
-      if (!fileInfo.exists) {
-        throw new Error('File does not exist');
-      }
-
-      const fileType = media.type === 'video' ? 'video/mp4' : 'image/jpeg';
-      const fileName = finalUri.split('/').pop() ?? `media_${Date.now()}`;
-
-      await uploadMediaFile({
+      // Create updated media object with final URI
+      const finalMedia = {
+        ...media,
         uri: finalUri,
-        type: fileType,
-        name: fileName,
-      });
+      };
 
-      navigation.goBack();
+      // Navigate to SelectRecipientsScreen where users can choose friends
+      navigation.navigate('SelectRecipients', { media: finalMedia });
     } catch (error) {
-      logError('Error sending media', (error as Error).message);
+      logError('MediaPreviewScreen', 'Error preparing media for sending', error);
+      Alert.alert('Error', 'Failed to prepare media for sending. Please try again.');
     } finally {
       setIsLoading(false);
     }

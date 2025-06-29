@@ -4,13 +4,14 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import { useTheme } from '../../styles/theme';
 import { getUserAIConversations } from '../../services/ai';
-import { Icon, AIConversationSkeleton, ConversationCard } from '../../components';
+import { AIConversationSkeleton, ConversationCard, ScreenHeader } from '../../components';
+import Icon from '../../components/Icon';
 import type { AIConversation } from '../../types';
 
 import { styles } from './styles';
@@ -132,20 +133,12 @@ const AIHomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <View style={dynamicStyles.header}>
-        <Text style={dynamicStyles.title}>AI Assistant</Text>
-        <TouchableOpacity style={dynamicStyles.newChatButton} onPress={handleNewChat}>
-          <Icon
-            name='plus'
-            size={24}
-            color={theme.colors.primary}
-            backgroundContainer={true}
-            containerColor={theme.colors.primary}
-            enable3D={true}
-            shadowColor={theme.colors.primary}
-          />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title='AI Assistant'
+        showRightAction={true}
+        rightActionIcon='plus'
+        onRightActionPress={handleNewChat}
+      />
 
       {loading && !hasLoadedOnce ? (
         <AIConversationSkeleton count={6} />

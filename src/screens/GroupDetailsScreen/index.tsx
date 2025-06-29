@@ -18,7 +18,7 @@ import { UserStackParamList } from '../../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useGroupStore } from '../../stores/groupStore';
-import { ConversationCard } from '../../components';
+import { ConversationCard, ScreenHeader } from '../../components';
 import type { GroupMember } from '../../types/groups';
 import { styles } from './styles';
 
@@ -108,13 +108,11 @@ export const GroupDetailsScreen = () => {
   if (isLoading && !currentGroupDetails) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name='arrow-back' size={24} color='#007AFF' />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Group Details</Text>
-          <View style={styles.placeholder} />
-        </View>
+        <ScreenHeader
+          title='Group Details'
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size='large' color='#007AFF' />
           <Text style={styles.loadingText}>Loading group details...</Text>
@@ -126,13 +124,11 @@ export const GroupDetailsScreen = () => {
   if (!currentGroupDetails) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name='arrow-back' size={24} color='#007AFF' />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Group Details</Text>
-          <View style={styles.placeholder} />
-        </View>
+        <ScreenHeader
+          title='Group Details'
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+        />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Failed to load group details</Text>
           <TouchableOpacity
@@ -149,13 +145,11 @@ export const GroupDetailsScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name='arrow-back' size={24} color='#007AFF' />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Group Details</Text>
-        <View style={styles.placeholder} />
-      </View>
+      <ScreenHeader
+        title='Group Details'
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
 
       {/* Group Info */}
       <View style={styles.groupInfoSection}>

@@ -10,12 +10,13 @@ import { View, Text, FlatList, RefreshControl, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 
-import { ConversationCard, ConversationListSkeleton } from '../../components';
+import { ConversationCard, ConversationListSkeleton, ScreenHeader } from '../../components';
 import { useTheme } from '../../styles/theme';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { getOrCreateDirectChat } from '../../services/chat';
 import { useConversations } from '../../stores';
 import { logger } from '../../utils/logger';
+import { logOut } from '../../services/auth';
 import { UserStackParamList } from '../../types/navigation';
 import { Conversation } from '../../types/chat';
 
@@ -34,6 +35,19 @@ const ChatScreen: React.FC = () => {
   const handleRefresh = useCallback(() => {
     refreshConversations();
   }, [refreshConversations]);
+
+  /**
+   * Handles user logout
+   */
+  const handleLogOut = useCallback(async () => {
+    try {
+      await logOut();
+      // Sign-out successful - navigation handled by useAuthentication hook
+    } catch (error) {
+      logger.error('ChatScreen: Sign out error', error);
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    }
+  }, []);
 
   /**
    * Navigates to the conversation screen
@@ -117,20 +131,28 @@ const ChatScreen: React.FC = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={dynamicStyles.container}>
-        <View style={dynamicStyles.header}>
-          <Text style={dynamicStyles.headerTitle}>Chat</Text>
-        </View>
+      <SafeAreaView style={dynamicStyles.container} edges={['bottom']}>
+        <ScreenHeader
+          title='Chat'
+          showRightAction={true}
+          rightActionText='Log Out'
+          rightActionColor={theme.colors.primary}
+          onRightActionPress={handleLogOut}
+        />
         <ConversationListSkeleton count={6} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container}>
-      <View style={dynamicStyles.header}>
-        <Text style={dynamicStyles.headerTitle}>Chat</Text>
-      </View>
+    <SafeAreaView style={dynamicStyles.container} edges={['bottom']}>
+      <ScreenHeader
+        title='Chat'
+        showRightAction={true}
+        rightActionText='Log Out'
+        rightActionColor={theme.colors.primary}
+        onRightActionPress={handleLogOut}
+      />
 
       <FlatList
         data={conversations}

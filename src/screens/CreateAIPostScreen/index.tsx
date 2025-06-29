@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createAIPost } from '../../services/ai';
 import { logger } from '../../utils/logger';
 import FormField from '../../components/FormField';
+import ScreenHeader from '../../components/ScreenHeader';
 import { styles } from './styles';
 
 interface RouteParams {
@@ -85,23 +86,25 @@ const CreateAIPostScreen: React.FC = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.headerTitle}>Share AI Insight</Text>
-
-        <TouchableOpacity
-          onPress={handlePost}
-          style={[styles.postButton, isPosting && styles.postButtonDisabled]}
-          disabled={isPosting}
-        >
-          <Text style={[styles.postText, isPosting && styles.postTextDisabled]}>
-            {isPosting ? 'Posting...' : 'Post'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title='Share AI Insight'
+        leftElement={
+          <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        }
+        rightElement={
+          <TouchableOpacity
+            onPress={handlePost}
+            style={[styles.postButton, isPosting && styles.postButtonDisabled]}
+            disabled={isPosting}
+          >
+            <Text style={[styles.postText, isPosting && styles.postTextDisabled]}>
+              {isPosting ? 'Posting...' : 'Post'}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Privacy Settings */}

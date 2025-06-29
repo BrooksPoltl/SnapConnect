@@ -25,6 +25,7 @@ import {
   // createAIConversation,
 } from '../../services/ai';
 import Icon from '../../components/Icon';
+import ScreenHeader from '../../components/ScreenHeader';
 import type { AIMessage, QueryAIResponse } from '../../types';
 import FormField from '../../components/FormField';
 
@@ -263,42 +264,37 @@ const AIChatScreen: React.FC = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Header */}
-        <View style={dynamicStyles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={dynamicStyles.backButton}>
-            <Icon
-              name='arrow-left'
-              size={24}
-              color={theme.colors.text}
-              enable3D={true}
-              shadowColor='rgba(0, 0, 0, 0.5)'
-            />
-          </TouchableOpacity>
-
-          {editingTitle ? (
-            <FormField
-              variant='inline'
-              value={tempTitle}
-              onChangeText={setTempTitle}
-              onBlur={handleTitleSave}
-              onSubmitEditing={handleTitleSave}
-              autoFocus
-              selectTextOnFocus
-              containerStyle={dynamicStyles.formFieldContainer}
-            />
-          ) : (
-            <TouchableOpacity
-              style={dynamicStyles.titleButton}
-              onPress={() => {
-                setTempTitle(title);
-                setEditingTitle(true);
-              }}
-            >
-              <Text style={dynamicStyles.title} numberOfLines={1}>
-                {title}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        <ScreenHeader
+          title={title}
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          centerElement={
+            editingTitle ? (
+              <FormField
+                variant='inline'
+                value={tempTitle}
+                onChangeText={setTempTitle}
+                onBlur={handleTitleSave}
+                onSubmitEditing={handleTitleSave}
+                autoFocus
+                selectTextOnFocus
+                containerStyle={dynamicStyles.formFieldContainer}
+              />
+            ) : (
+              <TouchableOpacity
+                style={dynamicStyles.titleButton}
+                onPress={() => {
+                  setTempTitle(title);
+                  setEditingTitle(true);
+                }}
+              >
+                <Text style={dynamicStyles.title} numberOfLines={1}>
+                  {title}
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+        />
 
         {/* Messages */}
         <FlatList

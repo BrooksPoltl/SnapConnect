@@ -13,6 +13,12 @@ export const styles = (theme: Theme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
     },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background,
+    },
     header: {
       flexDirection: 'row',
       alignItems: 'center',

@@ -7,6 +7,7 @@ export const styles = (theme: Theme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
       justifyContent: 'center',
+      alignItems: 'center',
     },
     header: {
       position: 'absolute',

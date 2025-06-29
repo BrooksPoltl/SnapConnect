@@ -373,7 +373,7 @@ const ConversationScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={dynamicStyles.container}>
+      <View style={dynamicStyles.loadingContainer}>
         <ActivityIndicator size='large' color={theme.colors.primary} />
       </View>
     );

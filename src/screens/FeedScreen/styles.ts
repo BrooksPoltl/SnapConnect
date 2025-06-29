@@ -22,6 +22,7 @@ export const styles = (theme: Theme) =>
       fontSize: 28,
       fontWeight: '700',
       color: theme.colors.text,
+      textAlign: 'center',
     },
     tabContainer: {
       flexDirection: 'row',

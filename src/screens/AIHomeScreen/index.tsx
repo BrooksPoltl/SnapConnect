@@ -10,7 +10,12 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useTheme } from '../../styles/theme';
 import { getUserAIConversations } from '../../services/ai';
-import { AIConversationSkeleton, ConversationCard, ScreenHeader } from '../../components';
+import {
+  AIConversationSkeleton,
+  ConversationCard,
+  ScreenHeader,
+  FadeInAnimation,
+} from '../../components';
 import Icon from '../../components/Icon';
 import type { AIConversation } from '../../types';
 
@@ -24,7 +29,6 @@ const AIHomeScreen: React.FC = () => {
   const [conversations, setConversations] = useState<AIConversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   /**
    * Load AI conversations from the server
@@ -39,7 +43,6 @@ const AIHomeScreen: React.FC = () => {
 
       const data = await getUserAIConversations();
       setConversations(data);
-      setHasLoadedOnce(true);
     } catch (error) {
       console.error('Error loading conversations:', error);
       Alert.alert('Error', 'Failed to load conversations. Please try again.');
@@ -140,27 +143,31 @@ const AIHomeScreen: React.FC = () => {
         onRightActionPress={handleNewChat}
       />
 
-      {loading && !hasLoadedOnce ? (
-        <AIConversationSkeleton count={6} />
-      ) : (
-        <FlatList
-          data={conversations}
-          renderItem={renderConversationItem}
-          keyExtractor={item => item.id}
-          contentContainerStyle={dynamicStyles.listContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
-              progressBackgroundColor={theme.colors.surface}
-            />
-          }
-          ListEmptyComponent={!loading && !refreshing ? renderEmptyState : null}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <FlatList
+        data={loading || refreshing ? [] : conversations}
+        renderItem={renderConversationItem}
+        keyExtractor={item => item.id}
+        contentContainerStyle={dynamicStyles.listContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        }
+        ListFooterComponent={
+          loading || refreshing ? (
+            <FadeInAnimation>
+              <AIConversationSkeleton count={6} />
+            </FadeInAnimation>
+          ) : !loading && !refreshing && conversations.length === 0 ? (
+            <FadeInAnimation>{renderEmptyState()}</FadeInAnimation>
+          ) : null
+        }
+        showsVerticalScrollIndicator={false}
+      />
     </SafeAreaView>
   );
 };

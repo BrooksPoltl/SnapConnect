@@ -26,6 +26,9 @@ analysis**, fostering a more informed and connected financial community.
 - [6. Getting Started](#6-getting-started)
   - [6.1. Prerequisites](#61-prerequisites)
   - [6.2. Local Development Setup](#62-local-development-setup)
+  - [6.3. Development Scripts](#63-development-scripts)
+  - [6.4. Network Troubleshooting](#64-network-troubleshooting)
+  - [6.5. Code Quality Standards](#65-code-quality-standards)
 
 ## 1. Product Vision
 
@@ -56,33 +59,51 @@ OpenAI.
 
 ## 2. Key Features
 
-### 🤖 AI-Powered Financial Insights
+### 🤖 AI-Powered Financial Insights ✅ **FULLY IMPLEMENTED**
 
 - **RAG Chat Interface**: Interactive AI assistant powered by SEC filing data
-  and OpenAI
-- **Conversation History**: Persistent, titled conversation threads with the AI
-- **Financial Context**: AI responses grounded in real EDGAR filing data
-- **Share AI Insights**: Post AI responses to public/friend feeds or send to
-  friends
+  and OpenAI GPT-4o-mini
+- **Conversation Management**: Create, edit, and manage titled conversation
+  threads with the AI
+- **Financial Context**: AI responses grounded in real EDGAR filing data with
+  source citations
+- **Share AI Insights**: Post AI responses to public/friend feeds via dedicated
+  share modal
+- **Collapsible Responses**: Long AI responses with expand/collapse
+  functionality for better UX
+- **Source Citations**: Clickable source references with detailed financial
+  document links
 
-### 💬 Social Messaging
+### 💬 Social Messaging ✅ **FULLY IMPLEMENTED**
 
-- **Ephemeral Messaging & Stories**: Send photo and video messages, or post
-  stories to a public or private audience. All content is automatically deleted
-  after 24 hours, creating a sense of urgency.
-- **Real-Time Chat**: Engage in one-on-one text conversations with real-time
-  message delivery, powered by Supabase Realtime.
-- **AI Feed**: Browse public and friend-only AI insights and commentary
+- **Ephemeral Stories**: Photo and video stories with 24-hour auto-deletion
+- **Real-Time Chat**: One-on-one and group text conversations with Supabase
+  Realtime
+- **Group Messaging**: Create and manage group chats with multiple participants
+- **Media Messaging**: Send photos and videos with drawing/annotation tools
+- **Message Status**: Read receipts and typing indicators
+- **Story Management**: Create, view, and delete your own stories with detailed
+  viewer analytics
 
-### 🎮 Engagement Features
+### 🎮 Social Features ✅ **FULLY IMPLEMENTED**
 
-- **Gamified User Score**: A simple and visible metric for engagement. Users
-  gain points for creating content (+10 for a story, +5 for a message) to build
-  their profile score and reputation.
-- **Friend Management**: A full-featured social graph, allowing users to search
-  by username, send/manage friend requests, and block users.
-- **Simple AR Filters**: An MVP feature allowing users to overlay custom text
-  (e.g., "$AAPL +5%") on their photo or video content.
+- **Friend System**: Complete social graph with friend requests, search by
+  username, and blocking
+- **User Profiles**: Detailed profiles with user scores, friend counts, and
+  story history
+- **Gamified Scoring**: Automated point system (+10 stories, +5 messages) with
+  database triggers
+- **Group Management**: Create groups, add/remove members, and manage group
+  settings
+- **Phone Authentication**: Secure authentication with phone number verification
+- **Onboarding Flow**: Comprehensive user onboarding with feature demonstrations
+
+### 📱 Media & Camera Features ✅ **FULLY IMPLEMENTED**
+
+- **Advanced Camera**: Custom camera interface with photo/video capture
+- **Media Storage**: Secure cloud storage with automatic cleanup
+- **AR Text Overlay**: Add custom text overlays to media content
+- **Story Viewer**: Instagram-style story viewing with tap navigation
 
 ## 3. Development Roadmap
 
@@ -130,27 +151,122 @@ mobile experiences.
 
 ### 5.1. Technology Stack
 
-- **Frontend**: React Native (with Expo) and TypeScript.
-- **Backend**: A full Supabase stack, including Auth, a Postgres Database,
-  Storage, Realtime, and Edge Functions.
-- **AI Infrastructure**: Node.js TypeScript API with OpenAI GPT-4o-mini and
-  Pinecone vector database for RAG functionality.
-- **Data Sources**: SEC EDGAR filings for financial context and insights.
+#### Frontend
+
+- **React Native**: v0.79.4 with Expo SDK 53.0.13
+- **TypeScript**: Full type safety with strict configuration
+- **Navigation**: React Navigation v7 with stack navigation
+- **State Management**: Zustand for global state (chat, groups)
+- **UI/Animations**: React Native Reanimated, React Native Skia, Linear Gradient
+- **Camera/Media**: Expo Camera, Image Picker, AV, Media Library
+- **Real-time**: Supabase Realtime for live messaging
+
+#### Backend & Services
+
+- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
+- **Authentication**: Supabase Auth with phone number verification
+- **Storage**: Supabase Storage for media files with automatic cleanup
+- **Real-time**: Supabase Realtime subscriptions for live messaging
+- **Edge Functions**: Supabase Edge Functions for server-side processing
+
+#### AI Infrastructure
+
+- **RAG System**: Node.js TypeScript API with OpenAI GPT-4o-mini
+- **Vector Database**: Pinecone for document embeddings and similarity search
+- **Data Sources**: SEC EDGAR filings for financial context and insights
+- **Processing**: Document ingestion and chunking for optimal RAG performance
+
+#### Development Tools
+
+- **Linting**: ESLint with Airbnb TypeScript configuration
+- **Formatting**: Prettier for consistent code style
+- **Quality**: Pre-commit hooks with `yarn prebuild` validation
+- **Navigation**: File-based routing with typed navigation parameters
 
 ### 5.2. Project Structure
 
-The project follows a standard Expo project structure, with the core application
-logic located in the `src/` directory.
+The project follows a modular, AI-first codebase structure with the core
+application logic located in the `src/` directory. All files are designed to be
+under 500 lines for maximum AI tool compatibility.
 
-- `src/components`: Reusable UI components.
-- `src/navigation`: Navigation logic, including stacks and routes.
-- `src/screens`: Top-level screen components, including AI chat interfaces.
-- `src/services`: Supabase client, AI service, and interaction logic.
-- `src/styles`: Theme, shared styles, and styling utilities.
-- `src/types`: TypeScript type definitions, including AI-related types.
-- `src/utils`: Shared utilities and hooks.
-- `api/`: Node.js TypeScript API endpoints for AI/RAG functionality.
-- `supabase/migrations/`: Database schema and function definitions.
+#### Frontend Structure (`src/`)
+
+- **`src/components/`**: 35+ reusable UI components organized by feature:
+  - **AI Components**: `AIConversationSkeleton`, `CollapsibleText`,
+    `SourceList`, `SourceCitation`
+  - **Animation Components**: `AnimatedCard`, `AnimatedPressable`,
+    `AnimatedText`, `FadeInAnimation`, `PulseAnimation`
+  - **Camera Components**: `Camera`, `CameraActions`, `CameraControls`,
+    `CameraOptions`, `CameraPermissionStatus`
+  - **Drawing Components**: `DrawingCanvas`, `DrawingToolbar`
+  - **Social Components**: `Avatar`, `FriendListItem`, `ConversationCard`,
+    `ConversationListItem`
+  - **UI Components**: `FormField`, `Icon`, `ScreenHeader`, `PhotoPreview`,
+    `ReturnButton`
+  - **Skeleton Loaders**: `CardSkeleton`, `ConversationListSkeleton`,
+    `SkeletonLoader`, `StoryListSkeleton`
+  - **Onboarding**: `OnboardingSlide`, `OnboardingSnapshots`
+
+- **`src/screens/`**: 20+ screen components for all app functionality:
+  - **Authentication**: `LogInScreen`, `SignUpScreen`, `PhoneAuthScreen`,
+    `OnboardingScreen`
+  - **AI Features**: `AIChatScreen`, `AIHomeScreen`, `CreateAIPostScreen`
+  - **Social Features**: `HomeScreen`, `FeedScreen`, `ProfileScreen`
+  - **Messaging**: `ChatScreen`, `ConversationScreen`
+  - **Group Features**: `CreateGroupScreen`, `GroupConversationScreen`,
+    `GroupDetailsScreen`, `AddGroupMembersScreen`
+  - **Friends**: `FriendsListScreen`, `AddFriendScreen`
+  - **Stories**: `StoriesScreen`, `StoryViewerScreen`, `MyStoryViewerScreen`
+  - **Media**: `CameraScreen`, `MediaPreviewScreen`, `MediaViewerScreen`,
+    `SelectRecipientsScreen`
+
+- **`src/services/`**: Comprehensive service layer with 9 specialized modules:
+  - `ai.ts`: AI/RAG functionality and conversation management (276 lines)
+  - `groups.ts`: Group chat creation and management (383 lines)
+  - `user.ts`: User profiles and management (307 lines)
+  - `friends.ts`: Friend system and social graph (286 lines)
+  - `chat.ts`: Real-time messaging (216 lines)
+  - `auth.ts`: Authentication and session management (157 lines)
+  - `stories.ts`: Ephemeral content management (140 lines)
+  - `media.ts`: File upload and media handling (132 lines)
+  - `supabase.ts`: Supabase client configuration (72 lines)
+
+- **`src/navigation/`**: Navigation architecture with 5 specialized stacks:
+  - `RootNavigation.tsx`: Main navigation coordinator
+  - `UserStack.tsx`: Authenticated user flow navigation (340 lines)
+  - `AuthStack.tsx`: Authentication flow
+  - `ChatStack.tsx`: Messaging navigation
+  - `FriendsStack.tsx`: Social features navigation
+
+- **`src/stores/`**: Zustand state management:
+  - `chatStore.ts`: Chat state and real-time messaging (171 lines)
+  - `groupStore.ts`: Group chat state management (399 lines)
+
+- **`src/types/`**: Comprehensive TypeScript definitions:
+  - `ai.ts`: AI/RAG related types
+  - `chat.ts`: Messaging types
+  - `groups.ts`: Group functionality types
+  - `user.ts`, `auth.ts`, `stories.ts`, `media.ts`: Feature-specific types
+  - `navigation.ts`: Navigation parameter types
+  - `theme.ts`: Styling types
+
+- **`src/styles/`**: Centralized styling system:
+  - `theme.ts`: Theme configuration and dark/light mode
+  - `shared/`: Reusable style components (buttons, containers, text)
+
+- **`src/utils/`**: Utility functions and custom hooks:
+  - `logger.ts`: Centralized logging for debugging
+  - `hooks/`: Custom React hooks including `useAuthentication.ts`
+
+#### Backend Structure
+
+- **`api/`**: Node.js TypeScript API endpoints for AI/RAG functionality
+- **`supabase/migrations/`**: 30+ database migrations with comprehensive schema
+- **`supabase/functions/`**: Edge functions for AI processing and data
+  operations
+- **`scripts/`**: Data processing and automation scripts
+  - `edgar_ingestion/`: Python scripts for SEC EDGAR filing data ingestion and
+    processing for RAG system
 
 ### 5.3. Core Backend Logic
 
@@ -232,13 +348,35 @@ locally.
       EXPO_PUBLIC_SUPABASE_ANON_KEY=your-local-anon-key-from-the-cli
       ```
 
-5.  **Run the Application:** Start the Metro development server.
+5.  **Verify Your Setup:** Before running the application, validate your code:
+
+    ```sh
+    yarn prebuild
+    ```
+
+    This command runs type checking, formatting, and linting to ensure your code
+    is ready for development.
+
+6.  **Run the Application:** Start the Metro development server:
 
     ```sh
     yarn start
     ```
 
-6.  **Launch the App:**
+    **Network Troubleshooting:** If you encounter network connectivity issues:
+
+    ```sh
+    # Use tunnel connection for network issues (slower but more reliable)
+    yarn start --tunnel
+
+    # Clear Metro cache if experiencing build issues
+    yarn start --clear
+
+    # Combine both options if needed
+    yarn start --tunnel --clear
+    ```
+
+7.  **Launch the App:**
     - Scan the QR code generated by Metro with the Expo Go app on your phone.
     - Or, press `i` to launch the iOS Simulator or `a` to launch the Android
       Emulator.
@@ -247,3 +385,70 @@ The app will now be running and connected to your local Supabase instance. Any
 changes you make to the frontend code will reload automatically. If you make
 changes to the backend (e.g., create a new database migration), you may need to
 restart the Supabase services (`supabase stop` and `supabase start`).
+
+### 6.3. Development Scripts
+
+The project includes several helpful development scripts:
+
+- **`yarn prebuild`**: Validates code quality (type checking, formatting,
+  linting) - **always run this after making changes**
+- **`yarn validate`**: Same as prebuild - ensures code quality before committing
+- **`yarn lint`**: Run ESLint to check for code issues
+- **`yarn lint:fix`**: Automatically fix linting issues where possible
+- **`yarn format`**: Format code with Prettier
+- **`yarn type-check`**: Run TypeScript compiler to check for type errors
+- **`yarn start`**: Start development server with validation
+- **`yarn ios`**: Run on iOS simulator with validation
+- **`yarn android`**: Run on Android emulator with validation
+
+### 6.4. Network Troubleshooting
+
+If you encounter connectivity issues during development, Expo provides several
+flags to resolve common problems:
+
+#### `--tunnel` Flag
+
+- **Purpose**: Routes connections through Expo's servers instead of direct local
+  network
+- **When to use**:
+  - Corporate firewalls blocking local connections
+  - Complex network configurations (VPNs, restricted WiFi)
+  - Unable to connect physical device to development server
+- **Trade-off**: Slower than local connections but more reliable
+- **Usage**: `yarn start --tunnel`
+
+#### `--clear` Flag
+
+- **Purpose**: Clears Metro bundler cache and temporary files
+- **When to use**:
+  - Experiencing unexplained build errors
+  - Code changes not reflecting in app
+  - After installing new dependencies
+  - Strange bundling or transformation issues
+- **Usage**: `yarn start --clear`
+
+#### Common Network Issues
+
+- **Corporate/University Networks**: Often require `--tunnel` due to firewall
+  restrictions
+- **Multiple Network Interfaces**: May need `--tunnel` if your machine has
+  multiple network adapters
+- **Cache Corruption**: Use `--clear` if seeing outdated code or bundle errors
+- **Expo Go Connection**: If QR code scanning fails, try `--tunnel` for more
+  reliable connection
+
+For more information, see
+[Expo CLI documentation](https://docs.expo.dev/more/expo-cli/) and
+[Expo troubleshooting guide](https://docs.expo.dev/troubleshooting/).
+
+### 6.5. Code Quality Standards
+
+The codebase follows strict quality standards:
+
+- **TypeScript**: Full type safety with strict configuration
+- **ESLint**: Airbnb configuration with React Native specific rules
+- **Prettier**: Consistent code formatting
+- **File Size Limit**: All files kept under 500 lines for AI tool compatibility
+- **Modular Architecture**: Clean separation of concerns with single
+  responsibility principle
+- **Centralized Logging**: Use `@utils/logger.ts` for all logging operations
